@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PembayarZakatController;
 use App\Http\Controllers\PemohonController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PenerimaZakatController;
+use App\Http\Controllers\JatahConfigController;
 
 Route::get('/', function () {
     return Inertia::render('InputZakat');
@@ -22,3 +24,14 @@ Route::get('/pemohon', [PemohonController::class, 'index'])->name('pemohon.index
 Route::post('/pemohon', [PemohonController::class, 'store'])->name('pemohon.store');
 Route::post('/pemohon/{id}/update', [PemohonController::class, 'update'])->name('pemohon.update');
 Route::post('/pemohon/{id}/destroy', [PemohonController::class, 'destroy'])->name('pemohon.destroy');
+
+// Route untuk penerima zakat
+Route::get('/penerima-zakat/print', [PenerimaZakatController::class, 'print'])->name('penerima.print');
+Route::get('/penerima-zakat', [PenerimaZakatController::class, 'index'])->name('penerima.index');
+Route::post('/penerima-zakat', [PenerimaZakatController::class, 'store'])->name('penerima.store');
+Route::post('/penerima-zakat/{id}/update', [PenerimaZakatController::class, 'update'])->name('penerima.update');
+Route::post('/penerima-zakat/{id}/destroy', [PenerimaZakatController::class, 'destroy'])->name('penerima.destroy');
+
+// Route untuk konfigurasi jatah
+Route::post('/jatah-config', [JatahConfigController::class, 'store'])->name('jatah.store');
+Route::post('/jatah-config/apply', [JatahConfigController::class, 'apply'])->name('jatah.apply');

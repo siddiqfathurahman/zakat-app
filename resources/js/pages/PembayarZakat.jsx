@@ -195,8 +195,8 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                         <th className="px-4 py-3 text-left text-sm font-semibold">No</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Nama Pembayar</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Panitia</th>
-                                        <th className="px-4 py-3 text-center text-sm font-semibold">RT/RW</th>
-                                        <th className="px-4 py-3 text-center text-sm font-semibold">Jiwa</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-center">RT/RW</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold">Jiwa</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Melalui</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Total Zakat</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Sodaqoh</th>

@@ -15,8 +15,18 @@ export default function Sidebar() {
       icon: Users,
     },
     {
+      name: 'Penerima Zakat',
+      href: '/penerima-zakat',
+      icon: Users,
+    },
+    {
       name: 'Pemohon Luar',
       href: '/pemohon',
+      icon: Users,
+    },
+    {
+      name: 'Formula Jatah',
+      href: '/formula-jatah',
       icon: Users,
     },
   ];
@@ -26,7 +36,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-green-600 text-white flex flex-col">
+    <aside className="w-64 bg-green-600 text-white flex flex-col h-full">
       <div className="p-6 border-b border-green-500">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">

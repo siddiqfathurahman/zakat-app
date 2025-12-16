@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, router } from "@inertiajs/react";
-import { Save, Wheat, Banknote } from "lucide-react";
+import { Save, Wheat, Banknote, X, Check } from "lucide-react";
 
 export default function InputZakat() {
     const [formData, setFormData] = useState({
@@ -14,11 +14,25 @@ export default function InputZakat() {
     });
 
     const [totalBayar, setTotalBayar] = useState(0);
+    const [showPreview, setShowPreview] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const nilaiPerJiwa = {
         uang: 25000,
         beras: 2.5,
     };
+
+    // Data RT dan RW
+    const rtRwData = [
+        { rt: "48", rw: "11" },
+        { rt: "49", rw: "11" },
+        { rt: "50", rw: "11" },
+        { rt: "51", rw: "12" },
+        { rt: "52", rw: "12" },
+        { rt: "53", rw: "12" },
+        { rt: "56", rw: "13" },
+        { rt: "57", rw: "13" },
+    ];
 
     useEffect(() => {
         const jiwa = parseInt(formData.jumlahJiwa) || 0;
@@ -40,6 +54,17 @@ export default function InputZakat() {
         }));
     };
 
+    const handleRtChange = (e) => {
+        const selectedRt = e.target.value;
+        const rtData = rtRwData.find((item) => item.rt === selectedRt);
+
+        setFormData((prev) => ({
+            ...prev,
+            rt: selectedRt,
+            rw: rtData ? rtData.rw : "",
+        }));
+    };
+
     const handleMelaluiChange = (value) => {
         setFormData((prev) => ({
             ...prev,
@@ -48,8 +73,12 @@ export default function InputZakat() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handlePreview = (e) => {
         e.preventDefault();
+        setShowPreview(true);
+    };
+
+    const handleSubmit = () => {
         const dataToSubmit = {
             ...formData,
             totalBayar,
@@ -58,21 +87,27 @@ export default function InputZakat() {
 
         router.post("/pembayar/store", dataToSubmit, {
             onSuccess: () => {
-                alert("Data berhasil disimpan!");
-                // Reset form
-                setFormData({
-                    namaPembayar: "",
-                    namaPanitia: "",
-                    rt: "",
-                    rw: "",
-                    jumlahJiwa: "",
-                    melalui: "uang",
-                    sodaqoh: "",
-                });
-                setTotalBayar(0);
+                setShowPreview(false);
+                setShowSuccess(true);
+
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    // Reset form
+                    setFormData({
+                        namaPembayar: "",
+                        namaPanitia: "",
+                        rt: "",
+                        rw: "",
+                        jumlahJiwa: "",
+                        melalui: "uang",
+                        sodaqoh: "",
+                    });
+                    setTotalBayar(0);
+                }, 2000);
             },
             onError: (errors) => {
                 console.error("Error:", errors);
+                alert("Terjadi kesalahan saat menyimpan data");
             },
         });
     };
@@ -86,6 +121,8 @@ export default function InputZakat() {
     };
 
     const sodaqohValue = parseInt(formData.sodaqoh) || 0;
+    const totalKeseluruhan =
+        formData.melalui === "uang" ? totalBayar + sodaqohValue : totalBayar;
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -108,7 +145,7 @@ export default function InputZakat() {
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                    <form onSubmit={handlePreview} className="p-6 space-y-6">
                         <div className="space-y-2">
                             <label
                                 htmlFor="namaPembayar"
@@ -157,16 +194,21 @@ export default function InputZakat() {
                                 >
                                     RT <span className="text-red-500">*</span>
                                 </label>
-                                <input
+                                <select
                                     id="rt"
                                     name="rt"
-                                    type="text"
-                                    placeholder="001"
                                     value={formData.rt}
-                                    onChange={handleInputChange}
+                                    onChange={handleRtChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                     required
-                                />
+                                >
+                                    <option value="">Pilih RT</option>
+                                    {rtRwData.map((item) => (
+                                        <option key={item.rt} value={item.rt}>
+                                            {item.rt}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="space-y-2">
                                 <label
@@ -179,11 +221,9 @@ export default function InputZakat() {
                                     id="rw"
                                     name="rw"
                                     type="text"
-                                    placeholder="001"
                                     value={formData.rw}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                                    readOnly
                                 />
                             </div>
                         </div>
@@ -320,7 +360,9 @@ export default function InputZakat() {
                                                         Sodaqoh:
                                                     </span>
                                                     <span className="text-xl font-bold text-pink-600">
-                                                        {formatRupiah(sodaqohValue)}
+                                                        {formatRupiah(
+                                                            sodaqohValue
+                                                        )}
                                                     </span>
                                                 </div>
                                             </>
@@ -334,11 +376,156 @@ export default function InputZakat() {
                             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
                         >
                             <Save size={20} />
-                            Simpan Data Zakat
+                            Preview Data Zakat
                         </button>
                     </form>
                 </div>
             </div>
+
+            {/* Modal Preview - Thermal Printer Style */}
+            {showPreview && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full">
+                        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                            <h2 className="text-lg font-semibold">
+                                Preview Nota
+                            </h2>
+                            <button
+                                onClick={() => setShowPreview(false)}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Thermal Printer Style Receipt */}
+                        <div className="p-6 font-mono text-sm">
+                            <div className="text-center mb-4 pb-4 border-b-2 border-dashed border-gray-300">
+                                <h3 className="font-bold text-base mb-1">
+                                    BUKTI PEMBAYARAN
+                                </h3>
+                                <p className="text-xs">ZAKAT FITRAH 1447 H</p>
+                            </div>
+
+                            <div className="space-y-2 mb-4 border-b-2 border-dashed border-gray-300 pb-4">
+                                <div className="flex">
+                                    <span className="w-32">Nama</span>
+                                    <span className="mr-2">:</span>
+                                    <span className="font-semibold flex-1">
+                                        {formData.namaPembayar}
+                                    </span>
+                                </div>
+                                <div className="flex">
+                                    <span className="w-32">RT/RW</span>
+                                    <span className="mr-2">:</span>
+                                    <span className="font-semibold flex-1">
+                                        {formData.rt}/{formData.rw}
+                                    </span>
+                                </div>
+                                <div className="flex">
+                                    <span className="w-32">Jumlah Jiwa</span>
+                                    <span className="mr-2">:</span>
+                                    <span className="font-semibold flex-1">
+                                        {formData.jumlahJiwa} jiwa
+                                    </span>
+                                </div>
+                                <div className="flex">
+                                    <span className="w-32">Dibayar</span>
+                                    <span className="mr-2">:</span>
+                                    <span className="font-semibold flex-1">
+                                        {formData.melalui === "uang"
+                                            ? "Uang"
+                                            : "Beras"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="border-b-2 border-dashed border-gray-300 pb-3 mb-3">
+                                <div className="flex justify-between">
+                                    <span>Zakat Fitrah</span>
+                                    <span className="font-semibold">
+                                        {formData.melalui === "uang"
+                                            ? formatRupiah(totalBayar)
+                                            : `${totalBayar} kg`}
+                                    </span>
+                                </div>
+                                {formData.melalui === "uang" &&
+                                    sodaqohValue > 0 && (
+                                        <div className="flex justify-between mt-1">
+                                            <span>Sodaqoh</span>
+                                            <span className="font-semibold">
+                                                {formatRupiah(sodaqohValue)}
+                                            </span>
+                                        </div>
+                                    )}
+                            </div>
+
+                            <div className="border-b-2 border-dashed border-gray-300 pb-3 mb-3">
+                                <div className="flex">
+                                    <span className="w-32">Panitia</span>
+                                    <span className="mr-2">:</span>
+                                    <span className="flex-1">
+                                        {formData.namaPanitia}
+                                    </span>
+                                </div>
+                                <div className="text-center mt-3 text-xs">
+                                    <p>
+                                        {new Date().toLocaleDateString(
+                                            "id-ID",
+                                            {
+                                                weekday: "long",
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            }
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="text-center text-xs">
+                                <p>Jazakumullahu Khairan</p>
+                                <p className="font-semibold">Semoga Berkah</p>
+                            </div>
+                        </div>
+
+                        <div className="p-4 border-t border-gray-200">
+                            <button
+                                onClick={handleSubmit}
+                                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Save size={20} />
+                                Simpan & Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Success */}
+            {showSuccess && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+                        <div className="mb-4 flex justify-center">
+                            <div className="bg-green-100 rounded-full p-4">
+                                <Check
+                                    size={48}
+                                    className="text-green-600"
+                                    strokeWidth={3}
+                                />
+                            </div>
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                            Berhasil!
+                        </h3>
+                        <p className="text-gray-600">
+                            Data zakat telah tersimpan
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
