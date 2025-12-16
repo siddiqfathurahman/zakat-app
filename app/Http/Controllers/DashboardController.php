@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PembayarZakat;
 use App\Models\Pemohon;
+use App\Models\FormulaJatah;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -75,6 +76,11 @@ class DashboardController extends Controller
             return (int) $angka;
         });
 
+        // Ambil data formula jatah terakhir
+        $formulaJatah = FormulaJatah::latest()->first();
+        $totalBungkus = $formulaJatah ? $formulaJatah->jumlah_total_bungkus : 0;
+        $sisaPembagian = $formulaJatah ? $formulaJatah->sisa_pembagian : 0;
+
         // Data untuk cards
         $stats = [
             [
@@ -107,6 +113,7 @@ class DashboardController extends Controller
             ],
         ];
 
+
         return Inertia::render('Dashboard', [
             'stats' => $stats,
             'distribusiRT' => $distribusiRT,
@@ -121,6 +128,10 @@ class DashboardController extends Controller
             'pemohonLuar' => [
                 'jumlah' => $jumlahPemohon,
                 'totalPermintaan' => $totalPermintaanLuar,
+            ],
+            'formulaJatah' => [
+                'totalBungkus' => $totalBungkus,
+                'sisaPembagian' => $sisaPembagian,
             ]
         ]);
     }

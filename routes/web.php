@@ -7,6 +7,7 @@ use App\Http\Controllers\PemohonController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenerimaZakatController;
 use App\Http\Controllers\JatahConfigController;
+use App\Http\Controllers\FormulaJatahController;
 
 Route::get('/', function () {
     return Inertia::render('InputZakat');
@@ -35,3 +36,7 @@ Route::post('/penerima-zakat/{id}/destroy', [PenerimaZakatController::class, 'de
 // Route untuk konfigurasi jatah
 Route::post('/jatah-config', [JatahConfigController::class, 'store'])->name('jatah.store');
 Route::post('/jatah-config/apply', [JatahConfigController::class, 'apply'])->name('jatah.apply');
+
+Route::get('/formula-jatah', [FormulaJatahController::class, 'index'])->name('formula-jatah.index');
+Route::post('/formula-jatah/store', [FormulaJatahController::class, 'store'])->name('formula-jatah.store');
+Route::get('/formula-jatah/latest', [FormulaJatahController::class, 'getLatest'])->name('formula-jatah.latest');

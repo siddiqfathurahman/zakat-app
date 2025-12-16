@@ -1,13 +1,40 @@
 import React from 'react';
 import AppLayout from '../Layout/AppLayout';
-import { TrendingUp, Package, Heart, Users } from 'lucide-react';
+import { TrendingUp, Package, Heart, Users, Box, AlertCircle } from 'lucide-react';
 
-export default function Dashboard({ stats, distribusiRT, distribusiRW, maxJumlah, chartData, pemohonLuar }) {
+export default function Dashboard({ stats, distribusiRT, distribusiRW, maxJumlah, chartData, pemohonLuar, formulaJatah }) {
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard Zakat</h1>
+      </div>
+
+      {/* Formula Jatah Cards - Di Atas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg shadow-md p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-lg bg-yellow-200">
+              <Box className="text-yellow-700" size={32} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-yellow-800 mb-1">JUMLAH TOTAL BUNGKUS</p>
+              <p className="text-4xl font-bold text-gray-900">{formulaJatah.totalBungkus}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-400 rounded-lg shadow-md p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-lg bg-orange-200">
+              <AlertCircle className="text-orange-700" size={32} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-orange-800 mb-1">SISA PEMBAGIAN</p>
+              <p className="text-4xl font-bold text-gray-900">{formulaJatah.sisaPembagian}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -85,9 +112,6 @@ export default function Dashboard({ stats, distribusiRT, distribusiRW, maxJumlah
                       className="bg-green-600 h-8 rounded-full flex items-center justify-end pr-3 transition-all duration-500"
                       style={{ width: `${(item.jumlah / maxJumlah) * 100}%` }}
                     >
-                      <span className="text-xs text-white font-medium">
-                        {item.jumlah} {item.jumlah === 1 ? 'Pembayar' : 'Pembayar'}
-                      </span>
                     </div>
                   </div>
                 </div>
