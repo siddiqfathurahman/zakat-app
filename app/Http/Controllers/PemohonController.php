@@ -21,6 +21,7 @@ class PemohonController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'permintaan' => 'nullable|string|max:255',
+            'jatah' => 'nullable|string|max:255',
             'no_hp' => 'required|string|max:20',
         ]);
 
@@ -44,6 +45,7 @@ class PemohonController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'permintaan' => 'required|string|max:255',
+            'jatah' => 'nullable|string|max:255',
             'no_hp' => 'required|string|max:20',
         ]);
 

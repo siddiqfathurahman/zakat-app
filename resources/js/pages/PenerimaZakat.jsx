@@ -30,6 +30,28 @@ export default function PenerimaZakat({ penerimas = { data: [], from: 1, to: 0, 
         5: configs[5] || ''
     });
 
+    const rtRwData = [
+        { rt: "48", rw: "11" },
+        { rt: "49", rw: "11" },
+        { rt: "50", rw: "11" },
+        { rt: "51", rw: "12" },
+        { rt: "52", rw: "12" },
+        { rt: "53", rw: "12" },
+        { rt: "56", rw: "13" },
+        { rt: "57", rw: "13" },
+    ];
+
+    const handleRtChange = (e) => {
+        const selectedRt = e.target.value;
+        const rtData = rtRwData.find((item) => item.rt === selectedRt);
+
+        setFormData((prev) => ({
+            ...prev,
+            rt: selectedRt,
+            rw: rtData ? rtData.rw : "",
+        }));
+    };
+
     const handleOpenModal = (penerima = null) => {
         if (penerima) {
             setEditingPenerima(penerima);
@@ -448,27 +470,32 @@ export default function PenerimaZakat({ penerimas = { data: [], from: 1, to: 0, 
                             <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label className="block text-gray-700 mb-2">RT *</label>
-                                    <input
-                                        type="number"
-                                        value={formData.rt}
-                                        onChange={(e) => setFormData({ ...formData, rt: e.target.value })}
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        required
-                                        placeholder="001"
-                                        min="1"
-                                    />
+                                <select
+                                    id="rt"
+                                    name="rt"
+                                    value={formData.rt}
+                                    onChange={handleRtChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                    required
+                                >
+                                    <option value="">Pilih RT</option>
+                                    {rtRwData.map((item) => (
+                                        <option key={item.rt} value={item.rt}>
+                                            {item.rt}
+                                        </option>
+                                    ))}
+                                </select>
                                 </div>
                                 <div>
                                     <label className="block text-gray-700 mb-2">RW *</label>
-                                    <input
-                                        type="number"
-                                        value={formData.rw}
-                                        onChange={(e) => setFormData({ ...formData, rw: e.target.value })}
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        required
-                                        placeholder="001"
-                                        min="1"
-                                    />
+                                <input
+                                    id="rw"
+                                    name="rw"
+                                    type="text"
+                                    value={formData.rw}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                                    readOnly
+                                />
                                 </div>
                             </div>
                             <div className="mb-4">

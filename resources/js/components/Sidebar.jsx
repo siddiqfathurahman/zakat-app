@@ -6,6 +6,7 @@ import {
     HandHeart,
     ClipboardList,
     Scale,
+    Settings,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -26,14 +27,19 @@ export default function Sidebar() {
             icon: HandHeart,
         },
         {
+          name: "Formula Jatah",
+          href: "/formula-jatah",
+          icon: Scale,
+        },
+        {
             name: "Pemohon Luar",
             href: "/pemohon",
             icon: ClipboardList,
         },
         {
-            name: "Formula Jatah",
-            href: "/formula-jatah",
-            icon: Scale,
+            name: "Settings",
+            href: "/setting-beras",
+            icon: Settings,
         },
     ];
 

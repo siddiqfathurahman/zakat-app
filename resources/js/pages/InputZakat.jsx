@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, router } from "@inertiajs/react";
 import { Save, Wheat, Banknote, X, Check } from "lucide-react";
 
-export default function InputZakat() {
+export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
     const [formData, setFormData] = useState({
         namaPembayar: "",
         namaPanitia: "",
@@ -18,11 +18,10 @@ export default function InputZakat() {
     const [showSuccess, setShowSuccess] = useState(false);
 
     const nilaiPerJiwa = {
-        uang: 25000,
+        uang: setting.harga_2_5kg || 25000,
         beras: 2.5,
     };
 
-    // Data RT dan RW
     const rtRwData = [
         { rt: "48", rw: "11" },
         { rt: "49", rw: "11" },
@@ -92,7 +91,6 @@ export default function InputZakat() {
 
                 setTimeout(() => {
                     setShowSuccess(false);
-                    // Reset form
                     setFormData({
                         namaPembayar: "",
                         namaPanitia: "",
@@ -486,7 +484,7 @@ export default function InputZakat() {
                             </div>
 
                             <div className="text-center text-xs">
-                                <p>Jazakumullahu Khairan</p>
+                                <p>Jazakumullahu Khairan Katsiran</p>
                                 <p className="font-semibold">Semoga Berkah</p>
                             </div>
                         </div>

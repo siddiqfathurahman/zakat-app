@@ -76,7 +76,6 @@
                 <th class="text-center" width="8%">RW</th>
                 <th class="text-center" width="12%">Jumlah Jiwa</th>
                 <th class="text-center" width="12%">Jatah</th>
-                <th width="20%">Tanda Tangan</th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +87,6 @@
                 <td class="text-center">{{ str_pad($penerima->rw, 3, '0', STR_PAD_LEFT) }}</td>
                 <td class="text-center">{{ $penerima->jiwa }}</td>
                 <td class="text-center">{{ $penerima->jatah ?? '-' }}</td>
-                <td></td>
             </tr>
             @endforeach
         </tbody>

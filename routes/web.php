@@ -8,9 +8,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenerimaZakatController;
 use App\Http\Controllers\JatahConfigController;
 use App\Http\Controllers\FormulaJatahController;
+use App\Http\Controllers\SettingBerasController;
+use App\Models\SettingBeras;
 
 Route::get('/', function () {
-    return Inertia::render('InputZakat');
+    $setting = SettingBeras::first() ?? SettingBeras::create([
+        'harga_per_kg' => 0,
+        'harga_2_5kg' => 0,
+    ]);
+    
+    return Inertia::render('InputZakat', [
+        'setting' => $setting,
+    ]);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -37,6 +46,12 @@ Route::post('/penerima-zakat/{id}/destroy', [PenerimaZakatController::class, 'de
 Route::post('/jatah-config', [JatahConfigController::class, 'store'])->name('jatah.store');
 Route::post('/jatah-config/apply', [JatahConfigController::class, 'apply'])->name('jatah.apply');
 
+// Route untuk formula jatah
 Route::get('/formula-jatah', [FormulaJatahController::class, 'index'])->name('formula-jatah.index');
 Route::post('/formula-jatah/store', [FormulaJatahController::class, 'store'])->name('formula-jatah.store');
 Route::get('/formula-jatah/latest', [FormulaJatahController::class, 'getLatest'])->name('formula-jatah.latest');
+
+// Route untuk setting beras
+Route::get('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'index'])->name('setting-beras.index');
+Route::post('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'store'])->name('setting-beras.store');
+Route::post('/setting-beras/{id}/update', [\App\Http\Controllers\SettingBerasController::class, 'update'])->name('setting-beras.update');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PembayarZakat;
 use App\Models\Pemohon;
+use App\Models\PenerimaZakat;
 use App\Models\FormulaJatah;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,31 +42,21 @@ class DashboardController extends Controller
         $persentaseUang = $totalPembayar > 0 ? round(($jumlahBayarUang / $totalPembayar) * 100, 1) : 0;
         $persentaseBeras = $totalPembayar > 0 ? round(($jumlahBayarBeras / $totalPembayar) * 100, 1) : 0;
         
-        // Distribusi per RT
-        $distribusiRT = PembayarZakat::select('rt', DB::raw('count(*) as jumlah'))
+        // Ganti kode distribusi RT yang lama dengan yang ini:
+        $distribusiRT = PenerimaZakat::select('rt', DB::raw('SUM(jatah) as total_jatah'))
+            ->whereNotNull('jatah')
             ->groupBy('rt')
             ->orderBy('rt')
             ->get()
             ->map(function($item) {
                 return [
-                    'rt' => 'RT ' . str_pad($item->rt, 3, '0', STR_PAD_LEFT),
-                    'jumlah' => $item->jumlah
+                    'rt' => 'RT ' . str_pad($item->rt, STR_PAD_LEFT),
+                    'jumlah' => $item->total_jatah ?? 0
                 ];
             });
-        
+
         // Hitung max jumlah untuk persentase bar chart
         $maxJumlah = $distribusiRT->max('jumlah') ?: 1;
-        
-        $distribusiRW = PembayarZakat::select('rw', DB::raw('count(*) as jumlah'))
-            ->groupBy('rw')
-            ->orderBy('rw')
-            ->get()
-            ->map(function($item) {
-                return [
-                    'rw' => 'RW ' . str_pad($item->rw, 3, '0', STR_PAD_LEFT),
-                    'jumlah' => $item->jumlah
-                ];
-            });
 
         // Data pemohon dari luar RT/RW
         $jumlahPemohon = Pemohon::count();
@@ -117,7 +108,6 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'stats' => $stats,
             'distribusiRT' => $distribusiRT,
-            'distribusiRW' => $distribusiRW,
             'maxJumlah' => $maxJumlah,
             'chartData' => [
                 'persentaseUang' => $persentaseUang,

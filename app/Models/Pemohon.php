@@ -9,6 +9,7 @@ class Pemohon extends Model
     protected $fillable = [
         'nama',
         'permintaan',
+        'jatah',
         'no_hp',
     ];
 }

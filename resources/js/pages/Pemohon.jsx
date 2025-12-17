@@ -11,7 +11,8 @@ export default function Pemohon({ pemohons = [], flash }) {
     const [formData, setFormData] = useState({
         nama: '',
         permintaan: '',
-        no_hp: ''
+        no_hp: '',
+        jatah: ''
     });
 
     const handleOpenModal = (pemohon = null) => {
@@ -20,11 +21,12 @@ export default function Pemohon({ pemohons = [], flash }) {
             setFormData({
                 nama: pemohon.nama,
                 permintaan: pemohon.permintaan || '',
-                no_hp: pemohon.no_hp
+                no_hp: pemohon.no_hp,
+                jatah: pemohon.jatah || ''
             });
         } else {
             setEditingPemohon(null);
-            setFormData({ nama: '', permintaan: '', no_hp: '' });
+            setFormData({ nama: '', permintaan: '', no_hp: '', jatah: '', });
         }
         setIsModalOpen(true);
     };
@@ -32,7 +34,7 @@ export default function Pemohon({ pemohons = [], flash }) {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingPemohon(null);
-        setFormData({ nama: '', permintaan: '', no_hp: '' });
+        setFormData({ nama: '', permintaan: '', no_hp: '',jatah: '' });
     };
 
     const handleSubmit = (e) => {
@@ -41,7 +43,8 @@ export default function Pemohon({ pemohons = [], flash }) {
         const submitData = {
             nama: formData.nama,
             permintaan: formData.permintaan,
-            no_hp: formData.no_hp
+            no_hp: formData.no_hp,
+            jatah: formData.jatah
         };
 
         if (editingPemohon) {
@@ -105,7 +108,6 @@ export default function Pemohon({ pemohons = [], flash }) {
                     </div>
                 )}
 
-
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <table className="w-full">
                         <thead className="bg-green-600 text-white">
@@ -114,6 +116,7 @@ export default function Pemohon({ pemohons = [], flash }) {
                                 <th className="px-4 py-3 text-left">Nama Pemohon</th>
                                 <th className="px-4 py-3 text-left">Jumlah Permintaan</th>
                                 <th className="px-4 py-3 text-left">Nomor Telepon</th>
+                                <th className="px-4 py-3 text-left">Jatah</th>
                                 <th className="px-4 py-3 text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -131,6 +134,7 @@ export default function Pemohon({ pemohons = [], flash }) {
                                         <td className="px-4 py-3">{pemohon.nama}</td>
                                         <td className="px-4 py-3">{pemohon.permintaan || '-'}</td>
                                         <td className="px-4 py-3">{pemohon.no_hp}</td>
+                                        <td className="px-4 py-3">{pemohon.jatah}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex justify-center gap-2">
                                                 <button
@@ -195,6 +199,16 @@ export default function Pemohon({ pemohons = [], flash }) {
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     required
                                     placeholder="Contoh: 08123456789"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 mb-2">Jatah</label>
+                                <input
+                                    type="text"
+                                    value={formData.jatah}
+                                    onChange={(e) => setFormData({ ...formData, jatah: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    placeholder="Contoh: 20 Bungkus"
                                 />
                             </div>
                             <div className="flex gap-2 justify-end">
