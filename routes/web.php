@@ -27,6 +27,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // Route untuk pembayar zakat
 Route::get('/pembayar', [PembayarZakatController::class, 'index'])->name('pembayar.index');
 Route::post('/pembayar/store', [PembayarZakatController::class, 'store'])->name('zakat.store');
+Route::post('/pembayar/{id}/update', [PembayarZakatController::class, 'update'])->name('zakat.update');
 Route::post('/pembayar/{id}', [PembayarZakatController::class, 'destroy'])->name('zakat.destroy');
 
 // Route untuk pemohon luar

@@ -73,6 +73,37 @@ class PembayarZakatController extends Controller
         return redirect()->back()->with('success', 'Data zakat berhasil disimpan!');
     }
 
+    public function update(Request $request, $id)
+    {
+        $pembayarZakat = PembayarZakat::findOrFail($id);
+
+        $validated = $request->validate([
+            'namaPembayar' => 'required|string|max:255',
+            'namaPanitia' => 'required|string|max:255',
+            'rt' => 'required|string|max:10',
+            'rw' => 'required|string|max:10',
+            'jumlahJiwa' => 'required|integer|min:1',
+            'melalui' => 'required|in:uang,beras',
+            'totalBayar' => 'required|numeric|min:0',
+            'nilaiPerJiwa' => 'required|numeric|min:0',
+            'sodaqoh' => 'nullable|numeric|min:0',
+        ]);
+
+        $pembayarZakat->update([
+            'nama' => $validated['namaPembayar'],
+            'panitia' => $validated['namaPanitia'],
+            'rt' => $validated['rt'],
+            'rw' => $validated['rw'],
+            'jumlah_jiwa' => $validated['jumlahJiwa'],
+            'melalui' => $validated['melalui'],
+            'nilai_per_jiwa' => $validated['nilaiPerJiwa'],
+            'total' => $validated['totalBayar'],
+            'sodaqoh' => $validated['sodaqoh'] ?? 0,
+        ]);
+
+        return redirect()->back()->with('success', 'Data zakat berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
         $pembayarZakat = PembayarZakat::findOrFail($id);

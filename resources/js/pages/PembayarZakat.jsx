@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, router } from "@inertiajs/react";
-import { Trash2, Search, X } from "lucide-react";
+import { Trash2, Search, Edit2, X, Edit } from "lucide-react";
 import AppLayout from "../Layout/AppLayout";
 
 export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }) {
@@ -9,8 +9,22 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
     const [selectedRW, setSelectedRW] = useState(filters.rw || "");
     const [currentPage, setCurrentPage] = useState(1);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
     const [deleteItemName, setDeleteItemName] = useState("");
+    const [editingId, setEditingId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        namaPembayar: "",
+        namaPanitia: "",
+        rt: "",
+        rw: "",
+        jumlahJiwa: "",
+        melalui: "uang",
+        totalBayar: 0,
+        nilaiPerJiwa: 0,
+        sodaqoh: "",
+    });
     const itemsPerPage = 10;
 
     const handleFilter = () => {
@@ -34,6 +48,62 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         setShowDeleteModal(false);
         setDeleteId(null);
         setDeleteItemName("");
+    };
+
+    const openEditModal = (item) => {
+        setEditingId(item.id);
+        setFormData({
+            namaPembayar: item.nama,
+            namaPanitia: item.panitia,
+            rt: item.rt,
+            rw: item.rw,
+            jumlahJiwa: item.jumlah_jiwa.toString(),
+            melalui: item.melalui,
+            totalBayar: item.total,
+            nilaiPerJiwa: item.nilai_per_jiwa,
+            sodaqoh: item.sodaqoh || "",
+        });
+        setShowEditModal(true);
+    };
+
+    const closeEditModal = () => {
+        setShowEditModal(false);
+        setEditingId(null);
+        setFormData({
+            namaPembayar: "",
+            namaPanitia: "",
+            rt: "",
+            rw: "",
+            jumlahJiwa: "",
+            melalui: "uang",
+            totalBayar: 0,
+            nilaiPerJiwa: 0,
+            sodaqoh: "",
+        });
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        router.post(`/pembayar/${editingId}/update`, formData, {
+            onSuccess: () => {
+                setIsLoading(false);
+                closeEditModal();
+            },
+            onError: () => {
+                setIsLoading(false);
+                alert('Terjadi kesalahan saat mengubah data');
+            }
+        });
     };
 
     const confirmDelete = () => {
@@ -238,12 +308,22 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                                     {formatDate(item.created_at)}
                                                 </td>
                                                 <td className="px-4 py-3 text-center">
-                                                    <button
-                                                        onClick={() => openDeleteModal(item.id, item.nama)}
-                                                        className="text-red-600 hover:text-red-800 transition-colors"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
+                                                    <div className="flex justify-center gap-2">
+                                                        <button
+                                                            onClick={() => openEditModal(item)}
+                                                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit size={18} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openDeleteModal(item.id, item.nama)}
+                                                            className="text-red-600 hover:text-red-800 transition-colors"
+                                                            title="Hapus"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
@@ -330,6 +410,191 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Edit */}
+            {showEditModal && (
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+                        <div className="p-6 border-b border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    Edit Pembayar Zakat
+                                </h3>
+                                <button
+                                    onClick={closeEditModal}
+                                    className="text-gray-400 hover:text-gray-600"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Nama Pembayar
+                                </label>
+                                <input
+                                    type="text"
+                                    name="namaPembayar"
+                                    value={formData.namaPembayar}
+                                    onChange={handleEditChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Nama Panitia
+                                </label>
+                                <input
+                                    type="text"
+                                    name="namaPanitia"
+                                    value={formData.namaPanitia}
+                                    onChange={handleEditChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        RT
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="rt"
+                                        value={formData.rt}
+                                        onChange={handleEditChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        RW
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="rw"
+                                        value={formData.rw}
+                                        onChange={handleEditChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Jumlah Jiwa
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="jumlahJiwa"
+                                        value={formData.jumlahJiwa}
+                                        onChange={handleEditChange}
+                                        min="1"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Melalui
+                                    </label>
+                                    <select
+                                        name="melalui"
+                                        value={formData.melalui}
+                                        onChange={handleEditChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        required
+                                    >
+                                        <option value="uang">Uang</option>
+                                        <option value="beras">Beras</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Nilai Per Jiwa
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="nilaiPerJiwa"
+                                        value={formData.nilaiPerJiwa}
+                                        onChange={handleEditChange}
+                                        step="0.01"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        readOnly
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Total Bayar
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="totalBayar"
+                                        value={formData.totalBayar}
+                                        onChange={handleEditChange}
+                                        step="0.01"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        readOnly
+                                    />
+                                </div>
+                            </div>
+
+                            {formData.melalui === "uang" && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Sodaqoh (Opsional)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="sodaqoh"
+                                        value={formData.sodaqoh}
+                                        onChange={handleEditChange}
+                                        step="0.01"
+                                        min="0"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    />
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 justify-end pt-4">
+                                <button
+                                    type="button"
+                                    onClick={closeEditModal}
+                                    disabled={isLoading}
+                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="px-4 py-2 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                            Menyimpan...
+                                        </>
+                                    ) : (
+                                        "Simpan Perubahan"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
