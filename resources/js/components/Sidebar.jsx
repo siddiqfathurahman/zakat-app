@@ -7,6 +7,7 @@ import {
     ClipboardList,
     Scale,
     Settings,
+    ReceiptPoundSterlingIcon,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -30,6 +31,11 @@ export default function Sidebar() {
           name: "Formula Jatah",
           href: "/formula-jatah",
           icon: Scale,
+        },
+        {
+          name: "Laporan Belanja",
+          href: "/laporan-belanja",
+          icon: ReceiptPoundSterlingIcon,
         },
         {
             name: "Pemohon Luar",

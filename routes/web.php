@@ -10,6 +10,7 @@ use App\Http\Controllers\JatahConfigController;
 use App\Http\Controllers\FormulaJatahController;
 use App\Http\Controllers\SettingBerasController;
 use App\Models\SettingBeras;
+use App\Http\Controllers\LaporanBelanjaController;
 
 Route::get('/', function () {
     $setting = SettingBeras::first() ?? SettingBeras::create([
@@ -56,3 +57,9 @@ Route::get('/formula-jatah/latest', [FormulaJatahController::class, 'getLatest']
 Route::get('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'index'])->name('setting-beras.index');
 Route::post('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'store'])->name('setting-beras.store');
 Route::post('/setting-beras/{id}/update', [\App\Http\Controllers\SettingBerasController::class, 'update'])->name('setting-beras.update');
+
+// Route untuk laporan belanja
+Route::get('/laporan-belanja', [LaporanBelanjaController::class, 'index'])->name('laporan-belanja.index');
+Route::post('/laporan-belanja', [LaporanBelanjaController::class, 'store'])->name('laporan-belanja.store');
+Route::post('/laporan-belanja/{id}/update', [LaporanBelanjaController::class, 'update'])->name('laporan-belanja.update');
+Route::post('/laporan-belanja/{id}/destroy', [LaporanBelanjaController::class, 'destroy'])->name('laporan-belanja.destroy');

@@ -59,13 +59,13 @@ export default function Dashboard({
                             </div>
                         </div>
                     </div>
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg shadow-md p-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-400 rounded-lg shadow-md p-6">
                         <div className="flex items-center gap-4">
-                            <div className="p-4 rounded-lg bg-yellow-200">
-                                <Box className="text-yellow-700" size={32} />
+                            <div className="p-4 rounded-lg bg-blue-200">
+                                <Box className="text-blue-700" size={32} />
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-yellow-800 mb-1">
+                                <p className="text-sm font-medium text-blue-800 mb-1">
                                     JATAH JAMAAH MASJID
                                 </p>
                                 <p className="text-4xl font-bold text-gray-900">
