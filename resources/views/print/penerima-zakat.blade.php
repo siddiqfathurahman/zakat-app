@@ -12,16 +12,13 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid #000;
             padding-bottom: 10px;
         }
         .header h2 {
             margin: 5px 0;
         }
         .filter-info {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f0f0f0;
+            font-size: 20px;
         }
         table {
             width: 100%;
@@ -34,8 +31,7 @@
             text-align: left;
         }
         th {
-            background-color: #4CAF50;
-            color: white;
+            color: #000;
             font-weight: bold;
         }
         tr:nth-child(even) {
@@ -63,7 +59,7 @@
 
     @if(!empty($filterInfo) && count($filterInfo) > 0)
     <div class="filter-info">
-        <strong>Filter:</strong> {{ implode(' | ', $filterInfo) }}
+        <strong></strong> {{ implode(' | ', $filterInfo) }}
     </div>
     @endif
 
@@ -74,7 +70,7 @@
                 <th>Nama Penerima</th>
                 <th class="text-center" width="8%">RT</th>
                 <th class="text-center" width="8%">RW</th>
-                <th class="text-center" width="12%">Jumlah Jiwa</th>
+                <th class="text-center" width="12%">Jiwa</th>
                 <th class="text-center" width="12%">Jatah</th>
             </tr>
         </thead>
@@ -83,8 +79,8 @@
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ $penerima->nama }}</td>
-                <td class="text-center">{{ str_pad($penerima->rt, 3, '0', STR_PAD_LEFT) }}</td>
-                <td class="text-center">{{ str_pad($penerima->rw, 3, '0', STR_PAD_LEFT) }}</td>
+                <td class="text-center">{{ $penerima->rt }}</td>
+                <td class="text-center">{{ $penerima->rw }}</td>
                 <td class="text-center">{{ $penerima->jiwa }}</td>
                 <td class="text-center">{{ $penerima->jatah ?? '-' }}</td>
             </tr>
@@ -93,7 +89,10 @@
     </table>
 
     <div class="summary">
-        Total Penerima: {{ $totalPenerima }} orang
+        Total Penerima: {{ $totalPenerima }} Orang
+    </div>
+    <div class="summary">
+        Total Jatah: {{ $totalJatah }} Bungkus
     </div>
 
     <div class="footer">

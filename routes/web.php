@@ -11,6 +11,8 @@ use App\Http\Controllers\FormulaJatahController;
 use App\Http\Controllers\SettingBerasController;
 use App\Models\SettingBeras;
 use App\Http\Controllers\LaporanBelanjaController;
+use App\Http\Controllers\ZakatCompareController;
+
 
 Route::get('/', function () {
     $setting = SettingBeras::first() ?? SettingBeras::create([
@@ -63,3 +65,5 @@ Route::get('/laporan-belanja', [LaporanBelanjaController::class, 'index'])->name
 Route::post('/laporan-belanja', [LaporanBelanjaController::class, 'store'])->name('laporan-belanja.store');
 Route::post('/laporan-belanja/{id}/update', [LaporanBelanjaController::class, 'update'])->name('laporan-belanja.update');
 Route::post('/laporan-belanja/{id}/destroy', [LaporanBelanjaController::class, 'destroy'])->name('laporan-belanja.destroy');
+
+Route::get('/zakat/compare-ai', [ZakatCompareController::class, 'compare']);

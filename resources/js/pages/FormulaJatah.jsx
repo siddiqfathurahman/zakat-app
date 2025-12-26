@@ -79,7 +79,7 @@ export default function FormulaJatah({ jiwaStats, formulaJatah }) {
     return (
         <AppLayout>
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-                <div className="max-w-6xl mx-auto">
+                <div className=" mx-auto">
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                         <div className="bg-green-600 text-white p-6">
                             <h1 className="text-2xl font-semibold mb-1">

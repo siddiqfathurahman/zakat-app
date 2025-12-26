@@ -100,15 +100,17 @@ class PenerimaZakatController extends Controller
         // Handle RT filter
         if ($request->has('rt') && $request->rt) {
             $query->where('rt', $request->rt);
-            $filterInfo[] = 'RT: ' . str_pad($request->rt, 3, '0', STR_PAD_LEFT);
+            $filterInfo[] = 'RT: ' . str_pad($request->rt, 2, '0', STR_PAD_LEFT);
         }
 
         $penerimas = $query->orderBy('created_at', 'desc')->get();
 
         return view('print.penerima-zakat', [
-            'penerimas' => $penerimas,
-            'filterInfo' => $filterInfo,
-            'totalPenerima' => count($penerimas),
+            'penerimas'      => $penerimas,
+            'filterInfo'     => $filterInfo,
+            'totalPenerima'  => $penerimas->count(),
+            'totalJiwa'      => $penerimas->sum('jiwa'),
+            'totalJatah'     => $penerimas->sum('jatah'), 
         ]);
     }
 }

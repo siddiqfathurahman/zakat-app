@@ -101,20 +101,22 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
             },
             onError: () => {
                 setIsLoading(false);
-                alert('Terjadi kesalahan saat mengubah data');
             }
         });
     };
 
     const confirmDelete = () => {
-        if (deleteId) {
-            router.post(`/pembayar/${deleteId}`, {
+        if (!deleteId) return;
+
+        router.post(
+            `/pembayar/${deleteId}`,
+            {},
+            {
                 onSuccess: () => {
                     closeDeleteModal();
-                    alert('Data berhasil dihapus!');
-                }
-            });
-        }
+                },
+            }
+        );
     };
 
     const formatRupiah = (angka) => {
@@ -169,7 +171,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                     <h1 className="text-2xl font-bold text-gray-800">Data Pembayar Zakat</h1>
                 </div>
 
-                <div className="max-w-7xl mx-auto">
+                <div className="mx-auto">
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="relative md:col-span-2">
@@ -265,8 +267,8 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                         <th className="px-4 py-3 text-left text-sm font-semibold">No</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Nama Pembayar</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Panitia</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold text-center">RT/RW</th>
-                                        <th className="px-4 py-3 text-left text-sm font-semibold">Jiwa</th>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold">RT/RW</th>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold">Jiwa</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Melalui</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Total Zakat</th>
                                         <th className="px-4 py-3 text-left text-sm font-semibold">Sodaqoh</th>
