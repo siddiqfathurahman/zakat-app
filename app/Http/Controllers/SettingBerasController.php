@@ -17,6 +17,10 @@ class SettingBerasController extends Controller
                 'harga_per_kg' => 0,
                 'harga_2_5kg' => 0,
                 'harga_sak' => 0,
+                'printer_connected' => false,
+                'printer_name' => null,
+                'printer_type' => null,
+                'printer_address' => null,
             ]
         );
 
@@ -53,5 +57,38 @@ class SettingBerasController extends Controller
         return redirect()->back()->with('success', 'Harga beras berhasil disimpan');
     }
 
+    public function updatePrinter(Request $request)
+    {
+        $request->validate([
+            'printer_connected' => 'required|boolean',
+            'printer_name' => 'nullable|string',
+            'printer_type' => 'nullable|string',
+            'printer_address' => 'nullable|string',
+        ]);
 
+        $setting = SettingBeras::first();
+        
+        $setting->update([
+            'printer_connected' => $request->printer_connected,
+            'printer_name' => $request->printer_name,
+            'printer_type' => $request->printer_type,
+            'printer_address' => $request->printer_address,
+        ]);
+
+        return redirect()->back()->with('success', 'Pengaturan printer berhasil disimpan');
+    }
+
+    public function disconnectPrinter()
+    {
+        $setting = SettingBeras::first();
+        
+        $setting->update([
+            'printer_connected' => false,
+            'printer_name' => null,
+            'printer_type' => null,
+            'printer_address' => null,
+        ]);
+
+        return redirect()->back()->with('success', 'Printer berhasil diputus');
+    }
 }

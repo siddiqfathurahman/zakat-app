@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, router } from "@inertiajs/react";
-import { Save, Wheat, Banknote, X, Check } from "lucide-react";
+import { Save, Wheat, Banknote, X, Check, Printer } from "lucide-react";
 
-export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
+export default function InputZakat({
+    setting = { harga_2_5kg: 0, printer_connected: false, printer_name: "" },
+}) {
     const [formData, setFormData] = useState({
         namaPembayar: "",
         namaPanitia: "",
@@ -122,6 +124,122 @@ export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
     const totalKeseluruhan =
         formData.melalui === "uang" ? totalBayar + sodaqohValue : totalBayar;
 
+    const handlePrint = async () => {
+        if (!setting.printer_connected) {
+            alert("Printer belum terhubung.");
+            return;
+        }
+
+        try {
+            const encoder = new TextEncoder();
+            let commands = [];
+
+            // INIT
+            commands.push(...encoder.encode("\x1B\x40"));
+
+            // CENTER
+            commands.push(...encoder.encode("\x1B\x61\x01"));
+
+            // LOGO
+            const logo = await imageToEscPos("/logo.webp", 384);
+            commands.push(...logo);
+            commands.push(...encoder.encode("\n"));
+
+            // JUDUL
+            commands.push(...encoder.encode("BUKTI PEMBAYARAN\n"));
+            commands.push(...encoder.encode("ZAKAT FITRAH 1447 H\n"));
+
+            // GARIS
+            commands.push(...encoder.encode(line));
+
+            // LEFT ALIGN
+            commands.push(...encoder.encode("\x1B\x61\x00"));
+
+            // DATA UTAMA (samakan dengan preview)
+            commands.push(
+                ...encoder.encode(`Nama        : ${formData.namaPembayar}\n`)
+            );
+            commands.push(
+                ...encoder.encode(
+                    `RT/RW       : ${formData.rt}/${formData.rw}\n`
+                )
+            );
+            commands.push(
+                ...encoder.encode(`Jumlah Jiwa : ${formData.jumlahJiwa} jiwa\n`)
+            );
+            commands.push(
+                ...encoder.encode(
+                    `Dibayar     : ${
+                        formData.melalui === "uang" ? "Uang" : "Beras"
+                    }\n`
+                )
+            );
+
+            // GARIS
+            commands.push(...encoder.encode(line));
+
+            // ZAKAT
+            commands.push(
+                ...encoder.encode(
+                    `Zakat Fitrah : ${
+                        formData.melalui === "uang"
+                            ? formatRupiah(totalBayar)
+                            : `${totalBayar} kg`
+                    }\n`
+                )
+            );
+
+            if (formData.melalui === "uang" && sodaqohValue > 0) {
+                commands.push(
+                    ...encoder.encode(
+                        `Sodaqoh     : ${formatRupiah(sodaqohValue)}\n`
+                    )
+                );
+            }
+
+            // GARIS
+            commands.push(...encoder.encode(line));
+
+            // PANITIA + TANGGAL
+            commands.push(
+                ...encoder.encode(`Panitia : ${formData.namaPanitia}\n`)
+            );
+            commands.push(
+                ...encoder.encode(
+                    `Tanggal : ${new Date().toLocaleDateString("id-ID", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}\n`
+                )
+            );
+
+            // FOOTER
+            commands.push(...encoder.encode(line));
+            commands.push(...encoder.encode("\x1B\x61\x01"));
+            commands.push(
+                ...encoder.encode("Jazakumullahu Khairan Katsiran\n")
+            );
+            commands.push(...encoder.encode("Semoga Berkah\n"));
+
+            // FEED + CUT
+            commands.push(...encoder.encode("\x1B\x64\x03"));
+            commands.push(...encoder.encode("\x1D\x56\x00"));
+
+            const data = new Uint8Array(commands);
+
+            console.log("Printing ESC/POS", data);
+
+            handleSubmit();
+        } catch (error) {
+            console.error(error);
+            alert("Gagal print: " + error.message);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
             <div className="flex justify-end mb-6">
@@ -133,6 +251,20 @@ export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
                 </Link>
             </div>
             <div className="max-w-4xl mx-auto">
+                <div
+                    className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
+                        setting.printer_connected
+                            ? "bg-green-50 text-green-700"
+                            : "bg-amber-50 text-amber-700"
+                    }`}
+                >
+                    <Printer size={18} />
+                    <span className="text-sm font-medium">
+                        {setting.printer_connected
+                            ? `Printer terhubung: ${setting.printer_name}`
+                            : "Printer belum terhubung - Print tidak tersedia"}
+                    </span>
+                </div>
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                     <div className="bg-green-600 text-white p-6">
                         <h1 className="text-2xl font-semibold mb-1">
@@ -368,7 +500,6 @@ export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
                                 </div>
                             </div>
                         )}
-
                         <button
                             type="submit"
                             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
@@ -399,6 +530,11 @@ export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
                         {/* Thermal Printer Style Receipt */}
                         <div className="p-6 font-mono text-sm">
                             <div className="text-center mb-4 pb-4 border-b-2 border-dashed border-gray-300">
+                                <img
+                                    src="/logo.webp"
+                                    alt="Logo"
+                                    className="brightness-0 w-60 mx-auto h-auto"
+                                />
                                 <h3 className="font-bold text-base mb-1">
                                     BUKTI PEMBAYARAN
                                 </h3>
@@ -491,11 +627,18 @@ export default function InputZakat({ setting = { harga_2_5kg: 0 } }) {
 
                         <div className="p-4 border-t border-gray-200">
                             <button
-                                onClick={handleSubmit}
-                                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
+                                onClick={handlePrint}
+                                disabled={!setting.printer_connected}
+                                className={`w-full py-3 px-4 rounded-md font-medium transition-colors flex items-center justify-center gap-2 ${
+                                    setting.printer_connected
+                                        ? "bg-green-600 hover:bg-green-700 text-white"
+                                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                }`}
                             >
                                 <Save size={20} />
-                                Simpan & Print
+                                {setting.printer_connected
+                                    ? "Simpan & Print"
+                                    : "Printer Tidak Terhubung"}
                             </button>
                         </div>
                     </div>

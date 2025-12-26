@@ -66,4 +66,9 @@ Route::post('/laporan-belanja', [LaporanBelanjaController::class, 'store'])->nam
 Route::post('/laporan-belanja/{id}/update', [LaporanBelanjaController::class, 'update'])->name('laporan-belanja.update');
 Route::post('/laporan-belanja/{id}/destroy', [LaporanBelanjaController::class, 'destroy'])->name('laporan-belanja.destroy');
 
+// Route Compare penerima & pembayar
 Route::get('/zakat/compare-ai', [ZakatCompareController::class, 'compare']);
+
+// Route untuk setting printer nota pembayar
+Route::post('/setting-beras/printer', [SettingBerasController::class, 'updatePrinter'])->name('setting.printer.update');
+Route::post('/setting-beras/printer/disconnect', [SettingBerasController::class, 'disconnectPrinter'])->name('setting.printer.disconnect');

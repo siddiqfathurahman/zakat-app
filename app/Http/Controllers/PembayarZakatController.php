@@ -42,6 +42,12 @@ class PembayarZakatController extends Controller
                 'rw' => $request->rw,
             ]
         ]);
+
+        $setting = \App\Models\SettingBeras::first();
+
+        return Inertia::render('InputZakat', [
+            'setting' => $setting,
+        ]);
     }
 
     public function store(Request $request)
