@@ -124,6 +124,64 @@ export default function InputZakat({
     const totalKeseluruhan =
         formData.melalui === "uang" ? totalBayar + sodaqohValue : totalBayar;
 
+        const imageToEscPos = async (src, width = 384) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ratio = img.height / img.width;
+                    canvas.width = width;
+                    canvas.height = Math.floor(width * ratio);
+                    const ctx = canvas.getContext("2d");
+
+                    // Fill white background dulu biar transparan jadi putih
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const { data, width: w, height: h } = imageData;
+
+                    const bytes = [];
+
+                    // ESC/POS GS v 0 (raster bit image)
+                    bytes.push(0x1d, 0x76, 0x30, 0x00);
+                    const bytesPerRow = Math.ceil(w / 8);
+                    bytes.push(bytesPerRow & 0xff, (bytesPerRow >> 8) & 0xff);
+                    bytes.push(h & 0xff, (h >> 8) & 0xff);
+
+                    for (let y = 0; y < h; y++) {
+                        for (let xByte = 0; xByte < bytesPerRow; xByte++) {
+                            let byte = 0;
+                            for (let bit = 0; bit < 8; bit++) {
+                                const x = xByte * 8 + bit;
+                                if (x < w) {
+                                    const idx = (y * w + x) * 4;
+                                    const r = data[idx];
+                                    const g = data[idx + 1];
+                                    const b = data[idx + 2];
+                                    // Grayscale luminance
+                                    const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+                                    // Pixel gelap = cetak, pixel terang = skip
+                                    if (brightness < 128) {
+                                        byte |= 0x80 >> bit;
+                                    }
+                                }
+                            }
+                            bytes.push(byte);
+                        }
+                    }
+                                            
+                    resolve(bytes);
+                };
+                img.onerror = (err) => reject(new Error("Gagal load gambar: " + src));
+                img.src = src;
+            });
+        };  
+
+    const line = "--------------------------------\n";
+
     const handlePrint = async () => {
         if (!setting.printer_connected) {
             alert("Printer belum terhubung.");

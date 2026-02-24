@@ -75,7 +75,7 @@ class SettingBerasController extends Controller
             'printer_address' => $request->printer_address,
         ]);
 
-        return redirect()->back()->with('success', 'Pengaturan printer berhasil disimpan');
+        return response()->json(['success' => true, 'message' => 'Pengaturan printer berhasil disimpan']);
     }
 
     public function disconnectPrinter()
@@ -89,6 +89,6 @@ class SettingBerasController extends Controller
             'printer_address' => null,
         ]);
 
-        return redirect()->back()->with('success', 'Printer berhasil diputus');
+        return response()->json(['success' => true, 'message' => 'Printer berhasil diputus']);
     }
 }

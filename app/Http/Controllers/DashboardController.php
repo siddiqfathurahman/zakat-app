@@ -6,7 +6,7 @@ use App\Models\PembayarZakat;
 use App\Models\Pemohon;
 use App\Models\PenerimaZakat;
 use App\Models\FormulaJatah;
-use Illuminate\Http\Request;
+use App\Models\SettingBeras;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
@@ -16,63 +16,67 @@ class DashboardController extends Controller
     {
         // Ambil semua data pembayar zakat
         $pembayarZakat = PembayarZakat::all();
-        
-        // Hitung total uang (dari yang bayar via uang)
-        $totalUang = $pembayarZakat
+
+        // Harga beras (Rp / KG)
+        $hargaBeras = optional(SettingBeras::first())->harga_per_kg ?? 1;
+
+        // Total uang (Rp)
+        $totalUangRp = $pembayarZakat
             ->where('melalui', 'uang')
             ->sum('total');
-        
-        // Hitung total beras (dari yang bayar via beras)
-        $totalBeras = $pembayarZakat
+
+        // Total beras (Kg)
+        $totalBerasKg = $pembayarZakat
             ->where('melalui', 'beras')
             ->sum('total');
-        
-        // Hitung total sodaqoh
+
+        // Total keseluruhan dalam KG
+        $totalAll = $totalBerasKg + ($totalUangRp / $hargaBeras);
+
+        $totalUang = $totalUangRp;
+        $totalBeras = $totalBerasKg;
         $totalSodaqoh = $pembayarZakat->sum('sodaqoh');
-        
-        // Hitung jumlah pembayar
         $jumlahPembayar = $pembayarZakat->count();
-        
-        // Hitung jumlah pembayar per metode
+
         $jumlahBayarUang = $pembayarZakat->where('melalui', 'uang')->count();
         $jumlahBayarBeras = $pembayarZakat->where('melalui', 'beras')->count();
-        
-        // Hitung persentase uang vs beras
+
         $totalPembayar = $jumlahBayarUang + $jumlahBayarBeras;
-        $persentaseUang = $totalPembayar > 0 ? round(($jumlahBayarUang / $totalPembayar) * 100, 1) : 0;
-        $persentaseBeras = $totalPembayar > 0 ? round(($jumlahBayarBeras / $totalPembayar) * 100, 1) : 0;
-        
-        // Ganti kode distribusi RT yang lama dengan yang ini:
+        $persentaseUang = $totalPembayar > 0
+            ? round(($jumlahBayarUang / $totalPembayar) * 100, 1)
+            : 0;
+
+        $persentaseBeras = $totalPembayar > 0
+            ? round(($jumlahBayarBeras / $totalPembayar) * 100, 1)
+            : 0;
+
         $distribusiRT = PenerimaZakat::select('rt', DB::raw('SUM(jatah) as total_jatah'))
             ->whereNotNull('jatah')
             ->groupBy('rt')
             ->orderBy('rt')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return [
-                    'rt' => 'RT ' . str_pad($item->rt, STR_PAD_LEFT),
-                    'jumlah' => $item->total_jatah ?? 0
+                    'rt' => 'RT ' . str_pad($item->rt, 2, '0', STR_PAD_LEFT),
+                    'jumlah' => (int) $item->total_jatah,
                 ];
             });
 
-        // Hitung max jumlah untuk persentase bar chart
         $maxJumlah = $distribusiRT->max('jumlah') ?: 1;
 
-        // Data pemohon dari luar RT/RW
         $jumlahPemohon = Pemohon::count();
-        
-        // Total permintaan dari pemohon luar
-        $totalPermintaanLuar = Pemohon::all()->sum(function($pemohon) {
-            $angka = preg_replace('/[^0-9]/', '', $pemohon->permintaan ?? '0');
-            return (int) $angka;
+
+        $totalPermintaanLuar = Pemohon::all()->sum(function ($pemohon) {
+            return (int) preg_replace('/[^0-9]/', '', $pemohon->permintaan ?? '0');
         });
 
-        // Ambil data formula jatah terakhir
         $formulaJatah = FormulaJatah::latest()->first();
-        $totalBungkus = $formulaJatah ? $formulaJatah->jumlah_total_bungkus : 0;
-        $sisaPembagian = $formulaJatah ? $formulaJatah->sisa_pembagian : 0;
 
-        // Data untuk cards
+        $totalBungkus = $formulaJatah->jumlah_total_bungkus ?? 0;
+        $sisaPembagian = $formulaJatah->sisa_pembagian ?? 0;
+
+
+        // CARD STATS
         $stats = [
             [
                 'title' => 'Total Uang',
@@ -104,8 +108,8 @@ class DashboardController extends Controller
             ],
         ];
 
-
         return Inertia::render('Dashboard', [
+            'totalAll' => round($totalAll, 2),
             'stats' => $stats,
             'distribusiRT' => $distribusiRT,
             'maxJumlah' => $maxJumlah,
@@ -122,7 +126,7 @@ class DashboardController extends Controller
             'formulaJatah' => [
                 'totalBungkus' => $totalBungkus,
                 'sisaPembagian' => $sisaPembagian,
-            ]
+            ],
         ]);
     }
 }
