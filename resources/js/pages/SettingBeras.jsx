@@ -10,9 +10,11 @@ import {
     X,
 } from "lucide-react";
 import AppLayout from "../Layout/AppLayout";
+import SuccessNotification from "../components/SuccessNotification";
 
 export default function SettingBeras({
     setting = { toko: "", harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },
+    flash,
 }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -120,6 +122,7 @@ export default function SettingBeras({
 
     return (
         <AppLayout>
+            <SuccessNotification message={flash?.success} />
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="mb-6 flex gap-40">
                     <div>

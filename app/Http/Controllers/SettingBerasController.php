@@ -11,7 +11,7 @@ class SettingBerasController extends Controller
     public function index(Request $request)
     {
         $setting = SettingBeras::firstOrCreate(
-            [], 
+            [],
             [
                 'toko' => '',
                 'harga_per_kg' => 0,
@@ -67,7 +67,7 @@ class SettingBerasController extends Controller
         ]);
 
         $setting = SettingBeras::first();
-        
+
         $setting->update([
             'printer_connected' => $request->printer_connected,
             'printer_name' => $request->printer_name,
@@ -75,13 +75,13 @@ class SettingBerasController extends Controller
             'printer_address' => $request->printer_address,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Pengaturan printer berhasil disimpan']);
+        return redirect()->back()->with('success', 'Pengaturan printer berhasil disimpan');
     }
 
     public function disconnectPrinter()
     {
         $setting = SettingBeras::first();
-        
+
         $setting->update([
             'printer_connected' => false,
             'printer_name' => null,
@@ -89,6 +89,6 @@ class SettingBerasController extends Controller
             'printer_address' => null,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Printer berhasil diputus']);
+        return redirect()->back()->with('success', 'Printer berhasil diputus');
     }
 }

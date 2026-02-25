@@ -13,6 +13,10 @@ class SettingBeras extends Model
         'harga_per_kg',
         'harga_2_5kg',
         'harga_sak',
+        'printer_connected',
+        'printer_name',
+        'printer_type',
+        'printer_address',
     ];
 }
 
