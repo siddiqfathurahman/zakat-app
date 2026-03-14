@@ -5,6 +5,33 @@ import { Save, Wheat, Banknote, X, Check, Printer } from "lucide-react";
 export default function InputZakat({
     setting = { harga_2_5kg: 0, printer_connected: false, printer_name: "" },
 }) {
+    // QZ Security Setup
+    if (typeof window !== "undefined" && window.qz) {
+        qz.security.setCertificatePromise(function (resolve, reject) {
+            resolve(
+                "-----BEGIN CERTIFICATE-----\n" +
+                    "MIIB...dummy...\n" +
+                    "-----END CERTIFICATE-----",
+            );
+        });
+
+        qz.security.setSignaturePromise(function (toSign) {
+            return function (resolve, reject) {
+                resolve();
+            };
+        });
+    }
+
+    const connectQZ = async () => {
+        if (!window.qz) {
+            throw new Error("QZ Tray tidak terdeteksi");
+        }
+
+        if (!qz.websocket.isActive()) {
+            await qz.websocket.connect();
+            console.log("QZ Connected");
+        }
+    };
     const [formData, setFormData] = useState({
         namaPembayar: "",
         namaPanitia: "",
@@ -120,67 +147,101 @@ export default function InputZakat({
         }).format(angka);
     };
 
+    // Khusus untuk print thermal - pure ASCII, tanpa unicode tersembunyi
+    const formatRupiahPrint = (angka) => {
+        const angkaBulat = Math.round(angka);
+        const formatted = angkaBulat
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return `Rp ${formatted}`;
+    };
+
     const sodaqohValue = parseInt(formData.sodaqoh) || 0;
     const totalKeseluruhan =
         formData.melalui === "uang" ? totalBayar + sodaqohValue : totalBayar;
 
-        const imageToEscPos = async (src, width = 384) => {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.crossOrigin = "anonymous";
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const ratio = img.height / img.width;
-                    canvas.width = width;
-                    canvas.height = Math.floor(width * ratio);
-                    const ctx = canvas.getContext("2d");
+    const imageToEscPos = async (src, width = 384) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ratio = img.height / img.width;
+                canvas.width = width;
+                canvas.height = Math.floor(width * ratio);
+                const ctx = canvas.getContext("2d");
 
-                    // Fill white background dulu biar transparan jadi putih
-                    ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // Fill white background dulu biar transparan jadi putih
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const { data, width: w, height: h } = imageData;
+                const imageData = ctx.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                );
+                const { data, width: w, height: h } = imageData;
 
-                    const bytes = [];
+                const bytes = [];
 
-                    // ESC/POS GS v 0 (raster bit image)
-                    bytes.push(0x1d, 0x76, 0x30, 0x00);
-                    const bytesPerRow = Math.ceil(w / 8);
-                    bytes.push(bytesPerRow & 0xff, (bytesPerRow >> 8) & 0xff);
-                    bytes.push(h & 0xff, (h >> 8) & 0xff);
+                // ESC/POS GS v 0 (raster bit image)
+                bytes.push(0x1d, 0x76, 0x30, 0x00);
+                const bytesPerRow = Math.ceil(w / 8);
+                bytes.push(bytesPerRow & 0xff, (bytesPerRow >> 8) & 0xff);
+                bytes.push(h & 0xff, (h >> 8) & 0xff);
 
-                    for (let y = 0; y < h; y++) {
-                        for (let xByte = 0; xByte < bytesPerRow; xByte++) {
-                            let byte = 0;
-                            for (let bit = 0; bit < 8; bit++) {
-                                const x = xByte * 8 + bit;
-                                if (x < w) {
-                                    const idx = (y * w + x) * 4;
-                                    const r = data[idx];
-                                    const g = data[idx + 1];
-                                    const b = data[idx + 2];
-                                    // Grayscale luminance
-                                    const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-                                    // Pixel gelap = cetak, pixel terang = skip
-                                    if (brightness < 128) {
-                                        byte |= 0x80 >> bit;
-                                    }
+                for (let y = 0; y < h; y++) {
+                    for (let xByte = 0; xByte < bytesPerRow; xByte++) {
+                        let byte = 0;
+                        for (let bit = 0; bit < 8; bit++) {
+                            const x = xByte * 8 + bit;
+                            if (x < w) {
+                                const idx = (y * w + x) * 4;
+                                const r = data[idx];
+                                const g = data[idx + 1];
+                                const b = data[idx + 2];
+                                // Grayscale luminance
+                                const brightness =
+                                    0.299 * r + 0.587 * g + 0.114 * b;
+                                // Pixel gelap = cetak, pixel terang = skip
+                                if (brightness < 128) {
+                                    byte |= 0x80 >> bit;
                                 }
                             }
-                            bytes.push(byte);
                         }
+                        bytes.push(byte);
                     }
-                                            
-                    resolve(bytes);
-                };
-                img.onerror = (err) => reject(new Error("Gagal load gambar: " + src));
-                img.src = src;
-            });
-        };  
+                }
+
+                resolve(bytes);
+            };
+            img.onerror = (err) =>
+                reject(new Error("Gagal load gambar: " + src));
+            img.src = src;
+        });
+    };
 
     const line = "--------------------------------\n";
+
+    // Helper: convert array of byte numbers ke base64 string
+    const bytesToBase64 = (bytes) => {
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    };
+
+    // Helper: convert ESC/POS command string ke base64 safely
+    const cmdToBase64 = (str) => {
+        const bytes = [];
+        for (let i = 0; i < str.length; i++) {
+            bytes.push(str.charCodeAt(i));
+        }
+        return bytesToBase64(bytes);
+    };
 
     const handlePrint = async () => {
         if (!setting.printer_connected) {
@@ -189,108 +250,301 @@ export default function InputZakat({
         }
 
         try {
-            const encoder = new TextEncoder();
-            let commands = [];
+            await connectQZ();
+            const config = qz.configs.create(setting.printer_name);
 
-            // INIT
-            commands.push(...encoder.encode("\x1B\x40"));
+            const logo = await imageToEscPos("/logo.png", 384); // maksimal 384 untuk 58mm
+            const logoBase64 = bytesToBase64(logo);
 
-            // CENTER
-            commands.push(...encoder.encode("\x1B\x61\x01"));
+            const enc = new TextEncoder();
+            const textToBase64 = (str) => {
+                const bytes = enc.encode(str);
+                return bytesToBase64(Array.from(bytes));
+            };
 
-            // LOGO
-            const logo = await imageToEscPos("/logo.webp", 384);
-            commands.push(...logo);
-            commands.push(...encoder.encode("\n"));
+            const FONT_NORMAL = cmdToBase64("\x1D\x21\x00");
+            const FONT_MEDIUM = cmdToBase64("\x1D\x21\x01");
+            const FONT_LARGE = cmdToBase64("\x1D\x21\x11");
+            const CENTER = cmdToBase64("\x1B\x61\x01");
+            const LEFT = cmdToBase64("\x1B\x61\x00");
+            const BOLD_ON = cmdToBase64("\x1B\x45\x01"); // tambah ini
+            const BOLD_OFF = cmdToBase64("\x1B\x45\x00"); // tambah ini
+            // ═══ STRUK 1 (lengkap dengan logo) ═══
+            const struk1 = [
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: cmdToBase64("\x1B\x40"),
+                },
+                { type: "raw", format: "base64", data: CENTER },
 
-            // JUDUL
-            commands.push(...encoder.encode("BUKTI PEMBAYARAN\n"));
-            commands.push(...encoder.encode("ZAKAT FITRAH 1447 H\n"));
+                // LOGO - full width
+                { type: "raw", format: "base64", data: logoBase64 },
+                { type: "raw", format: "base64", data: cmdToBase64("\n") },
 
-            // GARIS
-            commands.push(...encoder.encode(line));
+                // JUDUL - bold + double width+height
+                { type: "raw", format: "base64", data: BOLD_ON },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("BUKTI\n"),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("PEMBAYARAN\n"),
+                },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("ZAKAT FITRAH 1447 H\n"),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // LEFT ALIGN
-            commands.push(...encoder.encode("\x1B\x61\x00"));
+                // DATA
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Nama        : ${formData.namaPembayar}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `RT/RW       : ${formData.rt}/${formData.rw}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Jumlah Jiwa : ${formData.jumlahJiwa} jiwa\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Dibayar     : ${formData.melalui === "uang" ? "Uang" : "Beras"}\n`,
+                    ),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // DATA UTAMA (samakan dengan preview)
-            commands.push(
-                ...encoder.encode(`Nama        : ${formData.namaPembayar}\n`)
-            );
-            commands.push(
-                ...encoder.encode(
-                    `RT/RW       : ${formData.rt}/${formData.rw}\n`
-                )
-            );
-            commands.push(
-                ...encoder.encode(`Jumlah Jiwa : ${formData.jumlahJiwa} jiwa\n`)
-            );
-            commands.push(
-                ...encoder.encode(
-                    `Dibayar     : ${
-                        formData.melalui === "uang" ? "Uang" : "Beras"
-                    }\n`
-                )
-            );
+                // ZAKAT
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Zakat Fitrah : ${formData.melalui === "uang" ? formatRupiahPrint(totalBayar) : `${totalBayar} kg`}\n`,
+                    ),
+                },
+                ...(formData.melalui === "uang" && sodaqohValue > 0
+                    ? [
+                          {
+                              type: "raw",
+                              format: "base64",
+                              data: textToBase64(
+                                  `Sodaqoh      : ${formatRupiahPrint(sodaqohValue)}\n`,
+                              ),
+                          },
+                      ]
+                    : []),
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // GARIS
-            commands.push(...encoder.encode(line));
+                // PANITIA & WAKTU
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(`Panitia : ${formData.namaPanitia}\n`),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Hari    : ${new Date().toLocaleDateString("id-ID", { weekday: "long" })}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Tanggal : ${new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Jam     : ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}\n`,
+                    ),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // ZAKAT
-            commands.push(
-                ...encoder.encode(
-                    `Zakat Fitrah : ${
-                        formData.melalui === "uang"
-                            ? formatRupiah(totalBayar)
-                            : `${totalBayar} kg`
-                    }\n`
-                )
-            );
+                // FOOTER
+                { type: "raw", format: "base64", data: CENTER },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("Jazakumullahu Khairan Katsiran\n"),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("Semoga Berkah\n"),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: cmdToBase64("\x1B\x64\x02"),
+                },
+            ];
 
-            if (formData.melalui === "uang" && sodaqohValue > 0) {
-                commands.push(
-                    ...encoder.encode(
-                        `Sodaqoh     : ${formatRupiah(sodaqohValue)}\n`
-                    )
-                );
-            }
+            const separator = [
+                { type: "raw", format: "base64", data: CENTER },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("--------------------------------\n"),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: cmdToBase64("\x1B\x64\x01"),
+                },
+            ];
 
-            // GARIS
-            commands.push(...encoder.encode(line));
+            const struk2 = [
+                { type: "raw", format: "base64", data: CENTER },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64("ZAKAT FITRAH 1447 H\n"),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // PANITIA + TANGGAL
-            commands.push(
-                ...encoder.encode(`Panitia : ${formData.namaPanitia}\n`)
-            );
-            commands.push(
-                ...encoder.encode(
-                    `Tanggal : ${new Date().toLocaleDateString("id-ID", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}\n`
-                )
-            );
+                // DATA
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Nama        : ${formData.namaPembayar}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `RT/RW       : ${formData.rt}/${formData.rw}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Jumlah Jiwa : ${formData.jumlahJiwa} jiwa\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Dibayar     : ${formData.melalui === "uang" ? "Uang" : "Beras"}\n`,
+                    ),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // FOOTER
-            commands.push(...encoder.encode(line));
-            commands.push(...encoder.encode("\x1B\x61\x01"));
-            commands.push(
-                ...encoder.encode("Jazakumullahu Khairan Katsiran\n")
-            );
-            commands.push(...encoder.encode("Semoga Berkah\n"));
+                // ZAKAT
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Zakat Fitrah : ${formData.melalui === "uang" ? formatRupiahPrint(totalBayar) : `${totalBayar} kg`}\n`,
+                    ),
+                },
+                ...(formData.melalui === "uang" && sodaqohValue > 0
+                    ? [
+                          {
+                              type: "raw",
+                              format: "base64",
+                              data: textToBase64(
+                                  `Sodaqoh      : ${formatRupiahPrint(sodaqohValue)}\n`,
+                              ),
+                          },
+                      ]
+                    : []),
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
 
-            // FEED + CUT
-            commands.push(...encoder.encode("\x1B\x64\x03"));
-            commands.push(...encoder.encode("\x1D\x56\x00"));
+                // PANITIA & WAKTU
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(`Panitia : ${formData.namaPanitia}\n`),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Hari    : ${new Date().toLocaleDateString("id-ID", { weekday: "long" })}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Tanggal : ${new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}\n`,
+                    ),
+                },
+                {
+                    type: "raw",
+                    format: "base64",
+                    data: textToBase64(
+                        `Jam     : ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}\n`,
+                    ),
+                },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+            ];
 
-            const data = new Uint8Array(commands);
+            const printData = [...struk1, ...separator, ...struk2];
 
-            console.log("Printing ESC/POS", data);
-
+            await qz.print(config, printData);
+            console.log("Printed via QZ Tray");
             handleSubmit();
         } catch (error) {
             console.error(error);
@@ -521,7 +775,7 @@ export default function InputZakat({
                                         <span className="font-medium">
                                             {formData.melalui === "uang"
                                                 ? formatRupiah(
-                                                      nilaiPerJiwa.uang
+                                                      nilaiPerJiwa.uang,
                                                   )
                                                 : `${nilaiPerJiwa.beras} kg`}
                                         </span>
@@ -549,7 +803,7 @@ export default function InputZakat({
                                                     </span>
                                                     <span className="text-xl font-bold text-pink-600">
                                                         {formatRupiah(
-                                                            sodaqohValue
+                                                            sodaqohValue,
                                                         )}
                                                     </span>
                                                 </div>
@@ -589,7 +843,7 @@ export default function InputZakat({
                         <div className="p-6 font-mono text-sm">
                             <div className="text-center mb-4 pb-4 border-b-2 border-dashed border-gray-300">
                                 <img
-                                    src="/logo.webp"
+                                    src="/logo.png"
                                     alt="Logo"
                                     className="brightness-0 w-60 mx-auto h-auto"
                                 />
@@ -671,7 +925,7 @@ export default function InputZakat({
                                                 day: "numeric",
                                                 hour: "2-digit",
                                                 minute: "2-digit",
-                                            }
+                                            },
                                         )}
                                     </p>
                                 </div>

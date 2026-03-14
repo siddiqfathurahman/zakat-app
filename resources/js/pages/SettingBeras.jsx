@@ -16,6 +16,33 @@ export default function SettingBeras({
     setting = { toko: "", harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },
     flash,
 }) {
+    // QZ Security Setup
+    if (typeof window !== "undefined" && window.qz) {
+        qz.security.setCertificatePromise(function (resolve, reject) {
+            resolve(
+                "-----BEGIN CERTIFICATE-----\n" +
+                    "MIIB...dummy...\n" +
+                    "-----END CERTIFICATE-----"
+            );
+        });
+
+        qz.security.setSignaturePromise(function (toSign) {
+            return function (resolve, reject) {
+                resolve();
+            };
+        });
+    }
+
+    const connectQZ = async () => {
+        if (!window.qz) {
+            throw new Error("QZ Tray tidak terdeteksi");
+        }
+
+        if (!qz.websocket.isActive()) {
+            await qz.websocket.connect();
+            console.log("QZ Connected");
+        }
+    };
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -34,42 +61,33 @@ export default function SettingBeras({
     };
 
     const handleConnectPrinter = async () => {
-        try {
-            // Cek apakah browser mendukung Web Bluetooth
-            if ("bluetooth" in navigator) {
-                const device = await navigator.bluetooth.requestDevice({
-                    filters: [
-                        { services: ["000018f0-0000-1000-8000-00805f9b34fb"] },
-                    ],
-                    optionalServices: ["battery_service"],
-                });
+    try {
+        await connectQZ();
+        const printers = await qz.printers.find();
 
-                router.post("/setting-beras/printer", {
-                    printer_connected: true,
-                    printer_name: device.name,
-                    printer_type: "bluetooth",
-                    printer_address: device.id,
-                });
-            } else if ("usb" in navigator) {
-                // USB printer
-                const device = await navigator.usb.requestDevice({
-                    filters: [{ vendorId: 0x0416 }], // Ganti dengan vendor ID printer Anda
-                });
+        // Tampilkan pilihan printer ke user
+        const selectedPrinter = window.prompt(
+            "Printer tersedia:\n" + printers.map((p, i) => `${i+1}. ${p}`).join("\n") + 
+            "\n\nMasukkan nama printer persis:"
+        );
 
-                router.post("/setting-beras/printer", {
-                    printer_connected: true,
-                    printer_name: device.productName,
-                    printer_type: "usb",
-                    printer_address: device.serialNumber,
-                });
-            } else {
-                alert("Browser Anda tidak mendukung koneksi printer");
-            }
-        } catch (error) {
-            console.error("Error connecting printer:", error);
-            alert("Gagal menghubungkan printer: " + error.message);
+        if (!selectedPrinter || !printers.includes(selectedPrinter)) {
+            alert("Nama printer tidak valid.");
+            return;
         }
-    };
+
+        router.post("/setting-beras/printer", {
+            printer_connected: true,
+            printer_name: selectedPrinter,
+            printer_type: "qz-tray",
+            printer_address: "localhost",
+        });
+
+    } catch (error) {
+        console.error("Error connecting printer:", error);
+        alert("Gagal menghubungkan printer: " + error.message);
+    }
+};
 
     const handleDisconnectPrinter = () => {
         if (confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
