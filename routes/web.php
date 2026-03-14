@@ -32,6 +32,7 @@ Route::get('/pembayar', [PembayarZakatController::class, 'index'])->name('pembay
 Route::post('/pembayar/store', [PembayarZakatController::class, 'store'])->name('zakat.store');
 Route::post('/pembayar/{id}/update', [PembayarZakatController::class, 'update'])->name('zakat.update');
 Route::post('/pembayar/{id}', [PembayarZakatController::class, 'destroy'])->name('zakat.destroy');
+Route::get('/pembayar/export', [PembayarZakatController::class, 'export'])->name('pembayar.export');
 
 // Route untuk pemohon luar
 Route::get('/pemohon', [PemohonController::class, 'index'])->name('pemohon.index');

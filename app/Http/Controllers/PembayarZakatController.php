@@ -117,4 +117,73 @@ class PembayarZakatController extends Controller
 
         return redirect()->back()->with('success', 'Data zakat berhasil dihapus!');
     }
+
+    // export excel
+    public function export(Request $request)
+    {
+        $query = PembayarZakat::query();
+
+        if ($request->has('search') && $request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->search . '%')
+                ->orWhere('panitia', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->has('rt') && $request->rt) {
+            $query->where('rt', $request->rt);
+        }
+
+        if ($request->has('rw') && $request->rw) {
+            $query->where('rw', $request->rw);
+        }
+
+        $data = $query->latest()->get();
+
+        $filename = 'data-pembayar-zakat-' . now()->format('Ymd-His') . '.xlsx';
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header
+        $headers = ['No', 'Nama Pembayar', 'Panitia', 'RT', 'RW', 'Jumlah Jiwa', 'Melalui', 'Total Zakat', 'Sodaqoh', 'Tanggal'];
+        foreach ($headers as $col => $header) {
+            $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1) . '1';
+            $sheet->setCellValue($cell, $header);
+            $sheet->getStyle($cell)->getFont()->setBold(true);
+            $sheet->getStyle($cell)->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('16a34a');
+            $sheet->getStyle($cell)->getFont()->getColor()->setRGB('FFFFFF');
+        }
+
+        // Data rows
+        foreach ($data as $i => $item) {
+            $row = $i + 2;
+            $sheet->setCellValue("A{$row}", $i + 1);
+            $sheet->setCellValue("B{$row}", $item->nama);
+            $sheet->setCellValue("C{$row}", $item->panitia);
+            $sheet->setCellValue("D{$row}", $item->rt);
+            $sheet->setCellValue("E{$row}", $item->rw);
+            $sheet->setCellValue("F{$row}", $item->jumlah_jiwa);
+            $sheet->setCellValue("G{$row}", ucfirst($item->melalui));
+            $sheet->setCellValue("H{$row}", $item->total);
+            $sheet->setCellValue("I{$row}", $item->sodaqoh ?? 0);
+            $sheet->setCellValue("J{$row}", \Carbon\Carbon::parse($item->created_at)->format('d M Y'));
+        }
+
+        // Auto width
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        return response()->stream(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
 }

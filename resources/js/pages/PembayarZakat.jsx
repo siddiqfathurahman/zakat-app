@@ -144,6 +144,14 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         setCurrentPage(page);
     };
 
+    const handleExport = () => {
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('search', searchTerm);
+        if (selectedRT) params.append('rt', selectedRT);
+        if (selectedRW) params.append('rw', selectedRW);
+        window.location.href = `/pembayar/export?${params.toString()}`;
+    };
+
     const renderPagination = () => {
         const pages = [];
         for (let i = 1; i <= totalPages; i++) {
@@ -169,6 +177,17 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Data Pembayar Zakat</h1>
+                        <button
+        onClick={handleExport}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export Excel
+    </button>
                 </div>
 
                 <div className="mx-auto">
