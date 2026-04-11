@@ -38,6 +38,7 @@ export default function InputZakat({
         rt: "",
         rw: "",
         jumlahJiwa: "",
+        beratBeras: 2.5,
         melalui: "uang",
         sodaqoh: "",
     });
@@ -48,8 +49,15 @@ export default function InputZakat({
 
     const nilaiPerJiwa = {
         uang: setting.harga_2_5kg || 25000,
-        beras: 2.5,
+        beras: formData.beratBeras, 
     };
+
+    const handleBeratBerasChange = (berat) => {
+    setFormData((prev) => ({
+        ...prev,
+        beratBeras: berat,
+    }));
+};
 
     const rtRwData = [
         { rt: "48", rw: "11" },
@@ -97,6 +105,7 @@ export default function InputZakat({
         setFormData((prev) => ({
             ...prev,
             melalui: value,
+            beratBeras: value === "beras" ? 2.5 : prev.beratBeras, 
             sodaqoh: value === "beras" ? "" : prev.sodaqoh,
         }));
     };
@@ -754,6 +763,33 @@ export default function InputZakat({
                                 />
                             </div>
                         )}
+
+                        {formData.melalui === "beras" && (
+    <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+            Pilihan Berat Beras <span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-2">
+            {[2.5, 2.8, 3].map((berat) => (
+                <button
+                    key={berat}
+                    type="button"
+                    onClick={() => handleBeratBerasChange(berat)}
+                    className={`flex-1 py-2 px-3 rounded-md font-medium text-sm transition-colors border ${
+                        formData.beratBeras === berat
+                            ? "bg-green-600 text-white border-green-600"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
+                >
+                    {berat} kg
+                </button>
+            ))}
+        </div>
+        <p className="text-xs text-gray-500">
+            * Default: 2.5 kg per jiwa (standar zakat fitrah)
+        </p>
+    </div>
+)}
 
                         {formData.jumlahJiwa && (
                             <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
