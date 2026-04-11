@@ -1,10 +1,10 @@
 import React from 'react';
-import Sidebar from '../components/Sidebar';
+import QurbanSidebar from '../components/QurbanSidebar';
 
-export default function AppLayout({ children }) {
+export default function QurbanLayout({ children }) {
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden"> 
-            <Sidebar /> 
+            <QurbanSidebar /> 
             <div className="flex-1 overflow-y-auto"> 
                 <main className="p-6">
                     {children}

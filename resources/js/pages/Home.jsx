@@ -12,6 +12,12 @@ export default function Home() {
                 >
                     Zakat
                 </Link>
+                <Link
+                    href="/qurban"
+                    className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition"
+                >
+                    Qurban
+                </Link>
             </div>
         </div>
     );

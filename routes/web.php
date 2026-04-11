@@ -85,3 +85,23 @@ Route::prefix('zakat')->group(function () {
         Route::post('/setting-beras/printer/disconnect', [SettingBerasController::class, 'disconnectPrinter'])->name('setting.printer.disconnect');
     });
 });
+
+Route::prefix('qurban')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('QurbanHome');
+    });
+
+    Route::prefix('input')->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('qurban/InputQurban');
+        });
+
+        Route::get('/dashboard', function () {
+            return Inertia::render('qurban/Dashboard');
+        })->name('qurban.dashboard');
+
+        Route::get('/shohibul', function () {
+            return Inertia::render('qurban/Shohibul');
+        })->name('qurban.shohibul');
+    });
+});
