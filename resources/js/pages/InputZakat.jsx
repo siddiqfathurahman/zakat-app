@@ -77,10 +77,10 @@ export default function InputZakat({
             const totalZakat = jiwa * nilaiPerJiwa.uang;
             setTotalBayar(totalZakat);
         } else {
-            const totalBeras = jiwa * nilaiPerJiwa.beras;
+            const totalBeras = jiwa * formData.beratBeras; 
             setTotalBayar(totalBeras);
         }
-    }, [formData.jumlahJiwa, formData.melalui]);
+    }, [formData.jumlahJiwa, formData.melalui, formData.beratBeras]); 
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
