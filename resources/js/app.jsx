@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 
 createInertiaApp({
   resolve: name => {
-    return import(`./Pages/${name}.jsx`)
+    return import(`./pages/${name}.jsx`)
   },
   setup({ el, App, props }) {
     createRoot(el).render(<App {...props} />)

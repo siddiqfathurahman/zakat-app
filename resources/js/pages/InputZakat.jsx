@@ -122,7 +122,7 @@ export default function InputZakat({
             nilaiPerJiwa: nilaiPerJiwa[formData.melalui],
         };
 
-        router.post("/pembayar/store", dataToSubmit, {
+        router.post("/zakat/input/pembayar/store", dataToSubmit, {
             onSuccess: () => {
                 setShowPreview(false);
                 setShowSuccess(true);
@@ -565,7 +565,7 @@ export default function InputZakat({
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
             <div className="flex justify-end mb-6">
                 <Link
-                    href="/dashboard"
+                    href="/zakat/input/dashboard"
                     className="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded-full font-medium transition-colors"
                 >
                     Dashboard
@@ -1018,3 +1018,4 @@ export default function InputZakat({
         </div>
     );
 }
+

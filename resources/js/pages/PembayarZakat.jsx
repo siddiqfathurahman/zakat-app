@@ -29,7 +29,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
 
     const handleFilter = () => {
         setCurrentPage(1);
-        router.get('/pembayar', {
+        router.get('/zakat/pembayar', {
             search: searchTerm,
             rt: selectedRT,
             rw: selectedRW,
@@ -94,7 +94,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         e.preventDefault();
         setIsLoading(true);
 
-        router.post(`/pembayar/${editingId}/update`, formData, {
+        router.post(`/zakat/input/pembayar/${editingId}/update`, formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 closeEditModal();
@@ -109,7 +109,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         if (!deleteId) return;
 
         router.post(
-            `/pembayar/${deleteId}`,
+            `/zakat/input/pembayar/${deleteId}`,
             {},
             {
                 onSuccess: () => {
@@ -149,7 +149,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         if (searchTerm) params.append('search', searchTerm);
         if (selectedRT) params.append('rt', selectedRT);
         if (selectedRW) params.append('rw', selectedRW);
-        window.location.href = `/pembayar/export?${params.toString()}`;
+        window.location.href = `/zakat/input/pembayar/export?${params.toString()}`;
     };
 
     const renderPagination = () => {
@@ -227,7 +227,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRT(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/pembayar', {
+                                        router.get('/zakat/pembayar', {
                                             search: searchTerm,
                                             rt: e.target.value,
                                             rw: selectedRW,
@@ -253,7 +253,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRW(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/pembayar', {
+                                        router.get('/zakat/pembayar', {
                                             search: searchTerm,
                                             rt: selectedRT,
                                             rw: e.target.value,
@@ -622,3 +622,4 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         </AppLayout>
     );
 }
+

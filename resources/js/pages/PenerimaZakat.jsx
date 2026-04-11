@@ -108,7 +108,7 @@ export default function PenerimaZakat({
 
         if (editingPenerima) {
             router.post(
-                `/penerima-zakat/${editingPenerima.id}/update`,
+                `/zakat/input/penerima-zakat/${editingPenerima.id}/update`,
                 formData,
                 {
                     onSuccess: () => {
@@ -134,7 +134,7 @@ export default function PenerimaZakat({
     const handleDelete = () => {
         if (deletingPenerima) {
             router.post(
-                `/penerima-zakat/${deletingPenerima.id}/destroy`,
+                `/zakat/input/penerima-zakat/${deletingPenerima.id}/destroy`,
                 {},
                 {
                     onSuccess: () => {
@@ -216,7 +216,7 @@ export default function PenerimaZakat({
         queryParams.append("print", "1");
 
         window.open(
-            `/penerima-zakat/print?${queryParams.toString()}`,
+            `/zakat/input/penerima-zakat/print?${queryParams.toString()}`,
             "_blank"
         );
     };
@@ -586,7 +586,7 @@ export default function PenerimaZakat({
                                             key={page}
                                             onClick={() =>
                                                 handlePageChange(
-                                                    `/penerima-zakat?page=${page}`
+                                                    `/zakat/input/penerima-zakat?page=${page}`
                                                 )
                                             }
                                             className={`px-3 py-2 rounded min-w-[40px] ${
@@ -964,3 +964,5 @@ export default function PenerimaZakat({
         </AppLayout>
     );
 }
+
+

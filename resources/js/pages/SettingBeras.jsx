@@ -76,7 +76,7 @@ export default function SettingBeras({
             return;
         }
 
-        router.post("/setting-beras/printer", {
+        router.post("/zakat/input/setting-beras/printer", {
             printer_connected: true,
             printer_name: selectedPrinter,
             printer_type: "qz-tray",
@@ -91,7 +91,7 @@ export default function SettingBeras({
 
     const handleDisconnectPrinter = () => {
         if (confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
-            router.post("/setting-beras/printer/disconnect");
+            router.post("/zakat/input/setting-beras/printer/disconnect");
         }
     };
 
@@ -108,7 +108,7 @@ export default function SettingBeras({
         e.preventDefault();
         setIsLoading(true);
 
-        router.post("/setting-beras", formData, {
+        router.post("/zakat/input/setting-beras", formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 handleCloseModal();
@@ -441,3 +441,5 @@ export default function SettingBeras({
         </AppLayout>
     );
 }
+
+

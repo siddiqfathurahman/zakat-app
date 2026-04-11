@@ -354,3 +354,4 @@ export default function FormulaJatah({ jiwaStats, formulaJatah }) {
         </AppLayout>
     );
 }
+

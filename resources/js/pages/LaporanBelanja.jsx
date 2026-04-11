@@ -57,7 +57,7 @@ export default function LaporanBelanja({
 
     const handleUpdate = (e) => {
         e.preventDefault();
-        router.post(`/laporan-belanja/${editData.id}/update`, formData, {
+        router.post(`/zakat/input/laporan-belanja/${editData.id}/update`, formData, {
             onSuccess: () => {
                 setShowEditModal(false);
                 setEditData(null);
@@ -81,7 +81,7 @@ export default function LaporanBelanja({
 
     const handleDeleteConfirm = () => {
         if (!deleteTargetId) return;
-        router.post(`/laporan-belanja/${deleteTargetId}/destroy`, {}, {
+        router.post(`/zakat/input/laporan-belanja/${deleteTargetId}/destroy`, {}, {
             onSuccess: () => {
                 setShowDeleteModal(false);
                 setDeleteTargetId(null);
@@ -579,3 +579,5 @@ export default function LaporanBelanja({
         </>
     );
 }
+
+

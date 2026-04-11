@@ -48,7 +48,7 @@ export default function Pemohon({ pemohons = [], flash }) {
         };
 
         if (editingPemohon) {
-            router.post(`/pemohon/${editingPemohon.id}/update`, submitData, {
+            router.post(`/zakat/input/pemohon/${editingPemohon.id}/update`, submitData, {
                 onSuccess: () => {
                     handleCloseModal();
                 },
@@ -57,7 +57,7 @@ export default function Pemohon({ pemohons = [], flash }) {
                 }
             });
         } else {
-            router.post('/pemohon', submitData, {
+            router.post('/zakat/pemohon', submitData, {
                 onSuccess: () => {
                     handleCloseModal();
                 },
@@ -70,7 +70,7 @@ export default function Pemohon({ pemohons = [], flash }) {
 
     const handleDelete = () => {
         if (deletingPemohon) {
-            router.post(`/pemohon/${deletingPemohon.id}/destroy`, {}, {
+            router.post(`/zakat/input/pemohon/${deletingPemohon.id}/destroy`, {}, {
                 onSuccess: () => {
                     setIsDeleteModalOpen(false);
                     setDeletingPemohon(null);
@@ -262,3 +262,4 @@ export default function Pemohon({ pemohons = [], flash }) {
         </AppLayout>
     );
 }
+
