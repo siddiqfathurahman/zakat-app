@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function InputQurban() {
+export default function InputQurban() { 
     return (
         <div className="min-h-screen bg-orange-50 flex flex-col items-center justify-center p-4">
             <div className="mb-6 text-center">

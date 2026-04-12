@@ -22,6 +22,11 @@ export default function QurbanSidebar() {
             icon: Users, 
         },
         {
+            name: "Panitia",
+            href: "/qurban/input/panitia",
+            icon: Users, 
+        },
+        {
             name: "Penerima",
             href: "/qurban/input/penerima",
             icon: UserCheck, 

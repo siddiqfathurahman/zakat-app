@@ -12,6 +12,8 @@ use App\Http\Controllers\SettingBerasController;
 use App\Models\SettingBeras;
 use App\Http\Controllers\LaporanBelanjaController;
 use App\Http\Controllers\ZakatCompareController;
+use App\Http\Controllers\ShohibulqurbanController;
+use App\Http\Controllers\JatahlembagaqurbanController;
 
 
 Route::get('/', function () {
@@ -86,6 +88,8 @@ Route::prefix('zakat')->group(function () {
     });
 });
 
+
+// qurban route
 Route::prefix('qurban')->group(function () {
     Route::get('/', function () {
         return Inertia::render('QurbanHome');
@@ -100,8 +104,20 @@ Route::prefix('qurban')->group(function () {
             return Inertia::render('qurban/Dashboard');
         })->name('qurban.dashboard');
 
-        Route::get('/shohibul', function () {
-            return Inertia::render('qurban/Shohibul');
-        })->name('qurban.shohibul');
+
+        // shohibul qurban
+        Route::get('/shohibul', [ShohibulqurbanController::class, 'index'])->name('shohibul.index');
+        Route::get('/shohibul/create', [ShohibulqurbanController::class, 'create'])->name('shohibul.create');
+        Route::get('/shohibul/print', [ShohibulqurbanController::class, 'print'])->name('shohibul.print');
+        Route::post('/shohibul/store', [ShohibulqurbanController::class, 'store'])->name('shohibul.store');
+        Route::post('/shohibul/{shohibulqurban}/update', [ShohibulqurbanController::class, 'update'])->name('shohibul.update');
+        Route::post('/shohibul/{shohibulqurban}/destroy', [ShohibulqurbanController::class, 'destroy'])->name('shohibul.destroy');
+
+        // jatah lembaga qurban
+        Route::get('/jatah-lembaga', [JatahlembagaqurbanController::class, 'index'])->name('jatah-lembaga.index');
+        Route::post('/jatah-lembaga/store', [JatahlembagaqurbanController::class, 'store'])->name('jatah-lembaga.store');
+        Route::post('/jatah-lembaga/{jatahlembagaqurban}/update', [JatahlembagaqurbanController::class, 'update'])->name('jatah-lembaga.update');
+Route::post('/jatah-lembaga/{jatahlembagaqurban}/destroy', [JatahlembagaqurbanController::class, 'destroy'])->name('jatah-lembaga.destroy');
+        
     });
 });
