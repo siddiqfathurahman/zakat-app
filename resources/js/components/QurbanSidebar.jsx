@@ -53,11 +53,11 @@ export default function QurbanSidebar() {
     };
 
     return (
-        <aside className="w-64 bg-orange-600 text-white flex flex-col h-full">
+        <aside className="w-64 bg-orange-700 text-white flex flex-col h-full">
             <div className="p-6 border-b border-orange-500">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                        <span className="text-orange-600 text-xl font-bold">Q</span>
+                        <span className="text-orange-700 text-xl font-bold">Q</span>
                     </div>
                     <div>
                         <h1 className="font-bold text-lg">Qurban-App</h1>
@@ -78,7 +78,7 @@ export default function QurbanSidebar() {
                                     href={item.href}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                         active
-                                            ? "bg-white text-orange-600 font-medium"
+                                            ? "bg-white text-orange-700 font-medium"
                                             : "text-orange-50 hover:bg-orange-500"
                                     }`}
                                 >

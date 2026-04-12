@@ -22,7 +22,12 @@ export default function JumlahBungkus() {
 
     return (
         <QurbanLayout>
-            <div className="bg-gray-50 p-5">
+            <div className="bg-gray-50 p-1">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800">
+                        Dashboard Qurban
+                    </h1>
+                </div>
                 <div className="bg-green-50 border-2 border-green-400 rounded-xl px-6 py-5 mb-3 text-center">
                     <p className="text-xs font-semibold text-green-600 uppercase tracking-widest mb-1">
                         Total
