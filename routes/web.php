@@ -14,6 +14,7 @@ use App\Http\Controllers\LaporanBelanjaController;
 use App\Http\Controllers\ZakatCompareController;
 use App\Http\Controllers\ShohibulqurbanController;
 use App\Http\Controllers\JatahlembagaqurbanController;
+use App\Http\Controllers\PanitiaqurbanController;
 
 
 Route::get('/', function () {
@@ -117,7 +118,12 @@ Route::prefix('qurban')->group(function () {
         Route::get('/jatah-lembaga', [JatahlembagaqurbanController::class, 'index'])->name('jatah-lembaga.index');
         Route::post('/jatah-lembaga/store', [JatahlembagaqurbanController::class, 'store'])->name('jatah-lembaga.store');
         Route::post('/jatah-lembaga/{jatahlembagaqurban}/update', [JatahlembagaqurbanController::class, 'update'])->name('jatah-lembaga.update');
-Route::post('/jatah-lembaga/{jatahlembagaqurban}/destroy', [JatahlembagaqurbanController::class, 'destroy'])->name('jatah-lembaga.destroy');
+        Route::post('/jatah-lembaga/{jatahlembagaqurban}/destroy', [JatahlembagaqurbanController::class, 'destroy'])->name('jatah-lembaga.destroy');
         
+        // panitia wurban
+        Route::get('/panitia', [PanitiaqurbanController::class, 'index'])->name('panitia.index');
+        Route::post('/panitia/store', [PanitiaqurbanController::class, 'store'])->name('panitia.store');
+        Route::post('/panitia/{panitiaqurban}/update', [PanitiaqurbanController::class, 'update'])->name('panitia.update');
+        Route::post('/panitia/{panitiaqurban}/destroy', [PanitiaqurbanController::class, 'destroy'])->name('panitia.destroy');
     });
 });
