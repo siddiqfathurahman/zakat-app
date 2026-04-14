@@ -15,6 +15,9 @@ use App\Http\Controllers\ZakatCompareController;
 use App\Http\Controllers\ShohibulqurbanController;
 use App\Http\Controllers\JatahlembagaqurbanController;
 use App\Http\Controllers\PanitiaqurbanController;
+use App\Http\Controllers\PenerimaqurbanController;
+use App\Http\Controllers\JatahconfigqurbanController;
+
 
 
 Route::get('/', function () {
@@ -125,5 +128,19 @@ Route::prefix('qurban')->group(function () {
         Route::post('/panitia/store', [PanitiaqurbanController::class, 'store'])->name('panitia.store');
         Route::post('/panitia/{panitiaqurban}/update', [PanitiaqurbanController::class, 'update'])->name('panitia.update');
         Route::post('/panitia/{panitiaqurban}/destroy', [PanitiaqurbanController::class, 'destroy'])->name('panitia.destroy');
+
+        // penerima qurban
+        Route::get('/penerima', [PenerimaqurbanController::class, 'index'])->name('penerima.index');
+        Route::post('/penerima', [PenerimaqurbanController::class, 'store'])->name('penerima.store');
+        Route::post('/penerima/{penerimaqurban}/update', [PenerimaqurbanController::class, 'update'])->name('penerima.update');
+        Route::post('/penerima/{penerimaqurban}/destroy', [PenerimaqurbanController::class, 'destroy'])->name('penerima.destroy');
+
+        // Route untuk konfigurasi jatah
+        Route::post('/jatah-config', [JatahconfigqurbanController::class, 'store'])->name('qurban.jatah.store');
+        Route::post('/jatah-config/apply', [JatahconfigqurbanController::class, 'apply'])->name('qurban.jatah.apply');
+
+        // 🔥 untuk scanner (pakai fetch di React)
+        Route::get('/scan/{kode}', [PenerimaqurbanController::class, 'scan']);
+        Route::post('/claim/{kode}', [PenerimaqurbanController::class, 'claim']);
     });
 });
