@@ -194,7 +194,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Data Penerima Qurban</h1>
                 <button onClick={openAdd}
-                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
+                    className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -228,7 +228,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
 
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-orange-600 text-white text-sm">
+                        <thead className="bg-orange-700 text-white text-sm">
                             <tr>
                                 <th className="px-4 py-3 text-center border-r border-orange-500/30">Kategori / Jiwa</th>
                                 <th className="px-4 py-3 text-center" colSpan={5}>Muslim (Berdasarkan Jiwa)</th>
@@ -360,7 +360,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="bg-orange-600 text-white">
+                            <tr className="bg-orange-700 text-white">
                                 {['No', 'Nama', 'RT/RW', 'Agama', 'Jiwa', 'Jatah Sapi', 'Jatah Kambing', 'Kode QR', 'Status', 'Aksi'].map(h => (
                                     <th key={h} className="text-left px-3 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{h}</th>
                                 ))}
@@ -466,7 +466,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
                     {pageNumbers.map(p => (
                         <button key={p} onClick={() => setPage(p)}
                             className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition border ${
-                                p === page ? 'bg-orange-600 text-white border-orange-600' : 'border-gray-200 text-gray-600 hover:bg-orange-50'
+                                p === page ? 'bg-orange-700 text-white border-orange-700' : 'border-gray-200 text-gray-600 hover:bg-orange-50'
                             }`}>{p}</button>
                     ))}
                     {pageNumbers[pageNumbers.length - 1] < totalPages && (
@@ -486,7 +486,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
             {modalOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
-                        <div className="bg-orange-600 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                        <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
                             <h2 className="text-base font-bold text-white">
                                 {editData ? 'Edit Penerima' : 'Tambah Penerima'}
                             </h2>
@@ -541,7 +541,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
                             <button onClick={closeModal}
                                 className="border border-gray-200 rounded-lg px-5 py-2 text-sm hover:bg-gray-50 transition text-gray-600">Batal</button>
                             <button onClick={saveData}
-                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-lg px-5 py-2 text-sm font-semibold transition shadow-sm">Simpan</button>
+                                className="bg-orange-700 hover:bg-orange-700 text-white rounded-lg px-5 py-2 text-sm font-semibold transition shadow-sm">Simpan</button>
                         </div>
                     </div>
                 </div>
@@ -551,7 +551,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
             {detailData && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
-                        <div className="bg-orange-600 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                        <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
                             <h2 className="text-base font-bold text-white">Kode QR Penerima</h2>
                             <button onClick={() => setDetailData(null)} className="text-white/80 hover:text-white">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

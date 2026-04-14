@@ -162,7 +162,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
                 <h1 className="text-2xl font-bold text-gray-800">Data Panitia Qurban</h1>
                 <button
                     onClick={openAdd}
-                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm"
+                    className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -301,7 +301,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="bg-orange-600 text-white">
+                        <tr className="bg-orange-700 text-white">
                             {['No', 'Nama', 'Jabatan', 'RT/RW', 'Status Ambil', 'Aksi'].map(h => (
                                 <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide">
                                     {h}
@@ -408,7 +408,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
                     {pageNumbers.map(p => (
                         <button key={p} onClick={() => setPage(p)}
                             className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition border ${
-                                p === page ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-orange-50 hover:border-orange-300'
+                                p === page ? 'bg-orange-700 text-white border-orange-700 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-orange-50 hover:border-orange-300'
                             }`}>{p}</button>
                     ))}
                     {pageNumbers[pageNumbers.length - 1] < totalPages && (
@@ -429,7 +429,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
             {modalOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
-                        <div className="bg-orange-600 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                        <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
                             <h2 className="text-base font-bold text-white">
                                 {editData ? 'Edit Data Panitia' : 'Tambah Data Panitia'}
                             </h2>
@@ -506,7 +506,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
                                                 value={opt.val}
                                                 checked={form.sudah_diambil === opt.val}
                                                 onChange={e => setForm(f => ({ ...f, sudah_diambil: e.target.value }))}
-                                                className="accent-orange-600"
+                                                className="accent-orange-700"
                                             />
                                             <span className="text-xs font-medium">{opt.label}</span>
                                         </label>
@@ -527,7 +527,7 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
                                 Batal
                             </button>
                             <button onClick={saveData}
-                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-lg px-5 py-2 text-sm font-semibold transition shadow-sm">
+                                className="bg-orange-700 hover:bg-orange-700 text-white rounded-lg px-5 py-2 text-sm font-semibold transition shadow-sm">
                                 Simpan
                             </button>
                         </div>

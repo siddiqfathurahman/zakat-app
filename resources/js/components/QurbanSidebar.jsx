@@ -32,8 +32,8 @@ export default function QurbanSidebar() {
             icon: UserCheck, 
         },
         {
-            name: "Konfigurasi",
-            href: "/qurban/input/konfigurasi",
+            name: "Formula Jatah",
+            href: "/qurban/input/formula",
             icon: Sliders,
         },
         {
@@ -43,7 +43,7 @@ export default function QurbanSidebar() {
         },
         {
             name: "Settings",
-            href: "/qurban/input/settings",
+            href: "/qurban/input/setting",
             icon: Settings,
         },
     ];

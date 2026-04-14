@@ -1,24 +1,15 @@
 import React from 'react';
 import QurbanLayout from '../../Layout/QurbanLayout';
 
-const rtData = [
-    { rt: 'RT 48', sapi: 126, kambing: 70 },
-    { rt: 'RT 49', sapi: 243, kambing: 43 },
-    { rt: 'RT 50', sapi: 89, kambing: 12 },
-    { rt: 'RT 51', sapi: 133, kambing: 43 },
-    { rt: 'RT 52', sapi: 150, kambing: 60 },
-    { rt: 'RT 53', sapi: 111, kambing: 32 },
-    { rt: 'RT 56', sapi: 167, kambing: 99 },
-    { rt: 'RT 57', sapi: 189, kambing: 44 },
-];
-
-export default function JumlahBungkus() {
-    const totalBungkus = 1500;
-    const bungkusSapi = 180;
-    const jumlahSapi = 18;
-    const bungkusKambing = 600;
-    const jumlahKambing = 20;
-    const penjualanKulit = '1.500.000';
+export default function Dashboard({
+    totalBungkus = 0,
+    bungkusSapi = 0,
+    jumlahSapi = 0,
+    bungkusKambing = 0,
+    jumlahKambing = 0,
+    penjualanKulit = '0',
+    rtData = []
+}) {
 
     return (
         <QurbanLayout>

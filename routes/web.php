@@ -17,6 +17,9 @@ use App\Http\Controllers\JatahlembagaqurbanController;
 use App\Http\Controllers\PanitiaqurbanController;
 use App\Http\Controllers\PenerimaqurbanController;
 use App\Http\Controllers\JatahconfigqurbanController;
+use App\Http\Controllers\FormulaqurbanController;
+use App\Http\Controllers\SettingqurbanController;
+
 
 
 
@@ -104,9 +107,7 @@ Route::prefix('qurban')->group(function () {
             return Inertia::render('qurban/InputQurban');
         });
 
-        Route::get('/dashboard', function () {
-            return Inertia::render('qurban/Dashboard');
-        })->name('qurban.dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\QurbanDashboardController::class, 'index'])->name('qurban.dashboard');
 
 
         // shohibul qurban
@@ -139,8 +140,19 @@ Route::prefix('qurban')->group(function () {
         Route::post('/jatah-config', [JatahconfigqurbanController::class, 'store'])->name('qurban.jatah.store');
         Route::post('/jatah-config/apply', [JatahconfigqurbanController::class, 'apply'])->name('qurban.jatah.apply');
 
-        // 🔥 untuk scanner (pakai fetch di React)
+        // Route untuk formula jatah qurban
+        Route::get('/formula', [FormulaqurbanController::class, 'index'])->name('qurban.formula.index');
+        Route::post('/formula/store', [FormulaqurbanController::class, 'store'])->name('qurban.formula.store');
+        Route::get('/formula/latest', [FormulaqurbanController::class, 'getLatest'])->name('qurban.formula.latest');
+
+        // scanner
         Route::get('/scan/{kode}', [PenerimaqurbanController::class, 'scan']);
         Route::post('/claim/{kode}', [PenerimaqurbanController::class, 'claim']);
+
+        // setting qurban
+        Route::get('/setting', [SettingqurbanController::class, 'index'])->name('setting.index');
+        Route::post('/setting/store', [SettingqurbanController::class, 'store'])->name('setting.store');
+        Route::post('/setting/{settingqurban}/update', [SettingqurbanController::class, 'update'])->name('setting.update');
+        Route::post('/setting/{settingqurban}/destroy', [SettingqurbanController::class, 'destroy'])->name('setting.destroy');
     });
 });
