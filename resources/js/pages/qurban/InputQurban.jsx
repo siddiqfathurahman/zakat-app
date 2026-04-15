@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "@inertiajs/react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import QurbanLayout from "../../Layout/QurbanLayout";
@@ -10,32 +10,28 @@ export default function InputQurban() {
     const [searchQuery, setSearchQuery] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const scannerRef = useRef(null);
 
     useEffect(() => {
-        // Initialize QR Scanner
         const scanner = new Html5QrcodeScanner(
             "reader",
             { fps: 10, qrbox: { width: 250, height: 250 } },
             false,
         );
 
+        scannerRef.current = scanner; 
+
         scanner.render(
             (decodedText) => {
-                // When scan successes
-                scanner.pause(true); // pause so it doesn't repeatedly scan
+                scanner.pause(true);
                 handleScanKode(decodedText);
-
-                // resume after 3 seconds gracefully
                 setTimeout(() => {
-                    if (scanner.getState() === 2) {
-                        // 2 corresponds to PUSED
+                    if (scanner.getState() === 3) {
                         scanner.resume();
                     }
                 }, 3000);
             },
-            (error) => {
-                // Ignore general errors which are just "no qr code found in frame"
-            },
+            (error) => {},
         );
 
         return () => {
@@ -137,6 +133,22 @@ export default function InputQurban() {
                 return "Shohibul Qurban";
             default:
                 return "Status Tidak Diketahui";
+        }
+    };
+
+    const handleClear = () => {
+        setScanResult(null);
+        setErrorMsg("");
+        setSearchQuery("");
+
+        if (scannerRef.current) {
+            try {
+                if (scannerRef.current.getState() === 3) {
+                    scannerRef.current.resume();
+                }
+            } catch (e) {
+                console.error("Failed to resume scanner", e);
+            }
         }
     };
 
@@ -282,6 +294,13 @@ export default function InputQurban() {
                                 Penerima merupakan Shohibul Qurban
                             </div>
                         )}
+
+                        <button
+                            onClick={handleClear}
+                            className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl text-base transition-all"
+                        >
+                            Reset
+                        </button>
                     </div>
                 )}
             </div>
