@@ -1024,78 +1024,70 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
 
             {/* Modal Detail QR */}
             {detailData && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
-                        <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
-                            <h2 className="text-base font-bold text-white">
-                                Kode QR Penerima
-                            </h2>
-                            <button
-                                onClick={() => setDetailData(null)}
-                                className="text-white/80 hover:text-white"
-                            >
-                                <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                        <div className="p-6 flex flex-col items-center gap-4">
-                            <QRImage kode={detailData.kode_unik} />
-                            <div className="text-center">
-                                <p className="font-bold text-gray-800 text-base">
-                                    {detailData.nama}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-0.5">
-                                    RT {detailData.rt} / RW {detailData.rw}
-                                </p>
-                                <p className="text-xs font-mono text-gray-400 mt-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 break-all">
-                                    {detailData.kode_unik}
-                                </p>
-                            </div>
-                            <div className="w-full grid grid-cols-3 gap-2 text-center">
-                                {[
-                                    { label: "Jiwa", val: detailData.jiwa },
-                                    {
-                                        label: "Sapi",
-                                        val: ` ${detailData.jatah_sapi ?? 0}`,
-                                    },
-                                    {
-                                        label: "Kambing",
-                                        val: ` ${detailData.jatah_kambing ?? 0}`,
-                                    },
-                                ].map((s) => (
-                                    <div
-                                        key={s.label}
-                                        className="bg-gray-50 rounded-lg p-2 border border-gray-100"
-                                    >
-                                        <div className="text-xs text-gray-400">
-                                            {s.label}
-                                        </div>
-                                        <div className="font-bold text-gray-700 text-sm">
-                                            {s.val}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div
-                                className={`w-full text-center py-2 rounded-lg text-xs font-semibold border ${STATUS_CONFIG[detailData.status]?.bg} ${STATUS_CONFIG[detailData.status]?.text} ${STATUS_CONFIG[detailData.status]?.border}`}
-                            >
-                                {STATUS_CONFIG[detailData.status]?.label}
-                            </div>
-                        </div>
-                    </div>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
+            <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                <h2 className="text-base font-bold text-white">
+                    Kode QR Penerima
+                </h2>
+                <button
+                    onClick={() => setDetailData(null)}
+                    className="text-white/80 hover:text-white"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div className="p-6 flex flex-col items-center gap-4">
+                <QRImage kode={detailData.kode_unik} />
+                <div className="text-center">
+                    <p className="font-bold text-gray-800 text-base">
+                        {detailData.nama}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                        RT {detailData.rt} / RW {detailData.rw}
+                    </p>
+                    <p className="text-xs font-mono text-gray-400 mt-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 break-all">
+                        {detailData.kode_unik}
+                    </p>
                 </div>
-            )}
+                <div className="w-full grid grid-cols-3 gap-2 text-center">
+                    {[
+                        { label: "Jiwa",    val: detailData.jiwa },
+                        { label: "Sapi",    val: detailData.jatah_sapi ?? 0 },
+                        { label: "Kambing", val: detailData.jatah_kambing ?? 0 },
+                    ].map((s) => (
+                        <div key={s.label} className="bg-gray-50 rounded-lg p-2 border border-gray-100">
+                            <div className="text-xs text-gray-400">{s.label}</div>
+                            <div className="font-bold text-gray-700 text-sm">{s.val}</div>
+                        </div>
+                    ))}
+                </div>
+                <div className={`w-full text-center py-2 rounded-lg text-xs font-semibold border ${STATUS_CONFIG[detailData.status]?.bg} ${STATUS_CONFIG[detailData.status]?.text} ${STATUS_CONFIG[detailData.status]?.border}`}>
+                    {STATUS_CONFIG[detailData.status]?.label}
+                </div>
+
+                {/* ── Tombol Print Surat Keterangan ── */}
+                <button
+                    onClick={() =>
+                        window.open(
+                            `/qurban/input/qurban/surat-keterangan/${detailData.id}`,
+                            "_blank"
+                        )
+                    }
+                    className="w-full flex items-center justify-center gap-2 bg-orange-700 hover:bg-orange-800 text-white rounded-xl py-2.5 text-sm font-semibold transition shadow-sm"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Cetak Surat Keterangan
+                </button>
+            </div>
+        </div>
+    </div>
+)}
 
             {/* Confirm Save Jatah */}
             {isConfirmSaveOpen && (

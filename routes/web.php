@@ -109,6 +109,13 @@ Route::prefix('qurban')->group(function () {
 
         Route::get('/dashboard', [\App\Http\Controllers\QurbanDashboardController::class, 'index'])->name('qurban.dashboard');
 
+        Route::get('/qurban/surat-keterangan/{id}', function ($id) {
+            $penerima = \App\Models\PenerimaQurban::findOrFail($id);
+            return inertia('qurban/SuratKeterangan', [
+                'penerima' => $penerima,
+            ]);
+        })->name('qurban.surat-keterangan');
+
 
         // shohibul qurban
         Route::get('/shohibul', [ShohibulqurbanController::class, 'index'])->name('shohibul.index');
