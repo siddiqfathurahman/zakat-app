@@ -39,59 +39,16 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
     const [formErr, setFormErr] = useState("");
     const [filterRt, setFilterRt] = useState("");
 
-    const [printModalOpen, setPrintModalOpen] = useState(false);
-    const [printFilter, setPrintFilter] = useState("all"); // 'all' | 'rw11' | 'rw12' | 'rw13'
-
-    const getRwColor = (rw) => {
-        const rwStr = String(rw).replace(/^0+/, ""); // strip leading zeros
-        switch (rwStr) {
-            case "11":
-                return {
-                    bg: "#FEE2E2",
-                    border: "#EF4444",
-                    accent: "#DC2626",
-                    text: "#7F1D1D",
-                    badge: "#DC2626",
-                };
-            case "12":
-                return {
-                    bg: "#DBEAFE",
-                    border: "#3B82F6",
-                    accent: "#2563EB",
-                    text: "#1E3A8A",
-                    badge: "#2563EB",
-                };
-            case "13":
-                return {
-                    bg: "#DCFCE7",
-                    border: "#22C55E",
-                    accent: "#16A34A",
-                    text: "#14532D",
-                    badge: "#16A34A",
-                };
-            default:
-                return {
-                    bg: "#F3F4F6",
-                    border: "#9CA3AF",
-                    accent: "#6B7280",
-                    text: "#1F2937",
-                    badge: "#6B7280",
-                };
-        }
-    };
-
-    const printData = useMemo(() => {
-        if (printFilter === "all") return penerimas;
-        return penerimas.filter(
-            (r) =>
-                String(r.rw).replace(/^0+/, "") ===
-                printFilter.replace("rw", ""),
-        );
-    }, [penerimas, printFilter]);
-
-    const handlePrint = () => {
-        window.print();
-    };
+    const rtRwData = [
+        { rt: "48", rw: "11" },
+        { rt: "49", rw: "11" },
+        { rt: "50", rw: "11" },
+        { rt: "51", rw: "12" },
+        { rt: "52", rw: "12" },
+        { rt: "53", rw: "12" },
+        { rt: "56", rw: "13" },
+        { rt: "57", rw: "13" },
+    ];
 
     useEffect(() => {
         setPage(1);
@@ -923,36 +880,38 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="text-xs font-medium text-gray-600 mb-1 block">
-                                        RT{" "}
-                                        <span className="text-red-500">*</span>
+                                        RT <span className="text-red-500">*</span>
                                     </label>
-                                    <input
+                                    <select
                                         value={form.rt}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const selectedRt = e.target.value;
+                                            const found = rtRwData.find((d) => d.rt === selectedRt);
                                             setForm((f) => ({
                                                 ...f,
-                                                rt: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
-                                        placeholder="01"
-                                    />
+                                                rt: selectedRt,
+                                                rw: found ? found.rw : "",
+                                            }));
+                                        }}
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 bg-white"
+                                    >
+                                        <option value="">Pilih RT</option>
+                                        {rtRwData.map((d) => (
+                                            <option key={d.rt} value={d.rt}>
+                                                RT {d.rt}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-gray-600 mb-1 block">
-                                        RW{" "}
-                                        <span className="text-red-500">*</span>
+                                        RW <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        value={form.rw}
-                                        onChange={(e) =>
-                                            setForm((f) => ({
-                                                ...f,
-                                                rw: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
-                                        placeholder="02"
+                                        value={form.rw ? `RW ${form.rw}` : ""}
+                                        readOnly
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                                        placeholder="Otomatis terisi"
                                     />
                                 </div>
                             </div>
@@ -964,19 +923,19 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                                     </label>
                                     <select
                                         value={form.agama}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const selectedAgama = e.target.value;
                                             setForm((f) => ({
                                                 ...f,
-                                                agama: e.target.value,
-                                            }))
-                                        }
+                                                agama: selectedAgama,
+                                                jiwa: selectedAgama === "nonmuslim" ? "1" : f.jiwa,
+                                            }));
+                                        }}
                                         className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 bg-white"
                                     >
                                         <option value="muslim">Muslim</option>
-                                        <option value="nonmuslim">
-                                            Non Muslim
-                                        </option>
-                                    </select>
+                                        <option value="nonmuslim">Non Muslim</option>
+                                    </select>   
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-gray-600 mb-1 block">
@@ -987,15 +946,17 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                                         type="number"
                                         min="1"
                                         value={form.jiwa}
+                                        readOnly={form.agama === "nonmuslim"}
                                         onChange={(e) =>
-                                            setForm((f) => ({
-                                                ...f,
-                                                jiwa: e.target.value,
-                                            }))
+                                            setForm((f) => ({ ...f, jiwa: e.target.value }))
                                         }
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
-                                        placeholder="1"
-                                    />
+                                        className={`w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 ${
+                                            form.agama === "nonmuslim"
+                                                ? "bg-gray-50 text-gray-500 cursor-not-allowed"
+                                                : ""
+                                        }`}
+                                        placeholder="0"
+                                    />  
                                 </div>
                             </div>
                             {formErr && (
@@ -1024,70 +985,70 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
 
             {/* Modal Detail QR */}
             {detailData && (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
-            <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
-                <h2 className="text-base font-bold text-white">
-                    Kode QR Penerima
-                </h2>
-                <button
-                    onClick={() => setDetailData(null)}
-                    className="text-white/80 hover:text-white"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div className="p-6 flex flex-col items-center gap-4">
-                <QRImage kode={detailData.kode_unik} />
-                <div className="text-center">
-                    <p className="font-bold text-gray-800 text-base">
-                        {detailData.nama}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                        RT {detailData.rt} / RW {detailData.rw}
-                    </p>
-                    <p className="text-xs font-mono text-gray-400 mt-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 break-all">
-                        {detailData.kode_unik}
-                    </p>
-                </div>
-                <div className="w-full grid grid-cols-3 gap-2 text-center">
-                    {[
-                        { label: "Jiwa",    val: detailData.jiwa },
-                        { label: "Sapi",    val: detailData.jatah_sapi ?? 0 },
-                        { label: "Kambing", val: detailData.jatah_kambing ?? 0 },
-                    ].map((s) => (
-                        <div key={s.label} className="bg-gray-50 rounded-lg p-2 border border-gray-100">
-                            <div className="text-xs text-gray-400">{s.label}</div>
-                            <div className="font-bold text-gray-700 text-sm">{s.val}</div>
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
+                        <div className="bg-orange-700 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+                            <h2 className="text-base font-bold text-white">
+                                Kode QR Penerima
+                            </h2>
+                            <button
+                                onClick={() => setDetailData(null)}
+                                className="text-white/80 hover:text-white"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
-                    ))}
-                </div>
-                <div className={`w-full text-center py-2 rounded-lg text-xs font-semibold border ${STATUS_CONFIG[detailData.status]?.bg} ${STATUS_CONFIG[detailData.status]?.text} ${STATUS_CONFIG[detailData.status]?.border}`}>
-                    {STATUS_CONFIG[detailData.status]?.label}
-                </div>
+                        <div className="p-6 flex flex-col items-center gap-4">
+                            <QRImage kode={detailData.kode_unik} />
+                            <div className="text-center">
+                                <p className="font-bold text-gray-800 text-base">
+                                    {detailData.nama}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-0.5">
+                                    RT {detailData.rt} / RW {detailData.rw}
+                                </p>
+                                <p className="text-xs font-mono text-gray-400 mt-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 break-all">
+                                    {detailData.kode_unik}
+                                </p>
+                            </div>
+                            <div className="w-full grid grid-cols-3 gap-2 text-center">
+                                {[
+                                    { label: "Jiwa",    val: detailData.jiwa },
+                                    { label: "Sapi",    val: detailData.jatah_sapi ?? 0 },
+                                    { label: "Kambing", val: detailData.jatah_kambing ?? 0 },
+                                ].map((s) => (
+                                    <div key={s.label} className="bg-gray-50 rounded-lg p-2 border border-gray-100">
+                                        <div className="text-xs text-gray-400">{s.label}</div>
+                                        <div className="font-bold text-gray-700 text-sm">{s.val}</div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={`w-full text-center py-2 rounded-lg text-xs font-semibold border ${STATUS_CONFIG[detailData.status]?.bg} ${STATUS_CONFIG[detailData.status]?.text} ${STATUS_CONFIG[detailData.status]?.border}`}>
+                                {STATUS_CONFIG[detailData.status]?.label}
+                            </div>
 
-                {/* ── Tombol Print Surat Keterangan ── */}
-                <button
-                    onClick={() =>
-                        window.open(
-                            `/qurban/input/qurban/surat-keterangan/${detailData.id}`,
-                            "_blank"
-                        )
-                    }
-                    className="w-full flex items-center justify-center gap-2 bg-orange-700 hover:bg-orange-800 text-white rounded-xl py-2.5 text-sm font-semibold transition shadow-sm"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Cetak Surat Keterangan
-                </button>
-            </div>
-        </div>
-    </div>
-)}
+                            {/* ── Tombol Print Surat Keterangan ── */}
+                            <button
+                                onClick={() =>
+                                    window.open(
+                                        `/qurban/input/qurban/surat-keterangan/${detailData.id}`,
+                                        "_blank"
+                                    )
+                                }
+                                className="w-full flex items-center justify-center gap-2 bg-orange-700 hover:bg-orange-800 text-white rounded-xl py-2.5 text-sm font-semibold transition shadow-sm"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                                Cetak Surat Keterangan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Confirm Save Jatah */}
             {isConfirmSaveOpen && (

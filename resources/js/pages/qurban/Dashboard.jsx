@@ -32,14 +32,14 @@ export default function Dashboard({
                 <div className="grid grid-cols-2 gap-3 mb-3">
                     <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-9 h-9 rounded-lg bg-yellow-200 flex items-center justify-center text-lg">
-                                🐄
+                            <div className="w-9 h-9 rounded-lg bg-yellow-200 flex items-center justify-center text-lg font-semibold">
+                                {jumlahSapi}
                             </div>
                             <div>
                                 <p className="text-xs font-semibold text-yellow-700 uppercase tracking-wide leading-tight">
                                     Bungkus Sapi
                                 </p>
-                                <p className="text-xs text-yellow-500">{jumlahSapi} ekor sapi</p>
+                                <p className="text-xs text-yellow-500"> ekor sapi</p>
                             </div>
                         </div>
                         <div className="border-t border-yellow-200 pt-2 text-center">
@@ -50,14 +50,14 @@ export default function Dashboard({
 
                     <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-9 h-9 rounded-lg bg-blue-200 flex items-center justify-center text-lg">
-                                🐑
+                            <div className="w-9 h-9 rounded-lg bg-blue-200 flex items-center justify-center text-lg font-semibold">
+                                {jumlahKambing}
                             </div>
                             <div>
                                 <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide leading-tight">
                                     Bungkus Kambing
                                 </p>
-                                <p className="text-xs text-blue-500">{jumlahKambing} ekor kambing</p>
+                                <p className="text-xs text-blue-500">ekor kambing</p>
                             </div>
                         </div>
                         <div className="border-t border-blue-200 pt-2 text-center">
