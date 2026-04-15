@@ -8,6 +8,9 @@ export default function SettingQurban({ setting = null }) {
     const [form, setForm] = useState({
         jual_kulit:          setting?.jual_kulit          ?? '',
         operasional_kambing: setting?.operasional_kambing ?? '',
+        tanggal_pengambilan: setting?.tanggal_pengambilan ?? '',
+        waktu_pengambilan:   setting?.waktu_pengambilan ?? '',
+        tempat_pengambilan:  setting?.tempat_pengambilan ?? '',
     });
 
     const [errors, setErrors]   = useState({});
@@ -24,6 +27,9 @@ export default function SettingQurban({ setting = null }) {
             err.jual_kulit = 'Wajib diisi dan harus angka';
         if (form.operasional_kambing === '' || isNaN(form.operasional_kambing))
             err.operasional_kambing = 'Wajib diisi dan harus angka';
+        if (!form.tanggal_pengambilan) err.tanggal_pengambilan = 'Wajib diisi';
+        if (!form.waktu_pengambilan) err.waktu_pengambilan = 'Wajib diisi';
+        if (!form.tempat_pengambilan) err.tempat_pengambilan = 'Wajib diisi';
         setErrors(err);
         return Object.keys(err).length === 0;
     };
@@ -45,7 +51,7 @@ export default function SettingQurban({ setting = null }) {
         router.post(`/qurban/input/setting/${setting.id}/destroy`, {}, {
             onSuccess: () => {
                 setConfirm(false);
-                setForm({ jual_kulit: '', operasional_kambing: '' });
+                setForm({ jual_kulit: '', operasional_kambing: '', tanggal_pengambilan: '', waktu_pengambilan: '', tempat_pengambilan: '' });
             },
         });
     };
@@ -62,7 +68,7 @@ export default function SettingQurban({ setting = null }) {
             <div className="bg-orange-700 rounded-2xl px-6 py-5 mb-6 text-white">
                 <h1 className="text-xl font-bold">Setting Qurban</h1>
                 <p className="text-orange-100 text-sm mt-1">
-                    Penjualan Kulit dan operasional pelaksanaan qurban.
+                    Pengaturan nilai qurban dan jadwal & tempat pengambilan daging.
                 </p>
             </div>
 
@@ -79,10 +85,12 @@ export default function SettingQurban({ setting = null }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* ── Form Card ── */}
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                            <h2 className="font-semibold text-gray-800 pl-1">Data Keuangan Qurban</h2>
+                        </div>
                         <div className="p-6 space-y-5">
-
                             {/* Jual Kulit */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
@@ -140,7 +148,76 @@ export default function SettingQurban({ setting = null }) {
                                     Total biaya operasional pemotongan dan distribusi kambing.
                                 </p>
                             </div>
+                        </div>
+                    </div>
 
+                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                            <h2 className="font-semibold text-gray-800 pl-1">Jadwal & Tempat Pengambilan</h2>
+                        </div>
+                        <div className="p-6 space-y-5">
+                            <div>
+                                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
+                                    Tanggal Pengambilan <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="tanggal_pengambilan"
+                                    value={form.tanggal_pengambilan}
+                                    onChange={handleChange}
+                                    placeholder="contoh: Rabu, 27 Mei 2026"
+                                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition ${
+                                        errors.tanggal_pengambilan
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-200 focus:border-orange-400'
+                                    }`}
+                                />
+                                {errors.tanggal_pengambilan && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.tanggal_pengambilan}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
+                                    Waktu / Jam Pengambilan <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="waktu_pengambilan"
+                                    value={form.waktu_pengambilan}
+                                    onChange={handleChange}
+                                    placeholder="contoh: 15.00 - 16.30 WIB"
+                                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition ${
+                                        errors.waktu_pengambilan
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-200 focus:border-orange-400'
+                                    }`}
+                                />
+                                {errors.waktu_pengambilan && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.waktu_pengambilan}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
+                                    Tempat Pengambilan <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="tempat_pengambilan"
+                                    value={form.tempat_pengambilan}
+                                    onChange={handleChange}
+                                    placeholder="contoh: Masjid Al-Anhar Dalem Mangunjayan"
+                                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition ${
+                                        errors.tempat_pengambilan
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-200 focus:border-orange-400'
+                                    }`}
+                                />
+                                {errors.tempat_pengambilan && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.tempat_pengambilan}</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Footer Buttons */}
@@ -202,6 +279,12 @@ export default function SettingQurban({ setting = null }) {
                             <div className="border-t border-gray-100 pt-4">
                                 <p className="text-xs text-gray-400 mb-0.5">Biaya Operasional Kambing</p>
                                 <p className="text-lg font-bold text-green-700">{fmt(form.operasional_kambing)}</p>
+                            </div>
+                            <div className="border-t border-gray-100 pt-4">
+                                <p className="text-xs text-gray-400 mb-0.5">Pengambilan</p>
+                                <p className="text-sm font-semibold text-gray-800">{form.tanggal_pengambilan || '-'}</p>
+                                <p className="text-sm text-gray-600">{form.waktu_pengambilan || '-'}</p>
+                                <p className="text-sm text-gray-600">{form.tempat_pengambilan || '-'}</p>
                             </div>
                         </div>
                     </div>

@@ -17,10 +17,12 @@ class PenerimaqurbanController extends Controller
         $data = Penerimaqurban::latest()->get();
         // pass the configs collection as is so we can filter by kategori
         $configs = \App\Models\Jatahconfigqurban::all();
+        $setting = \App\Models\Settingqurban::first();
 
         return Inertia::render('qurban/PenerimaQurban', [
             'penerimas' => $data,
-            'configs' => $configs
+            'configs' => $configs,
+            'setting' => $setting
         ]);
     }
 

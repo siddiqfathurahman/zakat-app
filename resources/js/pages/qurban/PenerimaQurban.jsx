@@ -24,7 +24,7 @@ const STATUS_CONFIG = {
     },
 };
 
-export default function PenerimaQurban({ penerimas = [], configs = {} }) {
+export default function PenerimaQurban({ penerimas = [], configs = {}, setting = null }) {
     const { flash } = usePage().props;
 
     // ─── State ───
@@ -491,7 +491,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {} }) {
 
             {/* Filter */}
 <div className="flex justify-end gap-2">
-    <CetakKuponButton penerimas={penerimas} />
+    <CetakKuponButton penerimas={penerimas} setting={setting} />
 </div>
             <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
                 <div className="flex flex-wrap gap-3 items-end">

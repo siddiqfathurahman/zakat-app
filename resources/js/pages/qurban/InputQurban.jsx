@@ -163,12 +163,6 @@ export default function InputQurban() {
                     <p className="text-gray-600 mb-5">
                         Scan QR Code atau cari data penerima / shohibul Qurban
                     </p>
-                    <a
-                        href="/qurban/input/dashboard"
-                        className="bg-orange-600  hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg"
-                    >
-                        Dashboard
-                    </a>
                 </div>
 
                 {/* Search Bar */}
@@ -303,6 +297,14 @@ export default function InputQurban() {
                         </button>
                     </div>
                 )}
+                <div className="flex justify-center">
+                    <a
+                        href="/qurban/input/dashboard"
+                        className="bg-orange-600  hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg"
+                    >
+                        Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     );

@@ -11,5 +11,8 @@ class Settingqurban extends Model
     protected $fillable = [
         'jual_kulit',
         'operasional_kambing',
+        'tanggal_pengambilan',
+        'waktu_pengambilan',
+        'tempat_pengambilan',
     ];
 }

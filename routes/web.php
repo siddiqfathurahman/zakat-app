@@ -111,8 +111,10 @@ Route::prefix('qurban')->group(function () {
 
         Route::get('/qurban/surat-keterangan/{id}', function ($id) {
             $penerima = \App\Models\PenerimaQurban::findOrFail($id);
+            $setting = \App\Models\Settingqurban::first();
             return inertia('qurban/SuratKeterangan', [
                 'penerima' => $penerima,
+                'setting' => $setting
             ]);
         })->name('qurban.surat-keterangan');
 

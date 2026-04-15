@@ -40,7 +40,7 @@ async function genQR(text, color) {
 }
 
 // ─── Gambar satu kupon ke canvas jsPDF ───────────────────────────────────────
-async function drawKupon(doc, row, x, y) {
+async function drawKupon(doc, row, x, y, setting) {
     const c = getRwColor(row.rw);
 
     // --- Background card ---
@@ -64,10 +64,16 @@ async function drawKupon(doc, row, x, y) {
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(6.5);
-    doc.text("Rabu, 27 Mei 2026   |   15.00 – 16.30 WIB", x + CARD_W / 2, y + 10.5, { align: "center" });
+    
+    // Dynamic Jadwal
+    const tgl = setting?.tanggal_pengambilan || "Rabu, 27 Mei 2026";
+    const wkt = setting?.waktu_pengambilan || "15.00 - 16.30 WIB";
+    doc.text(`${tgl}   |   ${wkt}`, x + CARD_W / 2, y + 10.5, { align: "center" });
 
     doc.setFontSize(6);
-    doc.text("Tempat : Dalem Mangunjayan", x + CARD_W / 2, y + 15, { align: "center" });
+    // Dynamic Tempat
+    const tpt = setting?.tempat_pengambilan || "Dalem Mangunjayan";
+    doc.text(`Tempat : ${tpt}`, x + CARD_W / 2, y + 15, { align: "center" });
 
     // --- QR Code ---
     const qrImg = await genQR(row.kode_unik, c);
@@ -136,7 +142,7 @@ async function drawKupon(doc, row, x, y) {
 }
 
 // ─── Main: generate semua halaman ────────────────────────────────────────────
-async function generatePDF(penerimas, onProgress) {
+async function generatePDF(penerimas, onProgress, setting) {
     const doc = new jsPDF({ unit: "mm", format: [PAGE_W, PAGE_H], orientation: "portrait" });
 
     let col = 0;
@@ -157,7 +163,7 @@ async function generatePDF(penerimas, onProgress) {
         const x = MARGIN + posCol * (CARD_W + GAP_X);
         const y = MARGIN + posRow * (CARD_H + GAP_Y);
 
-        await drawKupon(doc, penerimas[i], x, y);
+        await drawKupon(doc, penerimas[i], x, y, setting);
 
         if (onProgress) onProgress(Math.round(((i + 1) / penerimas.length) * 100));
     }
@@ -166,7 +172,7 @@ async function generatePDF(penerimas, onProgress) {
 }
 
 // ─── Komponen ─────────────────────────────────────────────────────────────────
-export default function CetakKuponButton({ penerimas = [] }) {
+export default function CetakKuponButton({ penerimas = [], setting = null }) {
     const [isGenerating, setIsGenerating] = useState(false);
     const [progress, setProgress]         = useState(0);
     const [filterRw, setFilterRw]         = useState("all");
@@ -188,7 +194,7 @@ export default function CetakKuponButton({ penerimas = [] }) {
         setProgress(0);
 
         try {
-            const doc = await generatePDF(filtered, setProgress);
+            const doc = await generatePDF(filtered, setProgress, setting);
             const suffix = filterRw === "all" ? "semua" : `rw${filterRw}`;
             doc.save(`kupon-qurban-${suffix}.pdf`);
         } catch (err) {

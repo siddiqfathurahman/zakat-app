@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-export default function SuratKeterangan({ penerima }) {
+export default function SuratKeterangan({ penerima, setting }) {
     useEffect(() => {
         // Auto trigger print dialog saat halaman terbuka
         window.print();
@@ -306,7 +306,7 @@ Panitia Pelaksana Qurban Masjid Al-Anhar 1447 H dengan ini menyatakan bahwa nama
                 <div className="keterangan-title">Ketentuan Pengambilan :</div>
                 <ol className="keterangan-list">
                     <li>
-                        Pengambilan daging qurban dilaksanakan pada <strong>Rabu, 27 Mei 2026</strong> pukul <strong>15.00 – 16.30 WIB</strong> di <strong>Dalem Mangunjayan</strong>.
+                        Pengambilan daging qurban dilaksanakan pada <strong>{setting?.tanggal_pengambilan || '-'}</strong> pukul <strong>{setting?.waktu_pengambilan || '-'}</strong> di <strong>{setting?.tempat_pengambilan || '-'}</strong>.
                     </li>
                     <li>
                         QR Code pada surat ini akan <strong>dipindai oleh petugas</strong> sebagai bukti pengambilan yang sah.
