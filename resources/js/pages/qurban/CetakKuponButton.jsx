@@ -2,21 +2,18 @@ import React, { useState } from "react";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-// ─── Konstanta ukuran ─────────────────────────────────────────────────────────
-const CARD_W = 100;   // mm
-const CARD_H = 60;    // mm
-const PAGE_W = 329;   // mm  A3+
-const PAGE_H = 483;   // mm  A3+
-const MARGIN = 10;    // mm  margin kiri/atas
-const GAP_X  = 4;    // mm  jarak antar kupon horizontal
-const GAP_Y  = 4;    // mm  jarak antar kupon vertikal
+const CARD_W = 100;
+const CARD_H = 60;
+const PAGE_W = 329;
+const PAGE_H = 483;
+const MARGIN = 10;
+const GAP_X  = 0;
+const GAP_Y  = 0;
 
-// Berapa kupon per baris & kolom
-const COLS = Math.floor((PAGE_W - MARGIN * 2 + GAP_X) / (CARD_W + GAP_X)); // = 3
-const ROWS = Math.floor((PAGE_H - MARGIN * 2 + GAP_Y) / (CARD_H + GAP_Y)); // = 7
-const PER_PAGE = COLS * ROWS; // = 21
+const COLS = Math.floor((PAGE_W - MARGIN * 2 + GAP_X) / (CARD_W + GAP_X));
+const ROWS = Math.floor((PAGE_H - MARGIN * 2 + GAP_Y) / (CARD_H + GAP_Y));
+const PER_PAGE = COLS * ROWS;
 
-// ─── Peta warna per RW ───────────────────────────────────────────────────────
 const RW_COLORS = {
     "11": { header: [180, 30, 30],  light: [254, 226, 226], border: [220, 50,  50],  accent: [200, 40,  40]  },
     "12": { header: [30,  80,  180], light: [219, 234, 254], border: [59,  130, 246], accent: [37,  99,  235] },
@@ -29,132 +26,120 @@ function getRwColor(rw) {
     return RW_COLORS[key] || RW_COLORS["default"];
 }
 
-// ─── Helper: generate QR sebagai dataURL ─────────────────────────────────────
-async function genQR(text, color) {
-    const hex = (c) => "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+async function genQR(text) {
+    // QR selalu hitam
     return await QRCode.toDataURL(text, {
         width: 200,
         margin: 1,
-        color: { dark: hex(color.accent), light: "#FFFFFF" },
+        color: { dark: "#000000", light: "#FFFFFF" },
     });
 }
 
-// ─── Gambar satu kupon ke canvas jsPDF ───────────────────────────────────────
 async function drawKupon(doc, row, x, y, setting) {
     const c = getRwColor(row.rw);
 
-    // --- Background card ---
+    // --- Background card — TANPA rounded (rx=0) ---
     doc.setFillColor(...c.light);
     doc.setDrawColor(...c.border);
     doc.setLineWidth(0.4);
-    doc.roundedRect(x, y, CARD_W, CARD_H, 3, 3, "FD");
+    doc.rect(x, y, CARD_W, CARD_H, "FD"); // pakai rect biasa, bukan roundedRect
 
-    // --- Header strip ---
+    // --- Header strip — TANPA rounded ---
     doc.setFillColor(...c.header);
-    doc.roundedRect(x, y, CARD_W, 18, 3, 3, "F");
-    // tutup sudut bawah header agar lurus
-    doc.rect(x, y + 15, CARD_W, 3, "F");
+    doc.rect(x, y, CARD_W, 18, "F");
 
     // Teks header
     doc.setTextColor(255, 255, 255);
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8.5);
+    doc.setFontSize(8);
     doc.text("KUPON PENGAMBILAN DAGING QURBAN", x + CARD_W / 2, y + 5.5, { align: "center" });
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(6.5);
-    
-    // Dynamic Jadwal
     const tgl = setting?.tanggal_pengambilan || "Rabu, 27 Mei 2026";
     const wkt = setting?.waktu_pengambilan || "15.00 - 16.30 WIB";
-    doc.text(`${tgl}   |   ${wkt}`, x + CARD_W / 2, y + 10.5, { align: "center" });
+    doc.text(`${tgl}   |   ${wkt}`, x + CARD_W / 2, y + 11, { align: "center" });
 
-    doc.setFontSize(6);
-    // Dynamic Tempat
+    doc.setFontSize(5.8);
     const tpt = setting?.tempat_pengambilan || "Dalem Mangunjayan";
-    doc.text(`Tempat : ${tpt}`, x + CARD_W / 2, y + 15, { align: "center" });
+    doc.text(`Tempat: ${tpt}`, x + CARD_W / 2, y + 15.5, { align: "center" });
 
-    // --- QR Code ---
-    const qrImg = await genQR(row.kode_unik, c);
+    // --- QR Code (hitam) ---
+    const qrImg = await genQR(row.kode_unik);
     const qrSize = 26;
     const qrX = x + 5;
     const qrY = y + 21;
     doc.addImage(qrImg, "PNG", qrX, qrY, qrSize, qrSize);
 
-    // Garis pembatas tipis di kanan QR
+    // Garis pembatas
     doc.setDrawColor(...c.border);
     doc.setLineWidth(0.2);
-    doc.line(x + 36, y + 21, x + 36, y + 53);
+    doc.line(x + 36, y + 21, x + 36, y + 57);
 
     // --- Konten kanan ---
-    const cx = x + 40; // content x start
+    const cx = x + 40;
+    const maxNameW = CARD_W - 40 - 4;
 
-    // Nama
+    // Nama — bold, warna header
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(10.5);
+    doc.setFontSize(10);
     doc.setTextColor(...c.header);
 
-    // Truncate nama jika terlalu panjang
-    const maxNameW = CARD_W - 40 - 4;
     let nama = row.nama;
     while (doc.getTextWidth(nama) > maxNameW && nama.length > 1) {
         nama = nama.slice(0, -1);
     }
     if (nama !== row.nama) nama += "…";
+    doc.text(nama, cx, y + 27);
 
-    doc.text(nama, cx, y + 28);
-
-    // RT/RW
+    // RT/RW — normal, abu gelap
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
+    doc.setFontSize(7.5);
     doc.setTextColor(60, 60, 60);
-    doc.text(`RT ${String(row.rt).padStart(2, "0")} / RW ${String(row.rw).padStart(2, "0")}`, cx, y + 35);
+    doc.text(`RT ${String(row.rt).padStart(2, "0")} / RW ${String(row.rw).padStart(2, "0")}`, cx, y + 34);
 
-    // Kode unik — kotak kecil dengan background
+    // Kode unik — kotak penuh dengan rounded di dalam
     doc.setFillColor(...c.accent);
-    doc.roundedRect(cx, y + 38, maxNameW, 6, 1, 1, "F");
+    doc.roundedRect(cx, y + 37, maxNameW, 6, 1, 1, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(6);
     doc.setTextColor(255, 255, 255);
-    doc.text(row.kode_unik, cx + maxNameW / 2, y + 42.3, { align: "center" });
+    doc.text(row.kode_unik, cx + maxNameW / 2, y + 41.3, { align: "center" });
 
-    // Label jiwa
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(6.5);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Jumlah Jiwa : ${row.jiwa}`, cx, y + 50);
+    // JIWA : label bold + angka
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...c.header);
+    doc.text("JIWA :", cx, y + 49);
 
-    // --- Ornamen sudut kanan bawah (segitiga dekoratif) ---
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...c.accent);
+    doc.text(String(row.jiwa), cx + 13, y + 49);
+
+    // Kalimat peringatan di bawah
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(5);
+    doc.setTextColor(120, 120, 120);
+    doc.text("*jaga kupon jangan sampai rusak / lecek", cx, y + 55.5);
+
+    // --- Ornamen sudut kanan bawah ---
     doc.setFillColor(...c.border);
-    // Segitiga kecil di pojok kanan bawah
     doc.triangle(
         x + CARD_W - 10, y + CARD_H,
         x + CARD_W,      y + CARD_H - 10,
         x + CARD_W,      y + CARD_H,
         "F"
     );
-
-    // Nomor urut kecil di pojok kiri bawah
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(5);
-    doc.setTextColor(...c.border);
 }
 
-// ─── Main: generate semua halaman ────────────────────────────────────────────
 async function generatePDF(penerimas, onProgress, setting) {
     const doc = new jsPDF({ unit: "mm", format: [PAGE_W, PAGE_H], orientation: "portrait" });
-
-    let col = 0;
-    let row_idx = 0;
-    let pageNum = 0;
 
     for (let i = 0; i < penerimas.length; i++) {
         if (i > 0 && i % PER_PAGE === 0) {
             doc.addPage([PAGE_W, PAGE_H]);
-            col = 0;
-            row_idx = 0;
-            pageNum++;
         }
 
         const posCol = i % PER_PAGE % COLS;
@@ -171,7 +156,6 @@ async function generatePDF(penerimas, onProgress, setting) {
     return doc;
 }
 
-// ─── Komponen ─────────────────────────────────────────────────────────────────
 export default function CetakKuponButton({ penerimas = [], setting = null }) {
     const [isGenerating, setIsGenerating] = useState(false);
     const [progress, setProgress]         = useState(0);
@@ -192,7 +176,6 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
         if (filtered.length === 0) return;
         setIsGenerating(true);
         setProgress(0);
-
         try {
             const doc = await generatePDF(filtered, setProgress, setting);
             const suffix = filterRw === "all" ? "semua" : `rw${filterRw}`;
@@ -208,7 +191,6 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {/* Filter RW */}
             <select
                 value={filterRw}
                 onChange={(e) => setFilterRw(e.target.value)}
@@ -229,7 +211,6 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
                 ))}
             </select>
 
-            {/* Tombol Download */}
             <button
                 onClick={handleDownload}
                 disabled={isGenerating || filtered.length === 0}
@@ -252,11 +233,8 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
             >
                 {isGenerating ? (
                     <>
-                        {/* Spinner */}
-                        <svg
-                            style={{ animation: "spin 1s linear infinite", width: 15, height: 15 }}
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        >
+                        <svg style={{ animation: "spin 1s linear infinite", width: 15, height: 15 }}
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M12 3v1m0 16v1m8.66-10h-1M4.34 12h-1m14.95 6.36-.7-.7M6.4 6.4l-.7-.7m12.02 0-.7.7M6.4 17.6l-.7.7" />
@@ -265,7 +243,6 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
                     </>
                 ) : (
                     <>
-                        {/* Download icon */}
                         <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -285,4 +262,4 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
             </button>
         </div>
     );
-}
+}   
