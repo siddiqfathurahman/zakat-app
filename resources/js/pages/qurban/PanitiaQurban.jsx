@@ -46,6 +46,17 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
     const [page, setPage] = useState(1);
     const PER = 10;
 
+    const rtRwData = [
+        { rt: "48", rw: "11" },
+        { rt: "49", rw: "11" },
+        { rt: "50", rw: "11" },
+        { rt: "51", rw: "12" },
+        { rt: "52", rw: "12" },
+        { rt: "53", rw: "12" },
+        { rt: "56", rw: "13" },
+        { rt: "57", rw: "13" },
+    ];
+
     // ─── Stats ───
     const stats = useMemo(() => {
         const totalJobdesk = new Set(panitiaqurbans.map(r => r.jabatan)).size;
@@ -468,21 +479,41 @@ export default function PanitiaQurban({ panitiaqurbans = [] }) {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="text-xs font-medium text-gray-600 mb-1 block">RT <span className="text-red-500">*</span></label>
-                                    <input
+                                    <select
                                         value={form.rt}
-                                        onChange={e => setForm(f => ({ ...f, rt: e.target.value }))}
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
-                                        placeholder="01"
-                                    />
+                                        onChange={e => {
+                                            const selectedRt = e.target.value;
+                                            const match = rtRwData.find(item => item.rt === selectedRt);
+                                            setForm(f => ({
+                                                ...f,
+                                                rt: selectedRt,
+                                                rw: match ? match.rw : f.rw,
+                                            }));
+                                        }}
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 bg-white"
+                                    >
+                                        <option value="">Pilih RT...</option>
+                                        {rtRwData.map(item => (
+                                            <option key={item.rt} value={item.rt}>{item.rt}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-gray-600 mb-1 block">RW <span className="text-red-500">*</span></label>
-                                    <input
+                                    <select
                                         value={form.rw}
                                         onChange={e => setForm(f => ({ ...f, rw: e.target.value }))}
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200"
-                                        placeholder="02"
-                                    />
+                                        disabled={!!form.rt}
+                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 bg-white disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="">Pilih RW...</option>
+                                        {rtRwData.map(item => (
+                                            <option key={item.rw} value={item.rw}>{item.rw}</option>
+                                        ))}
+                                    </select>
+                                    {form.rt && (
+                                        <p className="text-xs text-gray-400 mt-1">Otomatis dari RT</p>
+                                    )}
                                 </div>
                             </div>
                             <div>
