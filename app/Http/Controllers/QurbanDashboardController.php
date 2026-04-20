@@ -31,10 +31,25 @@ class QurbanDashboardController extends Controller
             ->get();
 
         $rtDataFormatted = $rtData->map(function ($item) {
+            $rtNumber = $item->rt;
+
+            // Semua penerima di RT ini
+            $allPenerima = Penerimaqurban::where('rt', $rtNumber)
+                ->orderBy('nama')
+                ->get(['nama', 'status', 'jatah_sapi', 'jatah_kambing']);
+
+            $sudahAmbil = $allPenerima->filter(fn($p) => in_array($p->status, ['claimed', 'shohibul']))->values();
+            $belumAmbil = $allPenerima->filter(fn($p) => !in_array($p->status, ['claimed', 'shohibul']))->values();
+
             return [
-                'rt' => 'RT ' . $item->rt,
-                'sapi' => (int) $item->sapi,
-                'kambing' => (int) $item->kambing,
+                'rt'             => 'RT ' . $rtNumber,
+                'sapi'           => (int) $item->sapi,
+                'kambing'        => (int) $item->kambing,
+                'total'          => $allPenerima->count(),
+                'sudahAmbil'     => $sudahAmbil->count(),
+                'belumAmbil'     => $belumAmbil->count(),
+                'listSudah'      => $sudahAmbil->map(fn($p) => ['nama' => $p->nama, 'sapi' => $p->jatah_sapi, 'kambing' => $p->jatah_kambing]),
+                'listBelum'      => $belumAmbil->map(fn($p) => ['nama' => $p->nama, 'sapi' => $p->jatah_sapi, 'kambing' => $p->jatah_kambing]),
             ];
         });
 
