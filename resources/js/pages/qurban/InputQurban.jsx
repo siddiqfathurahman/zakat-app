@@ -157,11 +157,11 @@ export default function InputQurban() {
             <div className="max-w-3xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Scanner Qurban
+                    <h1 className="text-2xl font-bold text-black">
+                        Scanner Kupon Qurban
                     </h1>
                     <p className="text-gray-600 mb-5">
-                        Scan QR Code atau cari data penerima / shohibul Qurban
+                        Scan QR Code atau cari data penerima
                     </p>
                 </div>
 
@@ -215,53 +215,53 @@ export default function InputQurban() {
                     <div
                         className={`border-2 rounded-xl p-6 shadow-lg transition-all ${getResultBoxStyle(scanResult.status)}`}
                     >
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex justify-center items-start text-center mb-4">
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-800 mb-1">
+                                <h3 className="text-2xl font-bold text-black mb-1">
                                     {scanResult.nama}
                                 </h3>
                                 <p className="text-gray-600 font-medium">
                                     RT {scanResult.rt} / RW {scanResult.rw}
                                 </p>
-                                <p className="text-sm font-mono mt-1 text-gray-500">
+                                <p className="text-sm font-mono mt-1 text-black">
                                     {scanResult.kode_unik}
                                 </p>
                             </div>
-                            <span
+                            {/* <span
                                 className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide ${getBadgeStyle(scanResult.status)}`}
                             >
                                 {getStatusText(scanResult.status)}
-                            </span>
+                            </span> */}
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 mt-6">
-                            <div className="bg-white/60 p-4 rounded-lg text-center border border-white">
-                                <p className="text-sm text-gray-500 mb-1">
-                                    Jumlah Jiwa
+                            <div className="col-span-2 md:col-span-1 bg-white/60 p-4 rounded-lg text-center border border-white">
+                                <p className="text-lg text-black mb-1">
+                                    Jiwa
                                 </p>
-                                <p className="text-3xl font-bold text-gray-800">
+                                <p className="text-4xl font-bold text-black">
                                     {scanResult.jiwa}
                                 </p>
                             </div>
+
                             <div className="bg-white/60 p-4 rounded-lg text-center border border-white">
-                                <p className="text-sm text-gray-500 mb-1">
-                                    Jatah Sapi
+                                <p className="text-lg text-black mb-1">
+                                    Sapi
                                 </p>
-                                <p className="text-3xl font-bold text-gray-800">
-                                    {" "}
+                                <p className="text-4xl font-bold text-black">
                                     {scanResult.jatah_sapi ?? 0}
                                 </p>
                             </div>
+
                             <div className="bg-white/60 p-4 rounded-lg text-center border border-white">
-                                <p className="text-sm text-gray-500 mb-1">
-                                    Jatah Kambing
+                                <p className="text-lg text-black mb-1">
+                                    Kambing
                                 </p>
-                                <p className="text-3xl font-bold text-gray-800">
-                                    {" "}
+                                <p className="text-4xl font-bold text-black">
                                     {scanResult.jatah_kambing ?? 0}
                                 </p>
                             </div>
-                        </div>
+                        </div>  
 
                         {/* Action Button: only when pending */}
                         {scanResult.status === "pending" && (
@@ -272,14 +272,13 @@ export default function InputQurban() {
                             >
                                 {isLoading
                                     ? "Memproses..."
-                                    : "Tandai Sudah Diambil"}
+                                    : "Sudah Diambil"}
                             </button>
                         )}
 
                         {scanResult.status === "claimed" && (
                             <div className="text-center font-bold text-red-600 bg-red-100 py-3 rounded-lg">
-                                Data ini sudah diklaim dan tidak dapat diambil
-                                kembali
+                                Kupon Sudah Di Ambil
                             </div>
                         )}
 
@@ -297,7 +296,7 @@ export default function InputQurban() {
                         </button>
                     </div>
                 )}
-                <div className="flex justify-center">
+                <div className="flex justify-center opacity-20">
                     <a
                         href="/qurban/input/dashboard"
                         className="bg-orange-600  hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg"
