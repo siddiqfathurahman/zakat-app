@@ -11,6 +11,34 @@ export default function InputQurban() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const scannerRef = useRef(null);
+    const resultRef = useRef(null);
+
+    // Tambahkan fungsi ini di dalam component, sebelum handleScanKode
+    const playBeepAndVibrate = () => {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = "square";
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        } catch (e) {
+            console.warn("Audio tidak didukung:", e);
+        }
+
+        // Getar (hanya mobile)
+        if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]);
+        }
+    };
 
     useEffect(() => {
         const scanner = new Html5QrcodeScanner(
@@ -60,6 +88,11 @@ export default function InputQurban() {
 
             const data = await response.json();
             setScanResult(data);
+            playBeepAndVibrate();
+
+            setTimeout(() => {
+                resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
         } catch (err) {
             setScanResult(null);
             setErrorMsg(err.message);
@@ -213,6 +246,7 @@ export default function InputQurban() {
                 {/* Scan Result */}
                 {scanResult && (
                     <div
+                        ref={resultRef}
                         className={`border-2 rounded-xl p-6 shadow-lg transition-all ${getResultBoxStyle(scanResult.status)}`}
                     >
                         <div className="flex justify-center items-start text-center mb-4">
