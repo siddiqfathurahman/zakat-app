@@ -7,8 +7,8 @@ const CARD_H = 60;
 const PAGE_W = 329;
 const PAGE_H = 483;
 const MARGIN = 10;
-const GAP_X  = 0;
-const GAP_Y  = 0;
+const GAP_X  = 1;
+const GAP_Y  = 1;
 
 const COLS = Math.floor((PAGE_W - MARGIN * 2 + GAP_X) / (CARD_W + GAP_X));
 const ROWS = Math.floor((PAGE_H - MARGIN * 2 + GAP_Y) / (CARD_H + GAP_Y));
@@ -192,7 +192,7 @@ export default function CetakKuponButton({ penerimas = [], setting = null }) {
     return (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <select
-                value={filterRw}
+                value={filterRw}                    
                 onChange={(e) => setFilterRw(e.target.value)}
                 disabled={isGenerating}
                 style={{

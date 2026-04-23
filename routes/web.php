@@ -156,7 +156,7 @@ Route::prefix('qurban')->group(function () {
 
         // scanner
         Route::get('/scan/{kode}', [PenerimaqurbanController::class, 'scan']);
-        Route::post('/claim/{kode}', [PenerimaqurbanController::class, 'claim']);
+        Route::post('/claim/{kode}', [PenerimaqurbanController::class, 'claim']);   
 
         // setting qurban
         Route::get('/setting', [SettingqurbanController::class, 'index'])->name('setting.index');
