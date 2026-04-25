@@ -38,41 +38,38 @@ async function genQR(text) {
 async function drawKupon(doc, row, x, y, setting) {
     const c = getRwColor(row.rw);
 
-    // --- Background card — TANPA rounded (rx=0) ---
+    // --- Background card ---
     doc.setFillColor(...c.light);
     doc.setDrawColor(...c.border);
     doc.setLineWidth(0.4);
-    doc.rect(x, y, CARD_W, CARD_H, "FD"); // pakai rect biasa, bukan roundedRect
+    doc.rect(x, y, CARD_W, CARD_H, "FD");
 
-    // --- Header strip — TANPA rounded ---
+    // --- Header ---
     doc.setFillColor(...c.header);
     doc.rect(x, y, CARD_W, 18, "F");
 
-    // Teks header
     doc.setTextColor(255, 255, 255);
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
+    doc.setFontSize(12);
     doc.text("KUPON PENGAMBILAN DAGING QURBAN", x + CARD_W / 2, y + 5.5, { align: "center" });
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(6.5);
+    doc.setFontSize(8);
     const tgl = setting?.tanggal_pengambilan || "Rabu, 27 Mei 2026";
     const wkt = setting?.waktu_pengambilan || "15.00 - 16.30 WIB";
     doc.text(`${tgl}   |   ${wkt}`, x + CARD_W / 2, y + 11, { align: "center" });
 
-    doc.setFontSize(5.8);
     const tpt = setting?.tempat_pengambilan || "Dalem Mangunjayan";
     doc.text(`Tempat: ${tpt}`, x + CARD_W / 2, y + 15.5, { align: "center" });
 
-    // --- QR Code (hitam) ---
+    // --- QR Code ---
     const qrImg = await genQR(row.kode_unik);
-    const qrSize = 26;
-    const qrX = x + 5;
-    const qrY = y + 21;
+    const qrSize = 30;
+    const qrX = x + 3;
+    const qrY = y + 24;
     doc.addImage(qrImg, "PNG", qrX, qrY, qrSize, qrSize);
 
-    // Garis pembatas
+    // --- Divider ---
     doc.setDrawColor(...c.border);
     doc.setLineWidth(0.2);
     doc.line(x + 36, y + 21, x + 36, y + 57);
@@ -81,9 +78,9 @@ async function drawKupon(doc, row, x, y, setting) {
     const cx = x + 40;
     const maxNameW = CARD_W - 40 - 4;
 
-    // Nama — bold, warna header
+    // Nama
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
+    doc.setFontSize(12);
     doc.setTextColor(...c.header);
 
     let nama = row.nama;
@@ -93,38 +90,41 @@ async function drawKupon(doc, row, x, y, setting) {
     if (nama !== row.nama) nama += "…";
     doc.text(nama, cx, y + 27);
 
-    // RT/RW — normal, abu gelap
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
-    doc.setTextColor(60, 60, 60);
+    // RT/RW
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
     doc.text(`RT ${String(row.rt).padStart(2, "0")} / RW ${String(row.rw).padStart(2, "0")}`, cx, y + 34);
 
-    // Kode unik — kotak penuh dengan rounded di dalam
+    // Kode unik
     doc.setFillColor(...c.accent);
     doc.roundedRect(cx, y + 37, maxNameW, 6, 1, 1, "F");
+
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(6);
+    doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
     doc.text(row.kode_unik, cx + maxNameW / 2, y + 41.3, { align: "center" });
 
-    // JIWA : label bold + angka
+    // --- Ketentuan (FIX SPACING) ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(7);
-    doc.setTextColor(...c.header);
-    doc.text("JIWA :", cx, y + 49);
+    doc.setFontSize(6);
+    doc.setTextColor(0, 0, 0);
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.setTextColor(...c.accent);
-    doc.text(String(row.jiwa), cx + 13, y + 49);
+    const ketentuan = [
+        "- Dihimbau untuk datang tepat waktu",
+        "- Kupon berlaku untuk pengambilan daging qurban",
+        "- Simpan dengan baik jangan sampai kupon rusak ",
+        "  Hilang bukan tanggung jawab panitia",
+    ];
 
-    // Kalimat peringatan di bawah
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(5);
-    doc.setTextColor(120, 120, 120);
-    doc.text("*jaga kupon jangan sampai rusak / lecek", cx, y + 55.5);
+    const lastY = y + 41.3; // posisi terakhir (kode unik)
+    let startY = lastY + 6; // jarak antar section
 
-    // --- Ornamen sudut kanan bawah ---
+    ketentuan.forEach((item, index) => {
+        doc.text(item, cx, startY + (index * 3.2));
+    });
+
+    // --- Ornamen ---
     doc.setFillColor(...c.border);
     doc.triangle(
         x + CARD_W - 10, y + CARD_H,

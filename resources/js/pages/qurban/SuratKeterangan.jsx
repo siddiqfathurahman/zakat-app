@@ -268,8 +268,6 @@ Panitia Pelaksana Qurban Masjid Al-Anhar 1447 H dengan ini menyatakan bahwa nama
                     {[
                         { label: "Nama Lengkap",   val: penerima.nama },
                         { label: "RT / RW",         val: `RT ${String(penerima.rt).padStart(2,"0")} / RW ${String(penerima.rw).padStart(2,"0")}` },
-                        { label: "Jumlah Jiwa",     val: `${penerima.jiwa} jiwa` },
-                        { label: "Agama",           val: penerima.agama === "muslim" ? "Islam" : "Non Muslim" },
                         { label: "Status",          val: penerima.status === "claimed" ? "✔ Sudah Mengambil" : penerima.status === "shohibul" ? "Shohibul Qurban" : "Belum Mengambil" },
                     ].map((d) => (
                         <div className="data-row" key={d.label}>
@@ -303,31 +301,27 @@ Panitia Pelaksana Qurban Masjid Al-Anhar 1447 H dengan ini menyatakan bahwa nama
                 <hr className="section-divider" />
 
                 {/* ── KETERANGAN POINT-POINT ── */}
-                <div className="keterangan-title">Ketentuan Pengambilan :</div>
-                <ol className="keterangan-list">
-                    <li>
-                        Pengambilan daging qurban dilaksanakan pada <strong>{setting?.tanggal_pengambilan || '-'}</strong> pukul <strong>{setting?.waktu_pengambilan || '-'}</strong> di <strong>{setting?.tempat_pengambilan || '-'}</strong>.
-                    </li>
-                    <li>
-                        QR Code pada surat ini akan <strong>dipindai oleh petugas</strong> sebagai bukti pengambilan yang sah.
-                    </li>
-                    <li>
-                        Apabila penerima berhalangan hadir, pengambilan dapat <strong>diwakilkan</strong> oleh anggota keluarga satu KK dengan membawa surat ini.
-                    </li>
-                    <li>
-                        Surat keterangan ini hanya berlaku untuk <strong>satu kali pengambilan</strong> dan tidak dapat digandakan.
-                    </li>
-                    <li>
-                        Jatah daging qurban telah disesuaikan berdasarkan jumlah jiwa dalam satu keluarga sesuai ketentuan panitia.
-                    </li>
-                </ol>
+                    <div className="keterangan-title">Ketentuan Pengambilan :</div>
+                    <ol className="keterangan-list list-decimal pl-5">
+                        <li>
+                            Pengambilan daging qurban dilaksanakan pada <strong>{setting?.tanggal_pengambilan || '-'}</strong> pukul <strong>{setting?.waktu_pengambilan || '-'}</strong> di <strong>{setting?.tempat_pengambilan || '-'}</strong>.
+                        </li>
+                        <li>
+                            QR Code pada surat ini akan <strong>dipindai oleh petugas</strong> sebagai bukti pengambilan yang sah.
+                        </li>
+                        <li>
+                            Surat keterangan ini hanya berlaku untuk <strong>satu kali pengambilan</strong> dan tidak dapat digandakan.
+                        </li>
+                        <li>
+                            Jatah daging qurban telah disesuaikan berdasarkan jumlah jiwa dalam satu keluarga sesuai ketentuan panitia.
+                        </li>
+                    </ol>
 
-                {/* ── PENUTUP ── */}
-                <p className="penutup" style={{ marginTop: 18 }}>
-                    Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan
-                    sebagaimana mestinya. Semoga ibadah qurban ini membawa keberkahan bagi kita semua.
-                </p>
-
+                    {/* ── PENUTUP ── */}
+                    <p className="penutup" style={{ marginTop: 18 }}>
+                        Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan
+                        sebagaimana mestinya. Semoga ibadah qurban ini membawa keberkahan bagi kita semua.
+                    </p>
             </div>
         </>
     );

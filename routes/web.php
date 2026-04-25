@@ -163,5 +163,7 @@ Route::prefix('qurban')->group(function () {
         Route::post('/setting/store', [SettingqurbanController::class, 'store'])->name('setting.store');
         Route::post('/setting/{settingqurban}/update', [SettingqurbanController::class, 'update'])->name('setting.update');
         Route::post('/setting/{settingqurban}/destroy', [SettingqurbanController::class, 'destroy'])->name('setting.destroy');
+        Route::post('/setting/printer', [SettingqurbanController::class, 'updatePrinter'])->name('setting.qurban.printer.update');
+        Route::post('/setting/printer/disconnect', [SettingqurbanController::class, 'disconnectPrinter'])->name('setting.qurban.printer.disconnect');
     });
 });

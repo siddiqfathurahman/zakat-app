@@ -51,4 +51,43 @@ class SettingqurbanController extends Controller
         $settingqurban->delete();
         return redirect()->back()->with('success', 'Setting qurban berhasil direset.');
     }
+
+    public function updatePrinter(Request $request)
+    {
+        $request->validate([
+            'printer_connected' => 'required|boolean',
+            'printer_name' => 'required|string',
+        ]);
+
+        $setting = Settingqurban::first();
+        if (!$setting) {
+            $setting = Settingqurban::create([
+                'jual_kulit' => 0,
+                'operasional_kambing' => 0,
+                'tanggal_pengambilan' => '-',
+                'waktu_pengambilan' => '-',
+                'tempat_pengambilan' => '-',
+            ]);
+        }
+
+        $setting->update([
+            'printer_connected' => $request->printer_connected,
+            'printer_name' => $request->printer_name,
+        ]);
+
+        return redirect()->back()->with('success', 'Printer berhasil dihubungkan');
+    }
+
+    public function disconnectPrinter()
+    {
+        $setting = Settingqurban::first();
+        if ($setting) {
+            $setting->update([
+                'printer_connected' => false,
+                'printer_name' => null,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Printer berhasil diputuskan');
+    }
 }

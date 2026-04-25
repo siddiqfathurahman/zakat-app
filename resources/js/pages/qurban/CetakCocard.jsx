@@ -16,10 +16,10 @@ const PER_PAGE = COLS * ROWS; // 24 kartu per halaman
 
 // ─── Warna per RW ────────────────────────────────────────────────────────────
 const RW_COLORS = {
-    "11": { navy: [30,  42,  74],  accent: [185, 28,  28]  }, // Merah
-    "12": { navy: [30,  42,  74],  accent: [185, 28,  28]  }, // Biru
-    "13": { navy: [30,  42,  74],  accent: [185, 28,  28]  }, // Hijau
-    default: { navy: [30,  42,  74],  accent: [185, 28,  28]  } , // Coklat (fallback)
+    "11": { navy: [30,  42,  74],  accent: [194, 65, 12]  }, // Merah
+    "12": { navy: [30,  42,  74],  accent: [194, 65, 12]  }, // Biru
+    "13": { navy: [30,  42,  74],  accent: [194, 65, 12]  }, // Hijau
+    default: { navy: [30,  42,  74],  accent: [194, 65, 12]  } , // Coklat (fallback)
 };
 
 function getRwColor(rw) {
@@ -72,7 +72,7 @@ function drawCocard(doc, row, x, y) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
-    doc.text("1446 H / 2026 M", x + CARD_W / 2, y + 13, { align: "center" });
+    doc.text("1447H / 2026", x + CARD_W / 2, y + 13, { align: "center" });
 
     // ── Kotak Nama (PUTIH) ────────────────────────────────────────────────────
     const BOX_PADDING = 7;
@@ -105,8 +105,8 @@ function drawCocard(doc, row, x, y) {
 
     // Jabatan / Bidang — abu kecil
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(6);
-    doc.setTextColor(90, 90, 90);
+    doc.setFontSize(8);
+    doc.setTextColor(10, 10, 10);
     const jabFit = fitText(doc, row.jabatan, boxW - 4);
     doc.text(jabFit, boxCX, boxY + 21, { align: "center" });
 
@@ -117,26 +117,16 @@ function drawCocard(doc, row, x, y) {
     doc.rect(x, footerY, CARD_W, FOOTER_H, "F");
     doc.setGState(doc.GState({ opacity: 1 }));
 
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(4.8);
-    doc.setTextColor(210, 210, 210);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(6);
+    doc.setTextColor(255, 255, 255);
     doc.text(
-        "gunakan cocard ini untuk mengambil jatah panitia di sekretariatan",
+        "Cocard ini wajib dibawa sebagai bukti pengambilan jatah panitia di sekretariat",
         x + CARD_W / 2,
         footerY + 5.5,
         { align: "center" }
     );
 
-    // ── Ornamen sudut kanan bawah ─────────────────────────────────────────────
-    doc.setFillColor(...c.accent);
-    doc.setGState(doc.GState({ opacity: 0.4 }));
-    doc.triangle(
-        x + CARD_W - 12, y + CARD_H,
-        x + CARD_W,      y + CARD_H - 12,
-        x + CARD_W,      y + CARD_H,
-        "F"
-    );
-    doc.setGState(doc.GState({ opacity: 1 }));
 }
 
 // ─── Generate PDF ─────────────────────────────────────────────────────────────

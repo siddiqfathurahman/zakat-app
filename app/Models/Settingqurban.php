@@ -14,5 +14,7 @@ class Settingqurban extends Model
         'tanggal_pengambilan',
         'waktu_pengambilan',
         'tempat_pengambilan',
+        'printer_connected',
+        'printer_name',
     ];
 }

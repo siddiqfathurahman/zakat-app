@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
+import { Printer, X } from 'lucide-react';
 import QurbanLayout from '../../Layout/QurbanLayout';
 
 export default function SettingQurban({ setting = null }) {
@@ -12,6 +13,65 @@ export default function SettingQurban({ setting = null }) {
         waktu_pengambilan:   setting?.waktu_pengambilan ?? '',
         tempat_pengambilan:  setting?.tempat_pengambilan ?? '',
     });
+
+    if (typeof window !== "undefined" && window.qz) {
+        qz.security.setCertificatePromise(function (resolve, reject) {
+            resolve(
+                "-----BEGIN CERTIFICATE-----\n" +
+                    "MIIB...dummy...\n" +
+                    "-----END CERTIFICATE-----"
+            );
+        });
+
+        qz.security.setSignaturePromise(function (toSign) {
+            return function (resolve, reject) {
+                resolve();
+            };
+        });
+    }
+
+    const connectQZ = async () => {
+        if (!window.qz) {
+            throw new Error("QZ Tray tidak terdeteksi");
+        }
+
+        if (!qz.websocket.isActive()) {
+            await qz.websocket.connect();
+            console.log("QZ Connected");
+        }
+    };
+
+    const handleConnectPrinter = async () => {
+        try {
+            await connectQZ();
+            const printers = await qz.printers.find();
+
+            const selectedPrinter = window.prompt(
+                "Printer tersedia:\n" + printers.map((p, i) => `${i+1}. ${p}`).join("\n") + 
+                "\n\nMasukkan nama printer persis:"
+            );
+
+            if (!selectedPrinter || !printers.includes(selectedPrinter)) {
+                alert("Nama printer tidak valid.");
+                return;
+            }
+
+            router.post("/qurban/input/setting/printer", {
+                printer_connected: true,
+                printer_name: selectedPrinter,
+            });
+
+        } catch (error) {
+            console.error("Error connecting printer:", error);
+            alert("Gagal menghubungkan printer: " + error.message);
+        }
+    };
+
+    const handleDisconnectPrinter = () => {
+        if (confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
+            router.post("/qurban/input/setting/printer/disconnect");
+        }
+    };
 
     const [errors, setErrors]   = useState({});
     const [confirm, setConfirm] = useState(false);
@@ -246,6 +306,54 @@ export default function SettingQurban({ setting = null }) {
                                     {setting ? 'Update Setting' : 'Simpan Setting'}
                                 </button>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Printer Settings */}   
+                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                            <h2 className="font-semibold text-gray-800 pl-1">Setting Printer Thermal</h2>
+                        </div>
+                        <div className="p-6">
+                            {setting?.printer_connected ? (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                        <span className="text-sm font-medium text-green-700">
+                                            Printer Terhubung
+                                        </span>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 mb-4">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-gray-600 font-medium">Nama:</span>
+                                            <span className="font-semibold text-gray-800">{setting.printer_name}</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={handleDisconnectPrinter}
+                                        className="w-full bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+                                    >
+                                        <X size={16} />
+                                        <span className="text-sm font-medium">Putuskan Koneksi</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                        <span className="text-sm font-medium text-gray-600">
+                                            Printer Belum Terhubung
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={handleConnectPrinter}
+                                        className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+                                    >
+                                        <Printer size={16} />
+                                        <span className="text-sm font-medium">Hubungkan Printer</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

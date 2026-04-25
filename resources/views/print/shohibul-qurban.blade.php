@@ -71,9 +71,10 @@
             <tr>
                 <th width="5%">No</th>
                 <th>Nama Shohibul</th>
-                <th>Panitia / PJ</th>
-                <th width="12%">RT/RW</th>
-                <th width="15%">Jenis Hewan</th>
+                {{-- <th>Panitia / PJ</th> --}}
+                <th width="12%">RT</th>
+                <th width="12%">RW</th>
+                {{-- <th width="15%">Jenis Hewan</th> --}}
                 <th width="12%">No. Hewan</th>
             </tr>
         </thead>
@@ -82,9 +83,10 @@
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ $row->nama }}</td>
-                <td>{{ $row->panitia ?? '-' }}</td>
-                <td class="text-center">{{ $row->rt }}/{{ $row->rw }}</td>
-                <td class="text-center" style="text-transform: capitalize;">{{ $row->jenis_hewan }}</td>
+                {{-- <td>{{ $row->panitia ?? '-' }}</td> --}}
+                <td class="text-center">{{ $row->rt }}</td>
+                <td class="text-center">{{ $row->rw }}</td>
+                {{-- <td class="text-center" style="text-transform: capitalize;">{{ $row->jenis_hewan }}</td> --}}
                 <td class="text-center">{{ $row->nomor_hewan }}</td>
             </tr>
             @endforeach
@@ -99,13 +101,8 @@
 
     <div class="summary">
         <div>Total Data Shohibul: {{ $stats['total'] }} Peserta</div>
-        <div>Total Sapi: {{ $stats['sapi'] }} Peserta</div>
         <div>Total Kambing: {{ $stats['kambing'] }} Peserta</div>
     </div>
 
-    <div class="footer">
-        Dicetak pada: {{ date('d/m/Y H:i:s') }}
-        <div style="margin-top: 5px;">Zakat App System</div>
-    </div>
 </body>
 </html>

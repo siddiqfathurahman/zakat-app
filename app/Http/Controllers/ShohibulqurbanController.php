@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shohibulqurban;
+use App\Models\Settingqurban;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -37,9 +38,11 @@ class ShohibulqurbanController extends Controller
         }
 
         $data = $query->latest()->get();
+        $setting = Settingqurban::first();
 
         return Inertia::render('qurban/Shohibul', [
             'shohibulqurbans' => $data,
+            'setting' => $setting,
 
             // kirim state filter ke frontend
             'filters' => $request->only([

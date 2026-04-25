@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { router, usePage } from '@inertiajs/react';
-import { ArrowDownAZ, ArrowUpZA } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpZA, Printer } from 'lucide-react';
 import QurbanLayout from '../../Layout/QurbanLayout';
 
-export default function Shohibul({ shohibulqurbans = [], filters = {} }) {
+export default function Shohibul({ shohibulqurbans = [], filters = {}, setting = null }) {
     const { flash } = usePage().props;
 
     const [search, setSearch] = useState(filters.search || '');
@@ -22,6 +22,105 @@ export default function Shohibul({ shohibulqurbans = [], filters = {} }) {
 
     const [page, setPage] = useState(1);
     const PER = 10;
+
+    // QZ Security Setup
+    if (typeof window !== "undefined" && window.qz) {
+        qz.security.setCertificatePromise(function (resolve, reject) {
+            resolve(
+                "-----BEGIN CERTIFICATE-----\n" +
+                    "MIIB...dummy...\n" +
+                    "-----END CERTIFICATE-----",
+            );
+        });
+
+        qz.security.setSignaturePromise(function (toSign) {
+            return function (resolve, reject) {
+                resolve();
+            };
+        });
+    }
+
+    const connectQZ = async () => {
+        if (!window.qz) {
+            throw new Error("QZ Tray tidak terdeteksi");
+        }
+
+        if (!qz.websocket.isActive()) {
+            await qz.websocket.connect();
+            console.log("QZ Connected");
+        }
+    };
+
+    // Helper ESC/POS
+    const formatRupiahPrint = (angka) => {
+        const angkaBulat = Math.round(angka);
+        const formatted = angkaBulat
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return `Rp ${formatted}`;
+    };
+
+    const imageToEscPos = async (src, width = 384) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ratio = img.height / img.width;
+                canvas.width = width;
+                canvas.height = Math.floor(width * ratio);
+                const ctx = canvas.getContext("2d");
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const { data, width: w, height: h } = imageData;
+                const bytes = [];
+
+                bytes.push(0x1d, 0x76, 0x30, 0x00);
+                const bytesPerRow = Math.ceil(w / 8);
+                bytes.push(bytesPerRow & 0xff, (bytesPerRow >> 8) & 0xff);
+                bytes.push(h & 0xff, (h >> 8) & 0xff);
+
+                for (let y = 0; y < h; y++) {
+                    for (let xByte = 0; xByte < bytesPerRow; xByte++) {
+                        let byte = 0;
+                        for (let bit = 0; bit < 8; bit++) {
+                            const x = xByte * 8 + bit;
+                            if (x < w) {
+                                const idx = (y * w + x) * 4;
+                                const r = data[idx];
+                                const g = data[idx + 1];
+                                const b = data[idx + 2];
+                                const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+                                if (brightness < 128) byte |= 0x80 >> bit;
+                            }
+                        }
+                        bytes.push(byte);
+                    }
+                }
+                resolve(bytes);
+            };
+            img.onerror = () => reject(new Error("Gagal load gambar: " + src));
+            img.src = src;
+        });
+    };
+
+    const bytesToBase64 = (bytes) => {
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary);
+    };
+
+    const cmdToBase64 = (str) => {
+        const bytes = [];
+        for (let i = 0; i < str.length; i++) bytes.push(str.charCodeAt(i));
+        return bytesToBase64(bytes);
+    };
+
+    const line = "--------------------------------\n";
 
     const nomorOptions = useMemo(() => {
         const filtered = shohibulqurbans.filter(r =>
@@ -103,12 +202,7 @@ export default function Shohibul({ shohibulqurbans = [], filters = {} }) {
 
     const closeModal = () => setModalOpen(false);
 
-    const saveData = () => {
-        const { nama, panitia, rt, rw, jenis_hewan, nomor_hewan } = form;
-        if (!nama || !panitia || !rt || !rw || !jenis_hewan || !nomor_hewan) {
-            setFormErr('Semua field wajib diisi');
-            return;
-        }
+    const executeSubmit = () => {
         if (editData) {
             router.post(`/qurban/input/shohibul/${editData.id}/update`, form, {
                 onSuccess: () => closeModal(),
@@ -119,6 +213,109 @@ export default function Shohibul({ shohibulqurbans = [], filters = {} }) {
                 onSuccess: () => closeModal(),
                 onError: (e) => setFormErr(Object.values(e).join(', ')),
             });
+        }
+    };
+
+    const handlePrintAndSave = async () => {
+        try {
+            await connectQZ();
+            const config = qz.configs.create(setting.printer_name);
+            const logo = await imageToEscPos("/logo.png", 384);
+            const logoBase64 = bytesToBase64(logo);
+
+            const enc = new TextEncoder();
+            const textToBase64 = (str) => bytesToBase64(Array.from(enc.encode(str)));
+
+            const FONT_NORMAL = cmdToBase64("\x1D\x21\x00");
+            const FONT_MEDIUM = cmdToBase64("\x1D\x21\x01");
+            const CENTER = cmdToBase64("\x1B\x61\x01");
+            const LEFT = cmdToBase64("\x1B\x61\x00");
+            const BOLD_ON = cmdToBase64("\x1B\x45\x01");
+            const BOLD_OFF = cmdToBase64("\x1B\x45\x00");
+
+            const printData = [
+                { type: "raw", format: "base64", data: cmdToBase64("\x1B\x40") },
+                { type: "raw", format: "base64", data: CENTER },
+                { type: "raw", format: "base64", data: logoBase64 },
+                { type: "raw", format: "base64", data: cmdToBase64("\n") },
+                
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64("KWITANSI\n") },
+                { type: "raw", format: "base64", data: textToBase64("SHOHIBUL QURBAN\n") },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Data
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Nama    : ${form.nama}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`RT/RW   : ${form.rt}/${form.rw}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Panitia : ${form.panitia}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Hewan   : Kambing\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Nomor   : ${form.nomor_hewan}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Biaya Operasional
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Operasional Kambing :\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`${formatRupiahPrint(setting.operasional_kambing)}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Waktu
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Hari    : ${new Date().toLocaleDateString("id-ID", { weekday: "long" })}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Tanggal : ${new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Jam     : ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Footer
+                { type: "raw", format: "base64", data: CENTER },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64("Jazakumullahu Khairan\n") },
+                { type: "raw", format: "base64", data: textToBase64("Katsiran\n") },
+                { type: "raw", format: "base64", data: textToBase64("Semoga Berkah\n") },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: cmdToBase64("\x1B\x64\x02") },
+            ];
+
+            await qz.print(config, printData);
+            console.log("Printed via QZ Tray");
+            executeSubmit();
+        } catch (error) {
+            console.error(error);
+            alert("Gagal print: " + error.message);
+            // If failed to print, maybe still submit?
+            // In Zakat they stop if print fails to let user fix printer.
+        }
+    };
+
+    const saveData = () => {
+        const { nama, panitia, rt, rw, jenis_hewan, nomor_hewan } = form;
+        if (!nama || !panitia || !rt || !rw || !jenis_hewan || !nomor_hewan) {
+            setFormErr('Semua field wajib diisi');
+            return;
+        }
+
+        if (form.jenis_hewan === 'kambing' && setting?.printer_connected) {
+            // Print then submit
+            handlePrintAndSave();
+        } else {
+            // Just submit
+            executeSubmit();
         }
     };
 
@@ -467,6 +664,12 @@ export default function Shohibul({ shohibulqurbans = [], filters = {} }) {
                         </div>
 
                         <div className="p-6 space-y-3">
+                            <div className={`p-3 rounded-lg flex items-center gap-2 border ${setting?.printer_connected ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700'}`}>
+                                <Printer size={16} />
+                                <span className="text-xs font-medium">
+                                    {setting?.printer_connected ? `Printer terhubung: ${setting.printer_name} (Otomatis cetak saat Kambing ditambahkan)` : 'Printer belum terhubung - Fitur cetak tidak tersedia'}
+                                </span>
+                            </div>
                             <div>
                                 <label className="text-xs font-medium text-gray-600 mb-1 block">Nama Shohibul <span className="text-red-500">*</span></label>
                                 <input
