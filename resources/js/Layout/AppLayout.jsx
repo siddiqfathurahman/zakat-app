@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '../Components/Sidebar';
+import Sidebar from '../components/Sidebar';
 
 export default function AppLayout({ children }) {
     return (

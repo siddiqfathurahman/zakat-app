@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 export default function Dashboard({
+    totalAll,
     stats,
     distribusiRT,
     distribusiRW,
@@ -34,8 +35,8 @@ export default function Dashboard({
                             TOTAL DALAM JUMLAH KG ZAKAT
                         </p>
                         <p className="text-4xl font-bold text-gray-900">
-                            {formulaJatah.totalBungkus * 2.5} KG /{" "}
-                            {(formulaJatah.totalBungkus * 2.5) / 1000} TON
+                        {totalAll.toLocaleString("id-ID")} KG /{" "}
+                        {(totalAll / 1000).toLocaleString("id-ID")} TON
                         </p>
                     </div>
                 </div>
@@ -250,7 +251,7 @@ export default function Dashboard({
                                 </p>
                             </div>
                             <a
-                                href="/pemohon"
+                                href="/zakat/input/pemohon"
                                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
                             >
                                 Lihat Detail
@@ -262,3 +263,4 @@ export default function Dashboard({
         </AppLayout>
     );
 }
+

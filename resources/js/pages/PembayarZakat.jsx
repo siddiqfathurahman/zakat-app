@@ -29,7 +29,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
 
     const handleFilter = () => {
         setCurrentPage(1);
-        router.get('/pembayar', {
+        router.get('/zakat/pembayar', {
             search: searchTerm,
             rt: selectedRT,
             rw: selectedRW,
@@ -94,7 +94,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         e.preventDefault();
         setIsLoading(true);
 
-        router.post(`/pembayar/${editingId}/update`, formData, {
+        router.post(`/zakat/input/pembayar/${editingId}/update`, formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 closeEditModal();
@@ -109,7 +109,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         if (!deleteId) return;
 
         router.post(
-            `/pembayar/${deleteId}`,
+            `/zakat/input/pembayar/${deleteId}`,
             {},
             {
                 onSuccess: () => {
@@ -144,6 +144,14 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         setCurrentPage(page);
     };
 
+    const handleExport = () => {
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('search', searchTerm);
+        if (selectedRT) params.append('rt', selectedRT);
+        if (selectedRW) params.append('rw', selectedRW);
+        window.location.href = `/zakat/input/pembayar/export?${params.toString()}`;
+    };
+
     const renderPagination = () => {
         const pages = [];
         for (let i = 1; i <= totalPages; i++) {
@@ -169,6 +177,17 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Data Pembayar Zakat</h1>
+                        <button
+        onClick={handleExport}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export Excel
+    </button>
                 </div>
 
                 <div className="mx-auto">
@@ -208,7 +227,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRT(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/pembayar', {
+                                        router.get('/zakat/pembayar', {
                                             search: searchTerm,
                                             rt: e.target.value,
                                             rw: selectedRW,
@@ -234,7 +253,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRW(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/pembayar', {
+                                        router.get('/zakat/pembayar', {
                                             search: searchTerm,
                                             rt: selectedRT,
                                             rw: e.target.value,
@@ -603,3 +622,4 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
         </AppLayout>
     );
 }
+

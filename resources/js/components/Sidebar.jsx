@@ -14,37 +14,37 @@ export default function Sidebar() {
     const menuItems = [
         {
             name: "Dashboard",
-            href: "/dashboard",
+            href: "/zakat/input/dashboard",
             icon: LayoutDashboard,
         },
         {
             name: "Pembayar Zakat",
-            href: "/pembayar",
+            href: "/zakat/input/pembayar",
             icon: HandCoins,
         },
         {
             name: "Penerima Zakat",
-            href: "/penerima-zakat",
+            href: "/zakat/input/penerima-zakat",
             icon: HandHeart,
         },
         {
           name: "Formula Jatah",
-          href: "/formula-jatah",
+          href: "/zakat/input/formula-jatah",
           icon: Scale,
         },
         {
           name: "Laporan Belanja",
-          href: "/laporan-belanja",
+          href: "/zakat/input/laporan-belanja",
           icon: ReceiptPoundSterlingIcon,
         },
         {
             name: "Pemohon Luar",
-            href: "/pemohon",
+            href: "/zakat/input/pemohon",
             icon: ClipboardList,
         },
         {
             name: "Settings",
-            href: "/setting-beras",
+            href: "/zakat/input/setting-beras",
             icon: Settings,
         },
     ];
@@ -96,7 +96,7 @@ export default function Sidebar() {
 
             <div className="p-4">
                 <a
-                    href="/"
+                    href="/zakat/input"
                     className="
             w-full 
             flex 
@@ -119,3 +119,4 @@ export default function Sidebar() {
         </aside>
     );
 }
+

@@ -6,12 +6,43 @@ import {
     DollarSign,
     Calendar,
     AlertCircle,
+    Printer,
+    X,
 } from "lucide-react";
 import AppLayout from "../Layout/AppLayout";
+import SuccessNotification from "../components/SuccessNotification";
 
 export default function SettingBeras({
     setting = { toko: "", harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },
+    flash,
 }) {
+    // QZ Security Setup
+    if (typeof window !== "undefined" && window.qz) {
+        qz.security.setCertificatePromise(function (resolve, reject) {
+            resolve(
+                "-----BEGIN CERTIFICATE-----\n" +
+                    "MIIB...dummy...\n" +
+                    "-----END CERTIFICATE-----"
+            );
+        });
+
+        qz.security.setSignaturePromise(function (toSign) {
+            return function (resolve, reject) {
+                resolve();
+            };
+        });
+    }
+
+    const connectQZ = async () => {
+        if (!window.qz) {
+            throw new Error("QZ Tray tidak terdeteksi");
+        }
+
+        if (!qz.websocket.isActive()) {
+            await qz.websocket.connect();
+            console.log("QZ Connected");
+        }
+    };
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -29,6 +60,41 @@ export default function SettingBeras({
         setIsModalOpen(true);
     };
 
+    const handleConnectPrinter = async () => {
+    try {
+        await connectQZ();
+        const printers = await qz.printers.find();
+
+        // Tampilkan pilihan printer ke user
+        const selectedPrinter = window.prompt(
+            "Printer tersedia:\n" + printers.map((p, i) => `${i+1}. ${p}`).join("\n") + 
+            "\n\nMasukkan nama printer persis:"
+        );
+
+        if (!selectedPrinter || !printers.includes(selectedPrinter)) {
+            alert("Nama printer tidak valid.");
+            return;
+        }
+
+        router.post("/zakat/input/setting-beras/printer", {
+            printer_connected: true,
+            printer_name: selectedPrinter,
+            printer_type: "qz-tray",
+            printer_address: "localhost",
+        });
+
+    } catch (error) {
+        console.error("Error connecting printer:", error);
+        alert("Gagal menghubungkan printer: " + error.message);
+    }
+};
+
+    const handleDisconnectPrinter = () => {
+        if (confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
+            router.post("/zakat/input/setting-beras/printer/disconnect");
+        }
+    };
+
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setFormData({
@@ -42,7 +108,7 @@ export default function SettingBeras({
         e.preventDefault();
         setIsLoading(true);
 
-        router.post("/setting-beras", formData, {
+        router.post("/zakat/input/setting-beras", formData, {
             onSuccess: () => {
                 setIsLoading(false);
                 handleCloseModal();
@@ -74,91 +140,175 @@ export default function SettingBeras({
 
     return (
         <AppLayout>
+            <SuccessNotification message={flash?.success} />
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-                <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="mb-6 flex gap-40">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-800">
-                            Setting Harga Beras
-                        </h1>
-                        <p className="text-gray-600 text-sm mt-1">
-                            Harga beras untuk perhitungan zakat fitrah
-                        </p>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">
+                                Setting Harga Beras
+                            </h1>
+                            <p className="text-gray-600 text-sm mt-1">
+                                Harga beras untuk perhitungan zakat fitrah
+                            </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl shadow-sm border-2 border-green-400 ring-2 ring-green-200 max-w-md mt-6">
+                            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold px-4 py-2 rounded-t-lg ">
+                                Harga Beras
+                            </div>
+                            <div className="p-6">
+                                <div className="bg-gray-50 rounded-lg p-4 mb-3">
+                                    <div className="flex items-center gap-2 text-gray-700 mb-1">
+                                        <DollarSign size={16} />
+                                        <span className="text-xs font-medium">
+                                            Toko Beli Beras
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-gray-700">
+                                        {setting.toko || "-"}
+                                    </p>
+                                </div>
+                                <div className="bg-green-50 rounded-lg p-4 mb-3">
+                                    <div className="flex items-center gap-2 text-green-700 mb-1">
+                                        <DollarSign size={16} />
+                                        <span className="text-xs font-medium">
+                                            Harga per KG
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-green-700">
+                                        {formatRupiah(
+                                            setting.harga_per_kg || 0
+                                        )}
+                                    </p>
+                                </div>
+
+                                <div className="bg-amber-50 rounded-lg p-4 mb-4">
+                                    <div className="flex items-center gap-2 text-amber-700 mb-1">
+                                        <Package size={16} />
+                                        <span className="text-xs font-medium">
+                                            Harga 2.5 KG (Zakat Fitrah)
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-amber-700">
+                                        {formatRupiah(setting.harga_2_5kg || 0)}
+                                    </p>
+                                </div>
+                                <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                                    <div className="flex items-center gap-2 text-blue-700 mb-1">
+                                        <Package size={16} />
+                                        <span className="text-xs font-medium">
+                                            Harga per Sak (25 KG)
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-blue-700">
+                                        {formatRupiah(setting.harga_sak || 0)}
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-2 text-gray-500 text-xs mb-4">
+                                    <Calendar size={14} />
+                                    <span>
+                                        Update:{" "}
+                                        {formatDate(
+                                            setting.updated_at ||
+                                                setting.created_at
+                                        )}
+                                    </span>
+                                </div>
+
+                                <button
+                                    onClick={handleOpenModal}
+                                    className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all"
+                                >
+                                    <Edit2 size={16} />
+                                    <span className="text-sm font-medium">
+                                        Edit Harga
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div className="bg-white rounded-xl shadow-sm border-2 border-green-400 ring-2 ring-green-200 max-w-md">
-                    <div className="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold px-4 py-2 rounded-t-lg">
-                        Harga Beras
-                    </div>
-                    <div className="p-6">
-                        <div className="bg-gray-50 rounded-lg p-4 mb-3">
-                            <div className="flex items-center gap-2 text-gray-700 mb-1">
-                                <DollarSign size={16} />
-                                <span className="text-xs font-medium">
-                                    Toko Beli Beras
-                                </span>
-                            </div>
-                            <p className="text-2xl font-bold text-gray-700">
-                                {setting.toko || "-"}
-                            </p>
-                        </div>
-                        <div className="bg-green-50 rounded-lg p-4 mb-3">
-                            <div className="flex items-center gap-2 text-green-700 mb-1">
-                                <DollarSign size={16} />
-                                <span className="text-xs font-medium">
-                                    Harga per KG
-                                </span>
-                            </div>
-                            <p className="text-2xl font-bold text-green-700">
-                                {formatRupiah(setting.harga_per_kg || 0)}
+                    <div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">
+                                Setting Printer Nota
+                            </h1>
+                            <p className="text-gray-600 text-sm mt-1">
+                                Untuk Menyambungkan di input pembayar zakat
                             </p>
                         </div>
 
-                        <div className="bg-amber-50 rounded-lg p-4 mb-4">
-                            <div className="flex items-center gap-2 text-amber-700 mb-1">
-                                <Package size={16} />
-                                <span className="text-xs font-medium">
-                                    Harga 2.5 KG (Zakat Fitrah)
-                                </span>
+                        <div className="bg-white rounded-xl shadow-sm border-2 border-blue-400 ring-2 ring-blue-200 max-w-md mt-6">
+                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-t-lg">
+                                Pengaturan Printer Thermal
                             </div>
-                            <p className="text-2xl font-bold text-amber-700">
-                                {formatRupiah(setting.harga_2_5kg || 0)}
-                            </p>
-                        </div>
-                        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                            <div className="flex items-center gap-2 text-blue-700 mb-1">
-                                <Package size={16} />
-                                <span className="text-xs font-medium">
-                                    Harga per Sak (25 KG)
-                                </span>
-                            </div>
-                            <p className="text-2xl font-bold text-blue-700">
-                                {formatRupiah(setting.harga_sak || 0)}
-                            </p>
-                        </div>
+                            <div className="p-6">
+                                {setting.printer_connected ? (
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span className="text-sm font-medium text-green-700">
+                                                Printer Terhubung
+                                            </span>
+                                        </div>
 
-                        <div className="flex items-center gap-2 text-gray-500 text-xs mb-4">
-                            <Calendar size={14} />
-                            <span>
-                                Update:{" "}
-                                {formatDate(
-                                    setting.updated_at || setting.created_at
+                                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                            <div className="space-y-2 text-sm">
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-600">
+                                                        Nama:
+                                                    </span>
+                                                    <span className="font-medium">
+                                                        {setting.printer_name}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-600">
+                                                        Tipe:
+                                                    </span>
+                                                    <span className="font-medium capitalize">
+                                                        {setting.printer_type}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleDisconnectPrinter}
+                                            className="w-full bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all"
+                                        >
+                                            <X size={16} />
+                                            <span className="text-sm font-medium">
+                                                Putuskan Koneksi
+                                            </span>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                            <span className="text-sm font-medium text-gray-600">
+                                                Printer Belum Terhubung
+                                            </span>
+                                        </div>
+
+                                        <button
+                                            onClick={handleConnectPrinter}
+                                            className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all"
+                                        >
+                                            <Printer size={16} />
+                                            <span className="text-sm font-medium">
+                                                Hubungkan Printer
+                                            </span>
+                                        </button>
+                                    </div>
                                 )}
-                            </span>
+                            </div>
                         </div>
-
-                        <button
-                            onClick={handleOpenModal}
-                            className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all"
-                        >
-                            <Edit2 size={16} />
-                            <span className="text-sm font-medium">
-                                Edit Harga
-                            </span>
-                        </button>
                     </div>
                 </div>
-
                 {/* Modal */}
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -291,3 +441,5 @@ export default function SettingBeras({
         </AppLayout>
     );
 }
+
+
