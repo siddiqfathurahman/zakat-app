@@ -67,14 +67,14 @@ export default function SettingQurban({ setting = null }) {
         }
     };
 
-    const handleDisconnectPrinter = () => {
-        if (confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
-            router.post("/qurban/input/setting/printer/disconnect");
-        }
-    };
+        const handleDisconnectPrinter = () => {
+            if (window.confirm("Apakah Anda yakin ingin memutuskan koneksi printer?")) {
+                router.post("/qurban/input/setting/printer/disconnect");
+            }
+        };
 
     const [errors, setErrors]   = useState({});
-    const [confirm, setConfirm] = useState(false);
+    const [confirmReset, setConfirmReset] = useState(false);
 
     const handleChange = e => {
         setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -110,7 +110,7 @@ export default function SettingQurban({ setting = null }) {
     const doReset = () => {
         router.post(`/qurban/input/setting/${setting.id}/destroy`, {}, {
             onSuccess: () => {
-                setConfirm(false);
+                setConfirmReset(false);
                 setForm({ jual_kulit: '', operasional_kambing: '', tanggal_pengambilan: '', waktu_pengambilan: '', tempat_pengambilan: '' });
             },
         });
@@ -285,7 +285,7 @@ export default function SettingQurban({ setting = null }) {
                             {setting && (
                                 <button
                                     type="button"
-                                    onClick={() => setConfirm(true)}
+                                    onClick={() => setConfirmReset(true)}
                                     className="flex items-center gap-1.5 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl px-4 py-2 text-sm transition"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,7 +401,7 @@ export default function SettingQurban({ setting = null }) {
             </div>
 
             {/* Confirm Reset Modal */}
-            {confirm && (
+            {confirmReset && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
@@ -416,7 +416,7 @@ export default function SettingQurban({ setting = null }) {
                             </div>
                         </div>
                         <div className="flex justify-end gap-2">
-                            <button onClick={() => setConfirm(false)}
+                            <button onClick={() => setConfirmReset(false)}
                                 className="border border-gray-200 rounded-xl px-4 py-2 text-sm hover:bg-gray-50 transition">
                                 Batal
                             </button>
