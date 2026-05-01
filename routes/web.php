@@ -140,10 +140,12 @@ Route::prefix('qurban')->group(function () {
         Route::post('/panitia/{panitiaqurban}/destroy', [PanitiaqurbanController::class, 'destroy'])->name('panitia.destroy');
 
         // penerima qurban
+        Route::get('/penerima/print', [PenerimaqurbanController::class, 'print'])->name('penerima.qurban.print');
         Route::get('/penerima', [PenerimaqurbanController::class, 'index'])->name('penerima.index');
         Route::post('/penerima', [PenerimaqurbanController::class, 'store'])->name('penerima.store');
         Route::post('/penerima/{penerimaqurban}/update', [PenerimaqurbanController::class, 'update'])->name('penerima.update');
         Route::post('/penerima/{penerimaqurban}/destroy', [PenerimaqurbanController::class, 'destroy'])->name('penerima.destroy');
+
 
         // Route untuk konfigurasi jatah
         Route::post('/jatah-config', [JatahconfigqurbanController::class, 'store'])->name('qurban.jatah.store');

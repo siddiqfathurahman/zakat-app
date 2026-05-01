@@ -290,6 +290,44 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
                 { type: "raw", format: "base64", data: BOLD_OFF },
                 { type: "raw", format: "base64", data: FONT_NORMAL },
                 { type: "raw", format: "base64", data: cmdToBase64("\x1B\x64\x02") },
+
+                // Garis pemisah (putus-putus)
+                { type: "raw", format: "base64", data: LEFT },
+
+                // Judul (tanpa logo)
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Data ulang
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Nama    : ${form.nama}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`RT/RW   : ${form.rt}/${form.rw}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Panitia : ${form.panitia}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Hewan   : Kambing\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Nomor   : ${form.nomor_hewan}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Operasional
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Operasional Kambing :\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`${formatRupiahPrint(setting.operasional_kambing)}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
+                { type: "raw", format: "base64", data: textToBase64(line) },
+
+                // Waktu
+                { type: "raw", format: "base64", data: LEFT },
+                { type: "raw", format: "base64", data: BOLD_ON },
+                { type: "raw", format: "base64", data: FONT_MEDIUM },
+                { type: "raw", format: "base64", data: textToBase64(`Hari    : ${new Date().toLocaleDateString("id-ID", { weekday: "long" })}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Tanggal : ${new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}\n`) },
+                { type: "raw", format: "base64", data: textToBase64(`Jam     : ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}\n`) },
+                { type: "raw", format: "base64", data: BOLD_OFF },
+                { type: "raw", format: "base64", data: FONT_NORMAL },
             ];
 
             await qz.print(config, printData);

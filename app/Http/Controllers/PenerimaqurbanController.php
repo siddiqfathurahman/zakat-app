@@ -89,6 +89,42 @@ class PenerimaqurbanController extends Controller
     }
 
     /**
+     * Print daftar penerima (blade view)
+     */
+    public function print(Request $request)
+    {
+        $query = Penerimaqurban::query();
+
+        // Filter RT
+        if ($request->filled('rt')) {
+            $query->where('rt', $request->rt);
+        }
+
+        // Filter agama
+        if ($request->filled('agama')) {
+            $query->where('agama', $request->agama);
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $penerimas = $query->orderBy('rt')->orderBy('agama')->get();
+
+        // Build filter info labels
+        $filterInfo = [];
+        if ($request->filled('rt'))     $filterInfo[] = 'RT ' . $request->rt;
+        if ($request->filled('agama'))  $filterInfo[] = ucfirst($request->agama);
+        if ($request->filled('status')) {
+            $statusLabel = ['pending' => 'Belum Diambil', 'claimed' => 'Sudah Diambil', 'shohibul' => 'Shohibul'];
+            $filterInfo[] = $statusLabel[$request->status] ?? $request->status;
+        }
+
+        return view('print.penerima-qurban', compact('penerimas', 'filterInfo'));
+    }
+
+    /**
      * 🔥 Scan QR (untuk fetch data via AJAX dari React)
      */
     public function scan($kode)
