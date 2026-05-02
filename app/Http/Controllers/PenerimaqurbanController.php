@@ -173,9 +173,6 @@ class PenerimaqurbanController extends Controller
         $penerima = Penerimaqurban::findOrFail($id);
         $setting = \App\Models\Settingqurban::first();
         
-        return Inertia::render('qurban/SuratKeterangan', [
-            'penerima' => $penerima,                    
-            'setting' => $setting
-        ]);
+        return view('print.surat-keterangan', compact('penerima', 'setting'));
     }
 }
