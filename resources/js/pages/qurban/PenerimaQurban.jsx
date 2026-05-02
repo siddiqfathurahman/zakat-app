@@ -497,7 +497,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                             <option value="shohibul">Shohibul</option>
                         </select>
                     </div>
-                    <div>
+                    <div>           
                         <label className="block text-xs text-gray-500 mb-1 font-medium">
                             Filter Agama
                         </label>

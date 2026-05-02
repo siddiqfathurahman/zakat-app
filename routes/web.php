@@ -109,14 +109,7 @@ Route::prefix('qurban')->group(function () {
 
         Route::get('/dashboard', [\App\Http\Controllers\QurbanDashboardController::class, 'index'])->name('qurban.dashboard');
 
-        Route::get('/qurban/surat-keterangan/{id}', function ($id) {
-            $penerima = \App\Models\Penerimaqurban::findOrFail($id);
-            $setting = \App\Models\Settingqurban::first();
-            return inertia('qurban/SuratKeterangan', [
-                'penerima' => $penerima,
-                'setting' => $setting
-            ]);
-        })->name('qurban.surat-keterangan');
+        Route::get('/qurban/surat-keterangan/{id}', [PenerimaqurbanController::class, 'suratKeterangan'])->name('qurban.surat-keterangan');
 
 
         // shohibul qurban

@@ -164,4 +164,18 @@ class PenerimaqurbanController extends Controller
             'data' => $penerima
         ]);
     }
+
+    /**
+     * Cetak Surat Keterangan Qurban
+     */
+    public function suratKeterangan($id)
+    {
+        $penerima = Penerimaqurban::findOrFail($id);
+        $setting = \App\Models\Settingqurban::first();
+        
+        return Inertia::render('qurban/SuratKeterangan', [
+            'penerima' => $penerima,                    
+            'setting' => $setting
+        ]);
+    }
 }
