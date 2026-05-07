@@ -70,10 +70,12 @@ class DashboardController extends Controller
             return (int) preg_replace('/[^0-9]/', '', $pemohon->permintaan ?? '0');
         });
 
+        
         $formulaJatah = FormulaJatah::latest()->first();
 
-        $totalBungkus = $formulaJatah->jumlah_total_bungkus ?? 0;
-        $sisaPembagian = $formulaJatah->sisa_pembagian ?? 0;
+        $totalBungkus = optional($formulaJatah)->jumlah_total_bungkus ?? 0;
+        $sisaPembagian = optional($formulaJatah)->sisa_pembagian ?? 0;
+
 
 
         // CARD STATS

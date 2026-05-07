@@ -136,7 +136,7 @@ export default function InputQurban() {
             case "claimed":
                 return "border-red-400 bg-red-50 shadow-red-100";
             case "shohibul":
-                return "border-yellow-400 bg-yellow-50 shadow-yellow-100";
+                return "border-[#FFA700] bg-[#FFA700] shadow-yellow-100";
             default:
                 return "border-gray-200 bg-gray-50";
         }
