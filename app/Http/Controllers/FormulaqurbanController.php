@@ -15,12 +15,12 @@ class FormulaqurbanController extends Controller
         // Get population counts
         $jiwaStats = DB::table('penerimaqurbans')
             ->select(
-                DB::raw('COUNT(CASE WHEN agama = "muslim" AND jiwa = 1 THEN 1 END) as count_1'),
-                DB::raw('COUNT(CASE WHEN agama = "muslim" AND jiwa = 2 THEN 1 END) as count_2'),
-                DB::raw('COUNT(CASE WHEN agama = "muslim" AND jiwa = 3 THEN 1 END) as count_3'),
-                DB::raw('COUNT(CASE WHEN agama = "muslim" AND jiwa = 4 THEN 1 END) as count_4'),
-                DB::raw('COUNT(CASE WHEN agama = "muslim" AND jiwa >= 5 THEN 1 END) as count_5_plus'),
-                DB::raw('COUNT(CASE WHEN agama = "nonmuslim" THEN 1 END) as count_nonmuslim')
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "muslim" AND jiwa = 1 THEN 1 END) as count_1'),
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "muslim" AND jiwa = 2 THEN 1 END) as count_2'),
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "muslim" AND jiwa = 3 THEN 1 END) as count_3'),
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "muslim" AND jiwa = 4 THEN 1 END) as count_4'),
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "muslim" AND jiwa >= 5 THEN 1 END) as count_5_plus'),
+                DB::raw('COUNT(CASE WHEN status != "shohibul" AND agama = "nonmuslim" THEN 1 END) as count_nonmuslim')
             )
             ->first();
 
@@ -147,14 +147,14 @@ class FormulaqurbanController extends Controller
     private function updateJatahPenerima($validated)
     {
         // Muslim
-        Penerimaqurban::where('agama', 'muslim')->where('jiwa', 1)->update(['jatah_sapi' => $validated['sim_sapi_1'], 'jatah_kambing' => $validated['sim_kambing_1']]);
-        Penerimaqurban::where('agama', 'muslim')->where('jiwa', 2)->update(['jatah_sapi' => $validated['sim_sapi_2'], 'jatah_kambing' => $validated['sim_kambing_2']]);
-        Penerimaqurban::where('agama', 'muslim')->where('jiwa', 3)->update(['jatah_sapi' => $validated['sim_sapi_3'], 'jatah_kambing' => $validated['sim_kambing_3']]);
-        Penerimaqurban::where('agama', 'muslim')->where('jiwa', 4)->update(['jatah_sapi' => $validated['sim_sapi_4'], 'jatah_kambing' => $validated['sim_kambing_4']]);
-        Penerimaqurban::where('agama', 'muslim')->where('jiwa', '>=', 5)->update(['jatah_sapi' => $validated['sim_sapi_5_plus'], 'jatah_kambing' => $validated['sim_kambing_5_plus']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'muslim')->where('jiwa', 1)->update(['jatah_sapi' => $validated['sim_sapi_1'], 'jatah_kambing' => $validated['sim_kambing_1']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'muslim')->where('jiwa', 2)->update(['jatah_sapi' => $validated['sim_sapi_2'], 'jatah_kambing' => $validated['sim_kambing_2']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'muslim')->where('jiwa', 3)->update(['jatah_sapi' => $validated['sim_sapi_3'], 'jatah_kambing' => $validated['sim_kambing_3']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'muslim')->where('jiwa', 4)->update(['jatah_sapi' => $validated['sim_sapi_4'], 'jatah_kambing' => $validated['sim_kambing_4']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'muslim')->where('jiwa', '>=', 5)->update(['jatah_sapi' => $validated['sim_sapi_5_plus'], 'jatah_kambing' => $validated['sim_kambing_5_plus']]);
 
         // Non-Muslim
-        Penerimaqurban::where('agama', 'nonmuslim')->update(['jatah_sapi' => $validated['sim_sapi_nonmuslim'], 'jatah_kambing' => $validated['sim_kambing_nonmuslim']]);
+        Penerimaqurban::where('status', '!=', 'shohibul')->where('agama', 'nonmuslim')->update(['jatah_sapi' => $validated['sim_sapi_nonmuslim'], 'jatah_kambing' => $validated['sim_kambing_nonmuslim']]);
     }
 
     public function getLatest()

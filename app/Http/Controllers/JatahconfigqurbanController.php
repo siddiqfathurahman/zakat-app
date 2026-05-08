@@ -41,6 +41,11 @@ class JatahconfigqurbanController extends Controller
         $penerimas = Penerimaqurban::all();
 
         foreach ($penerimas as $penerima) {
+            // Skip shohibul status
+            if ($penerima->status === 'shohibul') {
+                continue;
+            }
+
             if ($penerima->agama === 'nonmuslim') {
                 if ($configNonMuslim) {
                     $penerima->update([
