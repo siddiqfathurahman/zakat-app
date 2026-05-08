@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $pembayarZakat = PembayarZakat::all();
 
         // Harga beras (Rp / KG)
-        $hargaBeras = optional(SettingBeras::first())->harga_per_kg ?? 1;
+        $hargaBeras = optional(SettingBeras::first())->harga_per_kg ?: 1;
 
         // Total uang (Rp)
         $totalUangRp = $pembayarZakat
