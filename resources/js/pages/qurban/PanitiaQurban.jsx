@@ -103,6 +103,19 @@ import CetakCocard from './CetakCocard';
         const start = filtered.length === 0 ? 0 : (page - 1) * PER + 1;
         const end = Math.min(page * PER, filtered.length);
 
+        const pageNumbers = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
         // ─── Modal helpers ───
         const openAdd = () => {
             setEditData(null);
