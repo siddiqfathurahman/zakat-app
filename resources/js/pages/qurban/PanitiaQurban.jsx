@@ -20,7 +20,7 @@ import CetakCocard from './CetakCocard';
         'Penimbangan Daging',
         'Balungan dan Kelet',
         'Pembagian Daging Sapi',
-        'Pembagian Daging Qurban',
+        'Pembagian Daging Kambing',
         'Konsumsi',
         'Sound Sistem',
         'Keamanan',

@@ -4,8 +4,8 @@ import jsPDF from "jspdf";
 // ─── Dimensi & Layout ────────────────────────────────────────────────────────
 const CARD_W  = 90;   // lebar kartu (mm)
 const CARD_H  = 55;   // tinggi kartu (mm)
-const PAGE_W  = 329;  // lebar kertas A3+ (mm)
-const PAGE_H  = 483;  // tinggi kertas A3+ (mm)
+const PAGE_W  = 320;  // lebar kertas A3+ (mm)
+const PAGE_H  = 485;  // tinggi kertas A3+ (mm)
 const MARGIN  = 10;   // margin tepi (mm)
 const GAP_X   = 1;    // jarak horizontal antar kartu (mm)
 const GAP_Y   = 1;    // jarak vertikal antar kartu (mm)

@@ -4,9 +4,9 @@ import QRCode from "qrcode";
 
 const CARD_W = 100;
 const CARD_H = 60;
-const PAGE_W = 329;
-const PAGE_H = 483;
-const MARGIN = 10;
+const PAGE_W = 320;
+const PAGE_H = 485;
+const MARGIN = 8;
 const GAP_X  = 1;
 const GAP_Y  = 1;
 
@@ -51,8 +51,8 @@ async function drawKupon(doc, row, x, y, setting) {
     doc.setTextColor(255, 255, 255);
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("KUPON PENGAMBILAN DAGING QURBAN", x + CARD_W / 2, y + 5.5, { align: "center" });
+    doc.setFontSize(10);
+    doc.text("KUPON PENGAMBILAN DAGING QURBAN", x + CARD_W / 2, y + 6.5, { align: "center" });
 
     doc.setFontSize(8);
     const tgl = setting?.tanggal_pengambilan || "Rabu, 27 Mei 2026";
