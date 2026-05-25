@@ -44,13 +44,30 @@ class PenerimaqurbanController extends Controller
         $rt = str_pad($validated['rt'], 2, '0', STR_PAD_LEFT);
         $rw = str_pad($validated['rw'], 2, '0', STR_PAD_LEFT);
 
-        $count = Penerimaqurban::where('rt', $validated['rt'])
+        // Ambil kode terakhir berdasarkan RT & RW
+        $lastKode = Penerimaqurban::where('rt', $validated['rt'])
             ->where('rw', $validated['rw'])
-            ->count() + 1;
+            ->orderByDesc('kode_unik')
+            ->value('kode_unik');
 
-        $noUrut = str_pad($count, 3, '0', STR_PAD_LEFT);
+        $nomor = 1;
 
-        $validated['kode_unik'] = "QURBAN-{$rt}{$rw}-{$noUrut}";
+        // Ambil angka terakhir dari kode_unik
+        if ($lastKode && preg_match('/-(\d+)$/', $lastKode, $match)) {
+            $nomor = ((int) $match[1]) + 1;
+        }
+
+        // Pastikan benar-benar unik
+        do {
+            $noUrut = str_pad($nomor, 3, '0', STR_PAD_LEFT);
+            $kodeUnik = "QURBAN-{$rt}{$rw}-{$noUrut}";
+
+            $exists = Penerimaqurban::where('kode_unik', $kodeUnik)->exists();
+
+            $nomor++;
+        } while ($exists);
+
+        $validated['kode_unik'] = $kodeUnik;
 
         Penerimaqurban::create($validated);
 
