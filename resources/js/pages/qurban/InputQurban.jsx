@@ -260,6 +260,13 @@ export default function InputQurban() {
                                 <p className="text-sm font-mono mt-1 text-black">
                                     {scanResult.kode_unik}
                                 </p>
+                            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xl font-semibold ${
+                                scanResult.agama === "nonmuslim"
+                                    ? "bg-purple-100 text-purple-700 border border-purple-300"
+                                    : "bg-teal-100 text-teal-700 border border-teal-300"
+                            }`}>
+                                {scanResult.agama === "nonmuslim" ? "Non Muslim" : "Muslim"}
+                            </span>
                             </div>
                             {/* <span
                                 className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide ${getBadgeStyle(scanResult.status)}`}
