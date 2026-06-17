@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, router } from "@inertiajs/react";
 import { Trash2, Search, Edit2, X, Edit } from "lucide-react";
-import AppLayout from "../Layout/AppLayout";
+import ZakatLayout from "../Layout/ZakatLayout";
 
 export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || "");
@@ -173,7 +173,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
     };
 
     return (
-        <AppLayout>
+        <ZakatLayout>
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Data Pembayar Zakat</h1>
@@ -619,7 +619,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                     </div>
                 </div>
             )}
-        </AppLayout>
+        </ZakatLayout>
     );
 }
 

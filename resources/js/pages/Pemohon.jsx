@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import AppLayout from '../Layout/AppLayout';
+import ZakatLayout from '../Layout/ZakatLayout';
 import { Edit, Trash2 } from 'lucide-react';
 
 export default function Pemohon({ pemohons = [], flash }) {
@@ -88,7 +88,7 @@ export default function Pemohon({ pemohons = [], flash }) {
     };
 
     return (
-        <AppLayout>
+        <ZakatLayout>
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="flex justify-between items-center mb-4">
                 <div className="flex justify-between items-center mb-6">
@@ -259,7 +259,7 @@ export default function Pemohon({ pemohons = [], flash }) {
                     </div>
                 </div>
             )}
-        </AppLayout>
+        </ZakatLayout>
     );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
+import AppLayout from '../Layout/AppLayout';
 
 export default function QurbanHome() {
     const [showModal, setShowModal] = useState(false);
@@ -16,6 +17,7 @@ export default function QurbanHome() {
     };
 
     return (
+        <AppLayout>
         <div className="min-h-screen bg-orange-50 flex flex-col items-center justify-center p-4">
             <div className="mb-8 text-center bg-white p-8 rounded-2xl shadow-sm border border-orange-100 max-w-lg w-full">
                 <div className="w-16 h-16 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -93,5 +95,6 @@ export default function QurbanHome() {
                 </div>
             )}
         </div>
+        </AppLayout>
     );
 }

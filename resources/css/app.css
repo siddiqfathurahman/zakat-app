@@ -2,6 +2,16 @@
 
 @theme {
   --font-sans: 'Poppins', sans-serif;
+  --max-width: 1440px;
+
+  --color-primary: #005239;
+  --color-primary-light: #166534;
+  --color-secondary: #f59e0b;
+  --color-secondary-light: #fbbf24;
 }
 
 @import "tailwindcss"; 
+
+.content {
+  @apply max-w-[var(--max-width)] mx-auto;
+}

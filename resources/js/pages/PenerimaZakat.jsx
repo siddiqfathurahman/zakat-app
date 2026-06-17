@@ -11,7 +11,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
-import AppLayout from "../Layout/AppLayout";
+import ZakatLayout from "../Layout/ZakatLayout";
 
 export default function PenerimaZakat({
     penerimas = {
@@ -268,7 +268,7 @@ export default function PenerimaZakat({
 };
 
     return (
-        <AppLayout>
+        <ZakatLayout>
             <div className="space-y-6 min-h-screen bg-gray-50 p-4 md:p-8">
                 {flash?.success && (
                     <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
@@ -961,7 +961,7 @@ export default function PenerimaZakat({
                     </div>
                 </div>
             )}
-        </AppLayout>
+        </ZakatLayout>
     );
 }
 

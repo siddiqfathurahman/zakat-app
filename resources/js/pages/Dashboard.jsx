@@ -1,5 +1,5 @@
 import React from "react";
-import AppLayout from "../Layout/AppLayout";
+import ZakatLayout from "../Layout/ZakatLayout";
 import {
     TrendingUp,
     Package,
@@ -21,7 +21,7 @@ export default function Dashboard({
     formulaJatah,
 }) {
     return (
-        <AppLayout>
+        <ZakatLayout>
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">
@@ -260,7 +260,7 @@ export default function Dashboard({
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </ZakatLayout>
     );
 }
 

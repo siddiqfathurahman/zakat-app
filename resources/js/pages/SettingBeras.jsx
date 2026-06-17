@@ -9,7 +9,7 @@ import {
     Printer,
     X,
 } from "lucide-react";
-import AppLayout from "../Layout/AppLayout";
+import ZakatLayout from "../Layout/ZakatLayout";
 import SuccessNotification from "../components/SuccessNotification";
 
 export default function SettingBeras({
@@ -139,7 +139,7 @@ export default function SettingBeras({
     };
 
     return (
-        <AppLayout>
+        <ZakatLayout>
             <SuccessNotification message={flash?.success} />
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                 <div className="mb-6 flex gap-40">
@@ -438,7 +438,7 @@ export default function SettingBeras({
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </ZakatLayout>
     );
 }
 

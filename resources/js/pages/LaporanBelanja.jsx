@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Head, router } from "@inertiajs/react";
-import AppLayout from "../Layout/AppLayout";
+import ZakatLayout from "../Layout/ZakatLayout";
 import { Delete, Edit, Plus, Trash, Trash2 } from "lucide-react";
 
 export default function LaporanBelanja({
@@ -97,7 +97,7 @@ export default function LaporanBelanja({
 
     return (
         <>
-            <AppLayout>
+            <ZakatLayout>
                 <div className="min-h-screen bg-gray-50 p-4 md:p-8">
                     <div className="mx-auto">
                         {/* Header */}
@@ -575,7 +575,7 @@ export default function LaporanBelanja({
                         </div>
                     </div>
                 )}
-            </AppLayout>
+            </ZakatLayout>
         </>
     );
 }
