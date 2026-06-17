@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import ZakatLayout from '../Layout/ZakatLayout';
+import ZakatLayout from '../../Layout/ZakatLayout';
 import { Edit, Trash2 } from 'lucide-react';
 
 export default function Pemohon({ pemohons = [], flash }) {
@@ -57,7 +57,7 @@ export default function Pemohon({ pemohons = [], flash }) {
                 }
             });
         } else {
-            router.post('/zakat/pemohon', submitData, {
+            router.post('/zakat/input/pemohon', submitData, {
                 onSuccess: () => {
                     handleCloseModal();
                 },

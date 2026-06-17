@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, router } from "@inertiajs/react";
 import { Save, Calculator, Check, X } from "lucide-react";
-import ZakatLayout from "../Layout/ZakatLayout";
+import ZakatLayout from "../../Layout/ZakatLayout";
 
 export default function FormulaJatah({ jiwaStats, formulaJatah }) {
     const [formData, setFormData] = useState({
@@ -62,7 +62,7 @@ export default function FormulaJatah({ jiwaStats, formulaJatah }) {
             jiwa_5_plus_count: jiwaData.jiwa_5_plus,
         };
 
-        router.post("/formula-jatah/store", dataToSubmit, {
+        router.post("/zakat/input/formula-jatah/store", dataToSubmit, {
             onSuccess: () => {
                 setShowSuccess(true);
                 setTimeout(() => {

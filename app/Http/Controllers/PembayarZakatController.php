@@ -32,7 +32,7 @@ class PembayarZakatController extends Controller
         $rtList = PembayarZakat::distinct()->pluck('rt')->sort()->values();
         $rwList = PembayarZakat::distinct()->pluck('rw')->sort()->values();
 
-        return Inertia::render('PembayarZakat', [
+        return Inertia::render('zakat/PembayarZakat', [
             'pembayarZakat' => $pembayarZakat,
             'rtList' => $rtList,
             'rwList' => $rwList,
@@ -45,7 +45,7 @@ class PembayarZakatController extends Controller
 
         $setting = \App\Models\SettingBeras::first();
 
-        return Inertia::render('InputZakat', [
+        return Inertia::render('zakat/InputZakat', [
             'setting' => $setting,
         ]);
     }

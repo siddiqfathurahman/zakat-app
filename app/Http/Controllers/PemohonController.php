@@ -11,7 +11,7 @@ class PemohonController extends Controller
     public function index(Request $request)
     {
         $pemohons = Pemohon::all();
-        return Inertia::render('Pemohon', [
+        return Inertia::render('zakat/Pemohon', [
             'pemohons' => $pemohons
         ]);
     }

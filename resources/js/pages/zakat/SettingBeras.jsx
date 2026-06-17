@@ -9,8 +9,8 @@ import {
     Printer,
     X,
 } from "lucide-react";
-import ZakatLayout from "../Layout/ZakatLayout";
-import SuccessNotification from "../components/SuccessNotification";
+import ZakatLayout from "../../Layout/ZakatLayout";
+import SuccessNotification from "../../components/SuccessNotification";
 
 export default function SettingBeras({
     setting = { toko: "", harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },

@@ -24,7 +24,7 @@ class SettingBerasController extends Controller
             ]
         );
 
-        return Inertia::render('SettingBeras', [
+        return Inertia::render('zakat/SettingBeras', [
             'setting' => $setting,
         ]);
     }

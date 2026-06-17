@@ -39,7 +39,7 @@ Route::prefix('zakat')->group(function () {
                 'harga_2_5kg' => 0,
             ]);
             
-            return Inertia::render('InputZakat', [
+            return Inertia::render('zakat/InputZakat', [
                 'setting' => $setting,
             ]);
         });

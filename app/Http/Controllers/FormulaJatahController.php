@@ -37,7 +37,7 @@ class FormulaJatahController extends Controller
             ];
         }
 
-        return Inertia::render('FormulaJatah', [
+        return Inertia::render('zakat/FormulaJatah', [
             'jiwaStats' => $jiwaStats,
             'formulaJatah' => $formulaJatah,
         ]);

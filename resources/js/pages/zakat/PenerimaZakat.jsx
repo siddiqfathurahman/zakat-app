@@ -11,7 +11,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
-import ZakatLayout from "../Layout/ZakatLayout";
+import ZakatLayout from "../../Layout/ZakatLayout";
 
 export default function PenerimaZakat({
     penerimas = {
@@ -120,7 +120,7 @@ export default function PenerimaZakat({
                 }
             );
         } else {
-            router.post("/penerima-zakat", formData, {
+            router.post("/zakat/input/penerima-zakat", formData, {
                 onSuccess: () => {
                     handleCloseModal();
                 },
@@ -163,7 +163,7 @@ export default function PenerimaZakat({
 
     const handleSaveJatahConfig = () => {
         router.post(
-            "/jatah-config",
+            "/zakat/input/jatah-config",
             {
                 jatah: jatahConfig,
             },
@@ -177,7 +177,7 @@ export default function PenerimaZakat({
 
     const handleApplyJatah = () => {
         router.post(
-            "/jatah-config/apply",
+            "/zakat/input/jatah-config/apply",
             {},
             {
                 onSuccess: () => {
@@ -191,7 +191,7 @@ export default function PenerimaZakat({
     const handleSearch = (e) => {
         e.preventDefault();
         router.get(
-            "/penerima-zakat",
+            "/zakat/input/penerima-zakat",
             {
                 search: searchQuery,
                 rt: selectedRT,
@@ -206,7 +206,7 @@ export default function PenerimaZakat({
     const handleResetFilter = () => {
         setSearchQuery("");
         setSelectedRT("");
-        router.get("/penerima-zakat");
+        router.get("/zakat/input/penerima-zakat");
     };
 
     const handlePrint = () => {
@@ -243,7 +243,7 @@ export default function PenerimaZakat({
     setMatches([]);
     
     try {
-        const response = await fetch('/zakat/compare-ai', {
+        const response = await fetch('/zakat/input/compare-ai', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',

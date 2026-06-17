@@ -26,7 +26,7 @@ class PenerimaZakatController extends Controller
         $configs = JatahConfig::pluck('jatah', 'jiwa')->toArray();
         $rtList = PenerimaZakat::distinct()->pluck('rt')->sort()->values()->toArray() ?: [];
         
-        return Inertia::render('PenerimaZakat', [
+        return Inertia::render('zakat/PenerimaZakat', [
             'penerimas' => $query->orderBy('created_at', 'desc')->paginate(10),
             'configs' => $configs,
             'filters' => [

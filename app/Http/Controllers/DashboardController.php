@@ -110,7 +110,7 @@ class DashboardController extends Controller
             ],
         ];
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('zakat/Dashboard', [
             'totalAll' => round($totalAll, 2),
             'stats' => $stats,
             'distribusiRT' => $distribusiRT,

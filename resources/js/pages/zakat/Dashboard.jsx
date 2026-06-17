@@ -1,5 +1,5 @@
 import React from "react";
-import ZakatLayout from "../Layout/ZakatLayout";
+import ZakatLayout from "../../Layout/ZakatLayout";
 import {
     TrendingUp,
     Package,

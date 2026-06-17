@@ -36,7 +36,7 @@ class LaporanBelanjaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('LaporanBelanja', [
+        return Inertia::render('zakat/LaporanBelanja', [
             'totalUangMasuk' => $totalUangMasuk,
             'totalDibelanjakan' => $totalDibelanjakan,
             'uangBelumBelanjakan' => $uangBelumBelanjakan,

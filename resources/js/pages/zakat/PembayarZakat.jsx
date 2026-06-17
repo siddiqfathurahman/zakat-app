@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, router } from "@inertiajs/react";
 import { Trash2, Search, Edit2, X, Edit } from "lucide-react";
-import ZakatLayout from "../Layout/ZakatLayout";
+import ZakatLayout from "../../Layout/ZakatLayout";
 
 export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || "");
@@ -29,7 +29,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
 
     const handleFilter = () => {
         setCurrentPage(1);
-        router.get('/zakat/pembayar', {
+        router.get('/zakat/input/pembayar', {
             search: searchTerm,
             rt: selectedRT,
             rw: selectedRW,
@@ -227,7 +227,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRT(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/zakat/pembayar', {
+                                        router.get('/zakat/input/pembayar', {
                                             search: searchTerm,
                                             rt: e.target.value,
                                             rw: selectedRW,
@@ -253,7 +253,7 @@ export default function PembayarZakat({ pembayarZakat, rtList, rwList, filters }
                                     onChange={(e) => {
                                         setSelectedRW(e.target.value);
                                         setCurrentPage(1);
-                                        router.get('/zakat/pembayar', {
+                                        router.get('/zakat/input/pembayar', {
                                             search: searchTerm,
                                             rt: selectedRT,
                                             rw: e.target.value,

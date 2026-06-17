@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Head, router } from "@inertiajs/react";
-import ZakatLayout from "../Layout/ZakatLayout";
+import ZakatLayout from "../../Layout/ZakatLayout";
 import { Delete, Edit, Plus, Trash, Trash2 } from "lucide-react";
 
 export default function LaporanBelanja({
@@ -31,7 +31,7 @@ export default function LaporanBelanja({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        router.post("/laporan-belanja", formData, {
+        router.post("/zakat/input/laporan-belanja", formData, {
             onSuccess: () => {
                 setShowModal(false);
                 setFormData({

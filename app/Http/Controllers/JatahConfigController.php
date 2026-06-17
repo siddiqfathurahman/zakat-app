@@ -13,7 +13,7 @@ class JatahConfigController extends Controller
     {
         $configs = JatahConfig::pluck('jatah', 'jiwa')->toArray();
         
-        return Inertia::render('PenerimaZakat', [
+        return Inertia::render('zakat/PenerimaZakat', [
             'penerimas' => PenerimaZakat::orderBy('created_at', 'desc')->get(),
             'configs' => $configs,
         ]);
