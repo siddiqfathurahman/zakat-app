@@ -1,13 +1,352 @@
-import React from 'react';
-import { Link } from '@inertiajs/react';
-import AppLayout from '../Layout/AppLayout';
+import React from "react";
+import { Link } from "@inertiajs/react";
+import AppLayout from "../Layout/AppLayout";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import JadwalSholat from "../components/JadwalSholat";
+import { BookOpen, GraduationCap, HandHeart } from "lucide-react";
+import { Wallet } from "lucide-react";
+
+const agendaItems = [
+    {
+        title: "Kajian Tafsir Al-Quran",
+        description: "Pembahasan Fiqih & Akhlak bersama Ustadz Dwi.",
+        schedule: "RABU • 19:00 - 20:30",
+        icon: BookOpen,
+    },
+    {
+        title: "TPA ",
+        description: "Pendidikan Al-Qur'an dan karakter untuk anak-anak.",
+        schedule: "RABU & SABTU • 15:30 - 17:00",
+        icon: GraduationCap,
+    },
+    {
+        title: "Jumat Berkah",
+        description: "Pembagian makan siang gratis untuk jamaah dan dhuafa.",
+        schedule: "JUMAT • 11:30 - 13:30",
+        icon: HandHeart,
+    },
+];
+
+const partnerLogos = [
+    { name: "Takmir", logo: "/logo-takmir.webp" },
+    { name: "Taman Pendidikan Al-Qur'an Al-Anhar", logo: "/logo-tpa.webp" },
+    { name: "Ramah Mergangsan", logo: "/logo-ramah.webp" },
+    { name: "Aisyiyah", logo: "/logo-aisyiyah.jpg" },
+    { name: "PRM", logo: "/logo-prm.png" },
+];
 
 export default function Home() {
     return (
         <AppLayout>
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Coming soon Home page</h1>
-        </div>
+            <div className="relative w-full h-[570px] md:h-[650px] overflow-hidden flex items-end">
+                <img
+                    src="dakwah.webp"
+                    alt="Foto dakwah"
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent" />
+
+                {/* Konten */}
+                <div className="relative z-10 md:p-10 p-5">
+                    <span className="inline-block bg-secondary text-[#251A00] md:text-sm text-xs font-semibold  px-3 py-1 rounded-full mb-2">
+                        BERITA UTAMA
+                    </span>
+                    <h1 className="text-white text-2xl md:text-4xl font-bold leading-snug mb-2 max-w-[800px]">
+                        Revitalisasi Area Terbuka: Mewujudkan Ruang Komunitas
+                        yang Asri dan Religius
+                    </h1>
+                    <p className="text-white/80 text-sm md:text-lg leading-relaxed md:mb-6 mb-2 max-w-xl">
+                        Masjid Al Anhar memulai tahap renovasi pelataran utama
+                        dengan konsep modern-minimalis untuk kenyamanan jamaah
+                        dalam beribadah dan bersilaturahmi.
+                    </p>
+                    <a
+                        href="#"
+                        className="inline-flex items-center text-xs md:text-lg gap-2 bg-secondary text-[#251A00] font-medium md:px-5 md:py-2.5 px-3 py-1.5 rounded-full hover:bg-[#f0e68c] transition"
+                    >
+                        Baca Selengkapnya <ArrowRight />
+                    </a>
+                </div>
+            </div>
+
+            <JadwalSholat />
+
+            <section className="bg-gray-50 px-6 py-22 md:px-10 lg:px-10">
+                <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
+                    {/* Kolom Teks */}
+                    <div>
+                        <div className="mb-4 flex items-center gap-3">
+                            <span className="h-6 w-1 bg-secondary" />
+                            <h2 className="text-2xl font-bold text-primary font-second md:text-3xl">
+                                Oase Keteduhan di Tengah Kota
+                            </h2>
+                        </div>
+
+                        <p className="mb-4 leading-relaxed text-gray-700">
+                            Berdiri sejak tahun 1994,{" "}
+                            <span className="font-semibold text-primary">
+                                Masjid Al Anhar
+                            </span>{" "}
+                            telah tumbuh bukan sekadar sebagai tempat bersujud,
+                            melainkan sebagai pusat gravitasi spiritual dan
+                            intelektual bagi masyarakat sekitar. Arsitektur kami
+                            yang memadukan garis modern dengan esensi tradisi
+                            mencerminkan visi kami untuk tetap relevan di zaman
+                            yang terus berubah tanpa kehilangan akar keimanan.
+                        </p>
+
+                        <p className="mb-6 leading-relaxed text-gray-700">
+                            Misi kami melampaui batas dinding masjid. Melalui
+                            berbagai program pemberdayaan ekonomi, pendidikan
+                            Al-Qur'an untuk tunas bangsa, hingga pengelolaan
+                            zakat yang transparan, kami berkomitmen untuk
+                            mewujudkan Islam yang rahmatan lil 'alamin.
+                        </p>
+
+                        <blockquote className="border-l-2 border-secondary pl-4 text-sm italic text-gray-500">
+                            "Bersama-sama kita membangun bukan hanya struktur
+                            fisik, tapi
+                            <br />
+                            juga karakter dan kekuatan ekonomi umat yang
+                            mandiri."
+                        </blockquote>
+                    </div>
+
+                    {/* Kolom Gambar (dikosongkan / placeholder) */}
+                    <div className="h-72 w-full overflow-hidden rounded-2xl md:h-96">
+                        <img
+                            src="/dakwah.webp"
+                            alt="Masjid"
+                            className="h-full w-full object-cover"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="bg-primary px-6 py-16 md:px-12 lg:px-20">
+                <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-2">
+                    {/* Visi */}
+                    <div>
+                        <div className="mb-5 flex items-center gap-3">
+                            <span className="h-px w-4 bg-secondary" />
+                            <h3 className="text-xl font-bold text-white ">
+                                Visi Kami
+                            </h3>
+                        </div>
+                        <p className="leading-relaxed text-gray-100">
+                            Menjadi pusat peradaban Islam yang unggul, mandiri,
+                            dan inklusif dalam mewujudkan masyarakat yang
+                            religius, berakhlak mulia, dan sejahtera di bawah
+                            naungan ridha Allah SWT.
+                        </p>
+                    </div>
+
+                    {/* Misi */}
+                    <div>
+                        <div className="mb-5 flex items-center gap-3">
+                            <span className="h-px w-4 bg-secondary" />
+                            <h3 className="text-xl font-bold text-white">
+                                Misi Kami
+                            </h3>
+                        </div>
+                        <ul className="space-y-4">
+                            {[
+                                "Menyelenggarakan ibadah yang khusyuk dan sesuai tuntunan Al-Qur'an dan Sunnah.",
+                                "Mengembangkan pendidikan Islam yang berkualitas bagi seluruh lapisan generasi.",
+                                "Memberdayakan ekonomi umat melalui pengelolaan ZISWAF yang profesional dan transparan.",
+                                "Membangun ukhuwah Islamiyah dan kepedulian sosial di tengah masyarakat.",
+                            ].map((item, i) => (
+                                <li key={i} className="flex items-start gap-3">
+                                    <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-secondary" />
+                                    <span className="leading-relaxed text-gray-100">
+                                        {item}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section className="bg-gray-50 px-6 py-16 md:px-12 lg:px-20">
+                <div className="mx-auto max-w-5xl">
+                    {/* Header */}
+                    <div className="mb-14 text-center">
+                        <h2 className="text-2xl font-extrabold text-primary font-second md:text-4xl">
+                            Agenda Kegiatan Rutin
+                        </h2>
+                        <p className="mt-3 text-gray-700">
+                            Menjalin Ukhuwah, Memperdalam Ilmu di Masjid Al
+                            Anhar
+                        </p>
+                    </div>
+
+                    {/* ===== Timeline — Desktop / Tablet (md ke atas) ===== */}
+                    <div className="relative hidden md:block">
+                        {/* garis vertikal tengah, di belakang icon (z-0) */}
+                        <span className="absolute left-1/2 top-2 bottom-2 z-0 w-px -translate-x-1/2 bg-gray-300" />
+
+                        <div className="space-y-14">
+                            {agendaItems.map((item, index) => {
+                                const Icon = item.icon;
+                                const isEven = index % 2 === 0; // genap: teks kiri, jadwal kanan
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className="grid grid-cols-[1fr_auto_1fr] items-center gap-6"
+                                    >
+                                        {/* Kolom Kiri */}
+                                        {isEven ? (
+                                            <div className="text-right">
+                                                <h3 className="text-lg font-bold text-primary">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="mt-1 text-sm text-gray-600">
+                                                    {item.description}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div className="justify-self-end rounded-2xl bg-white px-5 py-4 shadow-sm shadow-gray-200/70 max-w-xs">
+                                                <span className="text-xs font-bold tracking-wide text-second">
+                                                    {item.schedule}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        {/* Icon Tengah — di atas garis, dengan ring agar garis "terputus" rapi */}
+                                        <div className="z-10 flex justify-center">
+                                            <span className="ring-8 ring-indigo-50/60 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-md">
+                                                <Icon className="h-5 w-5" />
+                                            </span>
+                                        </div>
+
+                                        {/* Kolom Kanan */}
+                                        {isEven ? (
+                                            <div className="rounded-2xl bg-white px-5 py-4 shadow-sm shadow-gray-200/70 max-w-xs">
+                                                <span className="text-xs font-bold tracking-wide text-second">
+                                                    {item.schedule}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="text-left">
+                                                <h3 className="text-lg font-bold text-primary">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="mt-1 text-sm text-gray-600">
+                                                    {item.description}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* ===== Timeline — Mobile (di bawah md) ===== */}
+                    <div className="relative block md:hidden">
+                        <span className="absolute left-6 top-2 bottom-2 z-0 w-px bg-gray-300" />
+
+                        <div className="space-y-8">
+                            {agendaItems.map((item, index) => {
+                                const Icon = item.icon;
+                                return (
+                                    <div
+                                        key={index}
+                                        className="relative flex gap-4 pl-0"
+                                    >
+                                        {/* Icon di atas rel */}
+                                        <span className="ring-8 ring-indigo-50/60 relative z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-md">
+                                            <Icon className="h-5 w-5" />
+                                        </span>
+
+                                        {/* Kartu konten */}
+                                        <div className="min-w-0 flex-1 rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/70">
+                                            <span className="inline-block text-[11px] font-bold tracking-wide text-second">
+                                                {item.schedule}
+                                            </span>
+                                            <h3 className="mt-1.5 text-base font-bold text-primary">
+                                                {item.title}
+                                            </h3>
+                                            <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="bg-gray-50 px-6 py-14 md:px-12 lg:px-20">
+                <div className="mx-auto max-w-5xl">
+                    <div className="relative isolate overflow-hidden rounded-3xl">
+                        {/* Background image */}
+                        <img
+                            src="/dakwah.webp"
+                            alt=""
+                            className="absolute inset-0 -z-20 h-full w-full object-cover"
+                        />
+
+                        <div className="absolute inset-0 -z-10 bg-primary/80" />
+
+                        <div className="flex flex-col items-center px-6 py-14 text-center md:px-12 md:py-16">
+                            <h2 className="max-w-2xl text-2xl font-bold leading-snug text-white md:text-3xl">
+                                Bersama Memakmurkan
+                                <br />
+                                Masjid Al Anhar
+                            </h2>
+                            <p className="mt-4 max-w-xl text-sm leading-relaxed text-gray-100/90">
+                                Setiap rupiah yang Anda infakkan adalah
+                                investasi akhirat yang akan terus mengalir
+                                pahalanya. Mari berkontribusi dalam pembangunan
+                                peradaban umat.
+                            </p>
+
+                            <a href="/infaqdonasi" className="mt-7 inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-primary shadow-md transition hover:brightness-105">
+                                Donasi Sekarang
+                                <Wallet className="h-4 w-4" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== Section 2: Lembaga Masjid Alanhar ===== */}
+            <section className="bg-gray-50 px-6 py-14 md:px-12 lg:px-20">
+                <div className="mx-auto max-w-5xl text-center">
+                    <h2 className="text-xl font-extrabold tracking-tight text-primary font-second md:text-4xl mb-20">
+                        Lembaga Masjid Al-Anhar
+                    </h2>
+
+                    <div className="mt-10 grid grid-cols-2 items-center justify-items-center gap-y-10 sm:grid-cols-5">
+                        {partnerLogos.map((item, index) => (
+                            <div
+                                key={index}
+                                className="flex h-28 w-28 items-center justify-center md:h-40 md:w-40"
+                            >
+                                {item.logo ? (
+                                    <img
+                                        src={item.logo}
+                                        alt={item.name}
+                                        className="max-h-full max-w-full object-contain grayscale-0"
+                                    />
+                                ) : (
+                                    <div className="flex h-full w-full flex-col items-center justify-center rounded-full border border-dashed border-gray-300 bg-gray-50 p-2 text-center">
+                                        <span className="text-[10px] font-medium leading-tight text-gray-400">
+                                            {item.name}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </AppLayout>
     );
 }

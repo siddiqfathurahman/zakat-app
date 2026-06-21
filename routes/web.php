@@ -27,6 +27,18 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
+Route::get('/infaqdonasi', function () {
+    return Inertia::render('InfaqDonasi');
+});
+
+Route::get('/quran', function () {
+    return Inertia::render('Quran');
+});
+
+Route::get('/berita', function () {
+    return Inertia::render('Berita');
+});
+
 Route::prefix('zakat')->group(function () {
     Route::get('/', function () {
         return Inertia::render('ZakatHome');

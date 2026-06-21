@@ -1,17 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@400;600;700&display=swap");
 
 @theme {
-  --font-sans: 'Poppins', sans-serif;
-  --max-width: 1440px;
+    --font-sans: "Poppins", sans-serif;
+    --font-second: "Playfair Display", serif;
+    --max-width: 1440px;
 
-  --color-primary: #005239;
-  --color-primary-light: #166534;
-  --color-secondary: #f59e0b;
-  --color-secondary-light: #fbbf24;
+    --color-primary: #005239;
+    --color-secondary: #ffdf9b;
 }
 
-@import "tailwindcss"; 
+@import "tailwindcss";
 
 .content {
-  @apply max-w-[var(--max-width)] mx-auto;
+    @apply max-w-[var(--max-width)] mx-auto;
+}
+
+@keyframes flash-highlight {
+    0%,
+    100% {
+        background-color: #ffffff;
+    }
+    50% {
+        background-color: #ecfdf5;
+    }
+}
+.ayat-flash {
+    animation: flash-highlight 1s ease-in-out infinite;
 }

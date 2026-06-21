@@ -1,45 +1,53 @@
 import { useState } from "react";
+import { Link, usePage } from "@inertiajs/react";
 import { LogIn, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Berita", href: "#" },
-  { label: "Qur'an Online", href: "#" },
+  { label: "Berita", href: "/berita" },
+  { label: "Qur'an Online", href: "/quran" },
   { label: "Zakat", href: "/zakat" },
   { label: "Qurban", href: "/qurban" },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [active, setActive] = useState(NAV_LINKS[0].label);
+  const { url } = usePage();
+
+  const isActive = (href) => {
+    // Menentukan apakah menu aktif berdasarkan URL path saat ini
+    return url === href || url.startsWith(href + "/");
+  };
 
   return (
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <nav className="content px-6 flex items-center justify-between h-20">
-          <a href="/" className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0">
             <img
               src="/logo-hijau.svg"
               alt="Logo Masjid Al Anhar"
-              className="h-16 w-auto"
+              className="md:h-16 h-12 w-auto"
             />
-          </a>
+          </Link>
 
           <ul className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map(({ label, href }) => (
-              <li key={label}>
-                <a
-                  href={href}
-                  onClick={() => setActive(label)}
-                  className={`text-[16px] transition-all duration-200 ${
-                    active === label
-                      ? "text-primary font-semibold border-b-2 border-primary pb-1"
-                      : "text-primary hover:opacity-80"
-                  }`}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
+            {NAV_LINKS.map(({ label, href }) => {
+              const active = isActive(href);
+              return (
+                <li key={label}>
+                  <Link
+                    href={href}
+                    className={`text-[16px] transition-all duration-200 ${
+                      active
+                        ? "text-primary font-semibold border-b-2 border-primary pb-1"
+                        : "text-primary hover:opacity-80"
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <button className="hidden md:flex items-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
@@ -74,13 +82,7 @@ const Navbar = () => {
         }`}
       >
 
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <img
-            src="/logo-hijau.svg"
-            alt="Logo Masjid Al Anhar"
-            className="h-12 w-auto"
-          />
-
+        <div className="flex items-right justify-end px-5 py-4 border-b border-gray-100">
           <button
             onClick={() => setIsOpen(false)}
             aria-label="Close Menu"
@@ -91,27 +93,27 @@ const Navbar = () => {
         </div>
 
         <ul className="flex-1 px-5 py-2">
-          {NAV_LINKS.map(({ label, href }) => (
-            <li
-              key={label}
-              className="border-b border-gray-100 last:border-none"
-            >
-              <a
-                href={href}
-                onClick={() => {
-                  setActive(label);
-                  setIsOpen(false);
-                }}
-                className={`block py-4 text-base transition-colors ${
-                  active === label
-                    ? "text-primary font-semibold"
-                    : "text-gray-700 hover:text-primary"
-                }`}
+          {NAV_LINKS.map(({ label, href }) => {
+            const active = isActive(href);
+            return (
+              <li
+                key={label}
+                className="border-b border-gray-100 last:border-none"
               >
-                {label}
-              </a>
-            </li>
-          ))}
+                <Link
+                  href={href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block py-4 text-base transition-colors ${
+                    active
+                      ? "text-primary font-semibold"
+                      : "text-gray-700 hover:text-primary"
+                  }`}
+                >
+                  {label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         <div className="p-5 border-t border-gray-100">
