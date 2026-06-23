@@ -19,6 +19,9 @@ use App\Http\Controllers\PenerimaqurbanController;
 use App\Http\Controllers\JatahconfigqurbanController;
 use App\Http\Controllers\FormulaqurbanController;
 use App\Http\Controllers\SettingqurbanController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminDashboardController;
 
 
 
@@ -39,12 +42,26 @@ Route::get('/berita', function () {
     return Inertia::render('Berita');
 });
 
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+    Route::get('/user', [UserController::class, 'index'])->name('users.index');
+    Route::post('/user', [UserController::class, 'store'])->name('users.store');
+    Route::post('/user/{id}/update', [UserController::class, 'update'])->name('users.update');
+    Route::post('/user/{id}/delete', [UserController::class, 'destroy'])->name('users.destroy');
+});
+
+
 Route::prefix('zakat')->group(function () {
     Route::get('/', function () {
         return Inertia::render('ZakatHome');
     });
 
-    Route::prefix('input')->group(function () {
+    Route::middleware(['auth', 'role:super admin,admin,zakat'])->prefix('input')->group(function () {
         Route::get('/', function () {
             $setting = SettingBeras::first() ?? SettingBeras::create([
                 'harga_per_kg' => 0,
@@ -114,7 +131,7 @@ Route::prefix('qurban')->group(function () {
         return Inertia::render('QurbanHome');
     });
 
-    Route::prefix('input')->group(function () {
+    Route::middleware(['auth', 'role:super admin,admin,qurban'])->prefix('input')->group(function () {
         Route::get('/', function () {
             return Inertia::render('qurban/InputQurban');
         });

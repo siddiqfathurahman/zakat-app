@@ -94,7 +94,7 @@ export default function Sidebar() {
                 </ul>
             </nav>
 
-            <div className="p-4">
+            <div className="p-4 flex flex-col gap-2">
                 <a
                     href="/zakat/input"
                     className="
@@ -115,6 +115,28 @@ export default function Sidebar() {
                 >
                     Halaman Utama
                 </a>
+                <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    className="
+            w-full 
+            flex 
+            justify-center 
+            items-center 
+            px-4 
+            py-2 
+            text-sm 
+            font-semibold 
+            rounded-lg 
+            bg-red-500 
+            text-white 
+            hover:bg-red-600 
+            transition-colors
+          "
+                >
+                    Logout
+                </Link>
             </div>
         </aside>
     );

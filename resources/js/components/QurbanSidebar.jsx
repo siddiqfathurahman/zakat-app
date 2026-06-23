@@ -92,13 +92,21 @@ export default function QurbanSidebar() {
                 </ul>
             </nav>
 
-            <div className="p-4">
+            <div className="p-4 flex flex-col gap-2">
                 <a
                     href="/qurban/input"
                     className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-white text-orange-800 hover:bg-orange-100 transition-colors"
                 >
                     Kembali ke Input
                 </a>
+                <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                >
+                    Logout
+                </Link>
             </div>
         </aside>
     );

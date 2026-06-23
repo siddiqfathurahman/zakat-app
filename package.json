@@ -30,6 +30,7 @@
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
         "react-router-dom": "^7.10.1",
-        "react-thermal-printer": "^0.22.0"
+        "react-thermal-printer": "^0.22.0",
+        "recharts": "^3.8.1"
     }
 }

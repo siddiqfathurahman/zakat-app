@@ -50,10 +50,10 @@ const Navbar = () => {
             })}
           </ul>
 
-          <button className="hidden md:flex items-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
+          <a href="/login" className="hidden md:flex items-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
             <span>Login</span>
             <LogIn className="w-4 h-4" />
-          </button>
+          </a>
 
           <button
             onClick={() => setIsOpen(true)}
@@ -117,10 +117,10 @@ const Navbar = () => {
         </ul>
 
         <div className="p-5 border-t border-gray-100">
-          <button className="w-full flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-3 rounded-lg transition-all duration-200">
+          <a href="/login" className="w-full flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-3 rounded-lg transition-all duration-200">
             <span>Login</span>
             <LogIn className="w-4 h-4" />
-          </button>
+          </a>
         </div>
       </aside>
     </>
