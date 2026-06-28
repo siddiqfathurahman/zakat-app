@@ -22,6 +22,16 @@
         "@inertiajs/react": "^2.3.1",
         "@radix-ui/react-label": "^2.1.8",
         "@radix-ui/react-radio-group": "^1.3.8",
+        "@tiptap/extension-color": "^3.27.1",
+        "@tiptap/extension-image": "^3.27.1",
+        "@tiptap/extension-link": "^3.27.1",
+        "@tiptap/extension-placeholder": "^3.27.1",
+        "@tiptap/extension-text-align": "^3.27.1",
+        "@tiptap/extension-text-style": "^3.27.1",
+        "@tiptap/extension-underline": "^3.27.1",
+        "@tiptap/pm": "^3.27.1",
+        "@tiptap/react": "^3.27.1",
+        "@tiptap/starter-kit": "^3.27.1",
         "fuse.js": "^7.4.2",
         "html5-qrcode": "^2.3.8",
         "jspdf": "^4.2.1",
@@ -31,6 +41,7 @@
         "react-dom": "^19.2.3",
         "react-router-dom": "^7.10.1",
         "react-thermal-printer": "^0.22.0",
-        "recharts": "^3.8.1"
+        "recharts": "^3.8.1",
+        "ziggy-js": "^2.6.3"
     }
 }

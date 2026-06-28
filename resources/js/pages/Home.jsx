@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import JadwalSholat from "../components/JadwalSholat";
 import { BookOpen, GraduationCap, HandHeart } from "lucide-react";
 import { Wallet } from "lucide-react";
+import BeritaHome from "../components/BeritaHome";
 
 const agendaItems = [
     {
@@ -35,40 +36,10 @@ const partnerLogos = [
     { name: "PRM", logo: "/logo-prm.png" },
 ];
 
-export default function Home() {
+export default function Home({ news = [] }) {
     return (
         <AppLayout>
-            <div className="relative w-full h-[570px] md:h-[650px] overflow-hidden flex items-end">
-                <img
-                    src="dakwah.webp"
-                    alt="Foto dakwah"
-                    className="absolute inset-0 w-full h-full object-cover"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent" />
-
-                {/* Konten */}
-                <div className="relative z-10 md:p-10 p-5">
-                    <span className="inline-block bg-secondary text-[#251A00] md:text-sm text-xs font-semibold  px-3 py-1 rounded-full mb-2">
-                        BERITA UTAMA
-                    </span>
-                    <h1 className="text-white text-2xl md:text-4xl font-bold leading-snug mb-2 max-w-[800px]">
-                        Revitalisasi Area Terbuka: Mewujudkan Ruang Komunitas
-                        yang Asri dan Religius
-                    </h1>
-                    <p className="text-white/80 text-sm md:text-lg leading-relaxed md:mb-6 mb-2 max-w-xl">
-                        Masjid Al Anhar memulai tahap renovasi pelataran utama
-                        dengan konsep modern-minimalis untuk kenyamanan jamaah
-                        dalam beribadah dan bersilaturahmi.
-                    </p>
-                    <a
-                        href="#"
-                        className="inline-flex items-center text-xs md:text-lg gap-2 bg-secondary text-[#251A00] font-medium md:px-5 md:py-2.5 px-3 py-1.5 rounded-full hover:bg-[#f0e68c] transition"
-                    >
-                        Baca Selengkapnya <ArrowRight />
-                    </a>
-                </div>
-            </div>
+            <BeritaHome news={news} />
 
             <JadwalSholat />
 

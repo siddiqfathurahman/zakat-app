@@ -10,7 +10,7 @@ import {
 
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { name: "Berita", href: "/berita", icon: Newspaper },
+  { name: "Berita", href: "/admin/berita", icon: Newspaper },
   { name: "Keuangan", href: "/keuangan", icon: Wallet },
   { name: "User", href: "/admin/user", icon: Users },
 ];

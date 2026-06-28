@@ -22,13 +22,11 @@ use App\Http\Controllers\SettingqurbanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AiController;
 
-
-
-
-Route::get('/', function () {
-    return Inertia::render('Home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/infaqdonasi', function () {
     return Inertia::render('InfaqDonasi');
@@ -38,9 +36,9 @@ Route::get('/quran', function () {
     return Inertia::render('Quran');
 });
 
-Route::get('/berita', function () {
-    return Inertia::render('Berita');
-});
+Route::get('/berita', [NewsController::class, 'publicIndex'])->name('berita.index');
+Route::get('/berita/{slug}', [NewsController::class, 'publicShow'])->name('berita.show');
+Route::post('/berita/{slug}/like', [NewsController::class, 'addLike'])->name('berita.like');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -48,11 +46,21 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-
+ 
     Route::get('/user', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('users.store');
     Route::post('/user/{id}/update', [UserController::class, 'update'])->name('users.update');
     Route::post('/user/{id}/delete', [UserController::class, 'destroy'])->name('users.destroy');
+ 
+    Route::get('/berita', [NewsController::class, 'adminIndex'])->name('news.index');
+    Route::get('/berita/add', [NewsController::class, 'create'])->name('news.create');
+    Route::post('/berita', [NewsController::class, 'store'])->name('news.store');
+    Route::get('/berita/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
+    Route::post('/berita/{news}', [NewsController::class, 'update'])->name('news.update');
+    Route::put('/berita/{news}', [NewsController::class, 'update']); 
+    Route::post('/berita/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
+
+    Route::post('/ai/generate-news', [AiController::class, 'generateNews'])->name('ai.generate-news');
 });
 
 
