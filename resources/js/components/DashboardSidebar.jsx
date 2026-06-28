@@ -5,6 +5,7 @@ import {
   Wallet,
   Users,
   LogOut,
+  Tag,
 } from "lucide-react";
 
 
@@ -12,6 +13,7 @@ const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Berita", href: "/admin/berita", icon: Newspaper },
   { name: "Keuangan", href: "/keuangan", icon: Wallet },
+  { name: "Iklan", href: "/iklan", icon: Tag },
   { name: "User", href: "/admin/user", icon: Users },
 ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ class AdminDashboardController extends Controller
     {
         $authUser = Auth::user();
         $totalUsers = User::count();
+        $totalNews = News::count();
 
         return Inertia::render('dashboard/AdminDashboard', [
             'authUser' => [
@@ -20,7 +22,8 @@ class AdminDashboardController extends Controller
                 'username' => $authUser->username,
                 'role'     => $authUser->role,
             ],
-            'totalUsers' => $totalUsers,
+            'totalUsers'     => $totalUsers,
+            'totalNews'      => $totalNews,
         ]);
     }
 }

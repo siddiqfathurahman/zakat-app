@@ -8,14 +8,13 @@ import {
   Calendar,
   ArrowUpRight,
   User,
+  MessageCircle,
 } from "lucide-react";
 import { Link, router } from "@inertiajs/react";
 import { route } from "ziggy-js";
 
 const CATEGORIES = ["Semua", "Kegiatan", "Dakwah", "Sosial", "Pengumuman"];
-const AUTHOR = "Admin Alanhar";
 
-// Assign kategori statis berputar supaya kartu terlihat bervariasi
 const STATIC_CATS = ["Kegiatan", "Sosial", "Dakwah", "Pengumuman"];
 const getCat = (index) => STATIC_CATS[index % STATIC_CATS.length];
 
@@ -64,7 +63,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
   const truncate = (text, n) =>
     text && text.length > n ? text.substring(0, n) + "..." : text;
 
-  // hero = berita index-0; grid = sisanya
   const hero = news[0] ?? null;
   const gridNews = news.slice(1);
 
@@ -92,9 +90,8 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
             </div>
           </div>
 
-          {/* ── Banner Hero (berita pertama) ── */}
           {hero && (
-            <div className="relative isolate mb-7 h-72 overflow-hidden rounded-3xl md:h-96">
+            <div className="relative isolate mb-7 h-72 overflow-hidden md:rounded-3xl rounded-lg md:h-96">
               {hero.thumbnail ? (
                 <img
                   src={`/storage/${hero.thumbnail}`}
@@ -107,18 +104,18 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
               <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
 
               <div className="flex h-full flex-col justify-end p-6 md:p-10">
-                <span className="mb-2 inline-block w-fit rounded-full bg-secondary px-3 py-1 text-[10px] font-bold tracking-widest text-primary backdrop-blur-sm">
+                <span className="mb-2 inline-block w-fit rounded-full bg-secondary px-3 py-1 md:text-[10px] text-[8px] font-bold tracking-widest text-primary backdrop-blur-sm">
                   BERITA TERBARU
                 </span>
-                <h2 className="max-w-xl text-2xl font-extrabold leading-snug text-white md:text-3xl">
+                <h2 className="max-w-xl text-sm font-extrabold leading-snug text-white md:text-3xl">
                   {hero.title}
                 </h2>
-                <p className="mt-2 max-w-lg text-sm text-white/80 line-clamp-2">
+                <p className="mt-2 max-w-lg md:text-sm text-xs text-white/80 line-clamp-2">
                   {hero.excerpt}
                 </p>
                 <Link
                   href={route("berita.show", hero.slug)}
-                  className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-white underline-offset-4 hover:underline"
+                  className="mt-4 inline-flex w-fit items-center gap-1.5 md:text-sm text-xs font-semibold text-white underline-offset-4 hover:underline"
                 >
                   Baca Selengkapnya
                   <ArrowUpRight className="h-4 w-4" />
@@ -127,9 +124,7 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
             </div>
           )}
 
-          {/* ── Search + Filter Kategori ── */}
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-            {/* Search */}
             <form onSubmit={handleSearch} className="relative flex-1">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -141,7 +136,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
               />
             </form>
 
-            {/* Kategori */}
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -159,7 +153,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
             </div>
           </div>
 
-          {/* ── Grid Kartu ── */}
           {gridNews.length === 0 ? (
             <div className="rounded-2xl bg-white py-16 text-center text-sm text-gray-400 shadow-sm">
               Tidak ada berita yang cocok.
@@ -173,8 +166,7 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                   <article
                     key={item.id}
                     className="overflow-hidden rounded-2xl bg-white shadow-sm shadow-gray-200/70 flex flex-col"
-                  >
-                    {/* Thumbnail */}
+                  >      
                     <div className="relative h-44 w-full overflow-hidden bg-gray-100">
                       {item.thumbnail ? (
                         <img
@@ -192,7 +184,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                     </div>
 
                     <div className="flex flex-1 flex-col p-4">
-                      {/* Kategori + Tanggal */}
                       <div className="mb-2 flex items-center justify-between gap-2 text-[11px] font-bold">
                         <span className="text-primary uppercase">{item.category}</span>
                         <span className="text-gray-400 font-normal">
@@ -200,12 +191,10 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                         </span>
                       </div>
 
-                      {/* Judul */}
                       <h3 className="line-clamp-2 text-sm font-bold leading-snug text-gray-900">
                         {item.title}
                       </h3>
 
-                      {/* Excerpt */}
                       <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-gray-500 flex-1">
                         {item.excerpt}
                       </p>
@@ -217,39 +206,45 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                             <ArrowUpRight className="h-3.5 w-3.5" />
                           </Link>
 
-                      {/* Footer */}
                       <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5">
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-gray-400">
-                            <User className="h-3 w-3" />
+                              <User className="h-3 w-3" />
                           </span>
                           <span className="text-[11px] text-gray-500">{item.author}</span>
-                        </div>
+                      </div>
 
-                        <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
+                          {/* Like */}
                           <button
-                            onClick={() => handleLike(item.slug)}
-                            className={`flex items-center gap-1 text-xs transition ${
-                              liked ? "text-red-500" : "text-gray-400 hover:text-red-400"
-                            }`}
+                              onClick={() => handleLike(item.slug)}
+                              className={`flex items-center gap-1 text-xs transition ${
+                                  liked ? "text-red-500" : "text-gray-400 hover:text-red-400"
+                              }`}
                           >
-                            <Heart
-                              className="h-3.5 w-3.5"
-                              fill={liked ? "currentColor" : "none"}
-                            />
-                            {item.like ?? 0}
+                              <Heart
+                                  className="h-3.5 w-3.5"
+                                  fill={liked ? "currentColor" : "none"}
+                              />
+                              {item.like ?? 0}
                           </button>
 
-                        </div>
+                          {/* Komentar */}
+                          <Link
+                              href={route("berita.show", item.slug) + "#komentar"}
+                              className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary transition"
+                          >
+                              <MessageCircle className="h-3.5 w-3.5" />
+                              {item.comments_count ?? 0}
+                          </Link>
                       </div>
+                  </div>
                     </div>
                   </article>
                 );
               })}
             </div>
           )}
-
-          {/* ── Pagination ── */}
           {pagination && pagination.last_page > 1 && (
             <div className="mt-10 flex items-center justify-center gap-2">
               <button
@@ -286,7 +281,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                   </button>
                 ))}
 
-              {/* Elipsis + halaman terakhir */}
               {pagination.last_page > 5 &&
                 pagination.current_page < pagination.last_page - 2 && (
                   <>

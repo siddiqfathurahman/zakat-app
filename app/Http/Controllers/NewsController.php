@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,7 +23,7 @@ class NewsController extends Controller
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('excerpt', 'like', "%{$search}%");
+                        ->orWhere('excerpt', 'like', "%{$search}%");
                 });
             }
 
@@ -30,7 +31,6 @@ class NewsController extends Controller
                 $query->where('status', $request->status);
             }
 
-            // Tambah ini — sebelumnya tidak ada!
             if ($request->filled('category')) {
                 $query->where('category', $request->category);
             }
@@ -39,28 +39,40 @@ class NewsController extends Controller
             $perPage = $request->get('per_page', 10);
             $news = $query->paginate($perPage);
 
+            // Statistik
+            $totalNews = News::count();
+            $totalLikes = News::sum('like');
+            $totalViews = News::sum('views');
+            $totalComments = Comment::count();
+
             return Inertia::render('dashboard/AdminBerita', [
                 'news' => $news->items(),
                 'pagination' => [
-                    'total'        => $news->total(),
-                    'count'        => $news->count(),
-                    'per_page'     => $news->perPage(),
+                    'total' => $news->total(),
+                    'count' => $news->count(),
+                    'per_page' => $news->perPage(),
                     'current_page' => $news->currentPage(),
-                    'last_page'    => $news->lastPage(),
-                    'from'         => $news->firstItem(),
-                    'to'           => $news->lastItem(),
+                    'last_page' => $news->lastPage(),
+                    'from' => $news->firstItem(),
+                    'to' => $news->lastItem(),
                 ],
                 'filters' => [
-                    'search'   => $request->get('search', ''),
-                    'status'   => $request->get('status', ''),
+                    'search' => $request->get('search', ''),
+                    'status' => $request->get('status', ''),
                     'category' => $request->get('category', ''),
+                ],
+                'stats' => [
+                    'totalNews' => $totalNews,
+                    'totalLikes' => $totalLikes,
+                    'totalViews' => $totalViews,
+                    'totalComments' => $totalComments,
                 ],
             ]);
         } catch (\Exception $e) {
             return Inertia::render('dashboard/AdminBerita', [
-                'news'       => [],
+                'news' => [],
                 'pagination' => [],
-                'error'      => 'Gagal mengambil data: ' . $e->getMessage(),
+                'error' => 'Gagal mengambil data: '.$e->getMessage(),
             ]);
         }
     }
@@ -92,11 +104,11 @@ class NewsController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title'     => 'required|string|max:255',
-                'category'  => 'required|string|max:100',
-                'excerpt'   => 'required|string|max:500',
-                'content'   => 'required|string',
-                'status'    => 'required|in:draft,published',
+                'title' => 'required|string|max:255',
+                'category' => 'required|string|max:100',
+                'excerpt' => 'required|string|max:500',
+                'content' => 'required|string',
+                'status' => 'required|in:draft,published',
                 'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             ]);
 
@@ -104,7 +116,7 @@ class NewsController extends Controller
 
             if ($request->hasFile('thumbnail')) {
                 $file = $request->file('thumbnail');
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$file->getClientOriginalExtension();
                 $validated['thumbnail'] = $file->storeAs('news', $filename, 'public');
             }
 
@@ -113,7 +125,7 @@ class NewsController extends Controller
             $slug = $baseSlug;
             $counter = 1;
             while (News::where('slug', $slug)->exists()) {
-                $slug = $baseSlug . '-' . $counter++;
+                $slug = $baseSlug.'-'.$counter++;
             }
             $validated['slug'] = $slug;
 
@@ -125,7 +137,7 @@ class NewsController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal membuat berita: ' . $e->getMessage())->withInput();
+            return back()->with('error', 'Gagal membuat berita: '.$e->getMessage())->withInput();
         }
     }
 
@@ -136,11 +148,11 @@ class NewsController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title'     => 'required|string|max:255',
-                'category'  => 'required|string|max:100',
-                'excerpt'   => 'required|string|max:500',
-                'content'   => 'required|string',
-                'status'    => 'required|in:draft,published',
+                'title' => 'required|string|max:255',
+                'category' => 'required|string|max:100',
+                'excerpt' => 'required|string|max:500',
+                'content' => 'required|string',
+                'status' => 'required|in:draft,published',
                 'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             ]);
 
@@ -151,7 +163,7 @@ class NewsController extends Controller
                     \Storage::disk('public')->delete($news->thumbnail);
                 }
                 $file = $request->file('thumbnail');
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$file->getClientOriginalExtension();
                 $validated['thumbnail'] = $file->storeAs('news', $filename, 'public');
             }
 
@@ -161,7 +173,7 @@ class NewsController extends Controller
                 $slug = $baseSlug;
                 $counter = 1;
                 while (News::where('slug', $slug)->where('id', '!=', $news->id)->exists()) {
-                    $slug = $baseSlug . '-' . $counter++;
+                    $slug = $baseSlug.'-'.$counter++;
                 }
                 $validated['slug'] = $slug;
             }
@@ -174,7 +186,7 @@ class NewsController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memperbarui berita: ' . $e->getMessage())->withInput();
+            return back()->with('error', 'Gagal memperbarui berita: '.$e->getMessage())->withInput();
         }
     }
 
@@ -192,7 +204,7 @@ class NewsController extends Controller
             return redirect()->route('news.index')
                 ->with('success', 'Berita berhasil dihapus');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghapus berita: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus berita: '.$e->getMessage());
         }
     }
 
@@ -204,6 +216,7 @@ class NewsController extends Controller
         try {
             $news = News::where('slug', $slug)->firstOrFail();
             $news->increment('like');
+
             return back();
         } catch (\Exception $e) {
             return back();
@@ -214,51 +227,53 @@ class NewsController extends Controller
      * Public - Render berita list page
      */
     public function publicIndex(Request $request)
-        {
-            try {
-                $query = News::where('status', 'published');
+    {
+        try {
+            $query = News::where('status', 'published')
+                ->withCount(['comments' => function ($q) {
+                    $q->where('sentiment', 'positive');
+                }]);
 
-                if ($request->filled('search')) {
-                    $search = $request->search;
-                    $query->where(function ($q) use ($search) {
-                        $q->where('title', 'like', "%{$search}%")
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
                         ->orWhere('excerpt', 'like', "%{$search}%");
-                    });
-                }
-
-                // Tambah filter kategori
-                if ($request->filled('category')) {
-                    $query->where('category', $request->category);
-                }
-
-                $query->orderBy('created_at', 'desc');
-                $perPage = $request->get('per_page', 9);
-                $news = $query->paginate($perPage);
-
-                return Inertia::render('Berita', [
-                    'news' => $news->items(),
-                    'pagination' => [
-                        'total'        => $news->total(),
-                        'count'        => $news->count(),
-                        'per_page'     => $news->perPage(),
-                        'current_page' => $news->currentPage(),
-                        'last_page'    => $news->lastPage(),
-                        'from'         => $news->firstItem(),
-                        'to'           => $news->lastItem(),
-                    ],
-                    'filters' => [
-                        'search'   => $request->get('search', ''),
-                        'category' => $request->get('category', ''),  // tambah ini
-                    ],
-                ]);
-            } catch (\Exception $e) {
-                return Inertia::render('Berita', [
-                    'news'       => [],
-                    'pagination' => [],
-                    'error'      => 'Gagal mengambil data: ' . $e->getMessage(),
-                ]);
+                });
             }
+
+            if ($request->filled('category')) {
+                $query->where('category', $request->category);
+            }
+
+            $query->orderBy('created_at', 'desc');
+            $perPage = $request->get('per_page', 9);
+            $news = $query->paginate($perPage);
+
+            return Inertia::render('Berita', [
+                'news' => $news->items(),
+                'pagination' => [
+                    'total' => $news->total(),
+                    'count' => $news->count(),
+                    'per_page' => $news->perPage(),
+                    'current_page' => $news->currentPage(),
+                    'last_page' => $news->lastPage(),
+                    'from' => $news->firstItem(),
+                    'to' => $news->lastItem(),
+                ],
+                'filters' => [
+                    'search' => $request->get('search', ''),
+                    'category' => $request->get('category', ''),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return Inertia::render('Berita', [
+                'news' => [],
+                'pagination' => [],
+                'error' => 'Gagal mengambil data: '.$e->getMessage(),
+            ]);
         }
+    }
 
     /**
      * Public - Show detail berita
@@ -268,12 +283,20 @@ class NewsController extends Controller
         try {
             $news = News::where('slug', $slug)->firstOrFail();
 
-            if ($news->status === 'draft' && (!auth()->check() || !auth()->user()->hasRole(['admin', 'super admin']))) {
+            if ($news->status === 'draft' && (! auth()->check() || ! auth()->user()->hasRole(['admin', 'super admin']))) {
                 abort(404);
             }
 
+            $news->increment('views');
+
+            $comments = $news->comments()
+                ->where('sentiment', 'positive')
+                ->latest()
+                ->get();
+
             return Inertia::render('BeritaDetail', [
                 'news' => $news,
+                'comments' => $comments,
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);

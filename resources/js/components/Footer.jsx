@@ -121,6 +121,9 @@ const Footer = () => {
           © {new Date().getFullYear()} Masjid Al Anhar. Seluruh hak cipta
           dilindungi.
         </div>
+        <div className=" mt-4 text-center text-sm text-white/70">
+          2.0.10
+        </div>
       </div>
     </footer>
   );

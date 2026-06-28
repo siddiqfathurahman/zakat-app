@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import DashboardLayout from "../../Layout/DashboardLayout";
 import {
-    Search, Edit2, Trash2, Plus,
-    ChevronLeft, ChevronRight, Newspaper, AlertTriangle, X,
+    Search,
+    Edit2,
+    Trash2,
+    Plus,
+    ChevronLeft,
+    ChevronRight,
+    Newspaper,
+    AlertTriangle,
+    X,
+    Heart,
+    Eye,
 } from "lucide-react";
 import { router, Link } from "@inertiajs/react";
 import { route } from "ziggy-js";
+import { MessageCircle } from "lucide-react";
 
 const CATEGORIES = ["Kegiatan", "Dakwah", "Sosial", "Pengumuman"];
 
@@ -61,11 +71,11 @@ const DeleteModal = ({ news, onConfirm, onCancel, loading }) => {
     );
 };
 
-const AdminBerita = ({ news, pagination, filters = {} }) => {
+const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
     const [search, setSearch] = useState(filters.search || "");
     const [status, setStatus] = useState(filters.status || "");
     const [category, setCategory] = useState(filters.category || "");
-    const [deleteTarget, setDeleteTarget] = useState(null); 
+    const [deleteTarget, setDeleteTarget] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
     const handleSearch = (e) => {
@@ -76,13 +86,21 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
     const handleStatusFilter = (e) => {
         const newStatus = e.target.value;
         setStatus(newStatus);
-        router.get(route("news.index"), { search, status: newStatus, category });
+        router.get(route("news.index"), {
+            search,
+            status: newStatus,
+            category,
+        });
     };
 
     const handleCategoryFilter = (e) => {
         const newCategory = e.target.value;
         setCategory(newCategory);
-        router.get(route("news.index"), { search, status, category: newCategory });
+        router.get(route("news.index"), {
+            search,
+            status,
+            category: newCategory,
+        });
     };
 
     const confirmDelete = () => {
@@ -118,8 +136,85 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
             <div className="w-full">
                 <div className="flex items-center justify-between bg-white border border-gray-200 p-4">
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900">Manajemen Berita</h1>
-                        <p className="text-xs text-gray-400 mt-0.5">Kelola seluruh artikel dan pengumuman masjid.</p>
+                        <h1 className="text-xl font-bold text-gray-900">
+                            Manajemen Berita
+                        </h1>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            Kelola seluruh artikel dan pengumuman masjid.
+                        </p>
+                    </div>
+                </div>
+
+                {/* ── Kotak Statistik ── */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10 mx-10">
+                    <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">
+                                <Newspaper className="h-4 w-4 text-amber-500" />
+                            </span>
+                            <span className="text-[10px] font-bold text-amber-500 bg-amber-50 rounded-full px-2 py-0.5">
+                                Total
+                            </span>
+                        </div>
+                        <p className="text-3xl font-extrabold text-gray-900">
+                            {stats.totalNews ?? 0}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            Jumlah Berita
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50">
+                                <Heart className="h-4 w-4 text-red-500" />
+                            </span>
+                            <span className="text-[10px] font-bold text-red-500 bg-red-50 rounded-full px-2 py-0.5">
+                                Total
+                            </span>
+                        </div>
+                        <p className="text-3xl font-extrabold text-gray-900">
+                            {stats.totalLikes ?? 0}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            Total Like
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
+                                <MessageCircle className="h-4 w-4 text-blue-500" />
+                            </span>
+                            <span className="text-[10px] font-bold text-blue-500 bg-blue-50 rounded-full px-2 py-0.5">
+                                Total
+                            </span>
+                        </div>
+                        <p className="text-3xl font-extrabold text-gray-900">
+                            {stats.totalComments ?? 0}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            Total Komentar
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50">
+                                <Eye className="h-4 w-4 text-emerald-500" />
+                            </span>
+                            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 rounded-full px-2 py-0.5">
+                                Total
+                            </span>
+                        </div>
+                        <p className="text-3xl font-extrabold text-gray-900">
+                            {stats.totalViews >= 1000
+                                ? (stats.totalViews / 1000).toFixed(1) + "K"
+                                : (stats.totalViews ?? 0)}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            Total Pengunjung
+                        </p>
                     </div>
                 </div>
 
@@ -143,7 +238,9 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                         type="text"
                                         placeholder="Cari berita..."
                                         value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
                                         className="w-full rounded-xl border border-gray-200 py-2.5 pl-11 pr-4 text-sm text-gray-700 transition focus:border-primary"
                                     />
                                 </div>
@@ -163,7 +260,9 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                 >
                                     <option value="">Semua Kategori</option>
                                     {CATEGORIES.map((cat) => (
-                                        <option key={cat} value={cat}>{cat}</option>
+                                        <option key={cat} value={cat}>
+                                            {cat}
+                                        </option>
                                     ))}
                                 </select>
                                 <button
@@ -182,8 +281,21 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="border-b border-gray-100">
-                                            {["THUMBNAIL", "JUDUL & SLUG", "STATUS", "KATEGORI", "PENULIS", "LIKE", "TANGGAL", "AKSI"].map((h) => (
-                                                <th key={h} className="px-5 py-3.5 text-left text-[11px] font-bold tracking-wide text-primary">
+                                            {[
+                                                "THUMBNAIL",
+                                                "JUDUL & SLUG",
+                                                "STATUS",
+                                                "KATEGORI",
+                                                "PENULIS",
+                                                "LIKE",
+                                                "VIEWS",
+                                                "TANGGAL",
+                                                "AKSI",
+                                            ].map((h) => (
+                                                <th
+                                                    key={h}
+                                                    className="px-5 py-3.5 text-left text-[11px] font-bold tracking-wide text-primary"
+                                                >
                                                     {h}
                                                 </th>
                                             ))}
@@ -191,10 +303,17 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                     </thead>
                                     <tbody className="divide-y divide-gray-50">
                                         {news.map((item) => (
-                                            <tr key={item.id} className="group hover:bg-gray-50/60 transition">
+                                            <tr
+                                                key={item.id}
+                                                className="group hover:bg-gray-50/60 transition"
+                                            >
                                                 <td className="px-5 py-4">
                                                     {item.thumbnail ? (
-                                                        <img src={`/storage/${item.thumbnail}`} alt={item.title} className="h-12 w-16 rounded-xl object-cover" />
+                                                        <img
+                                                            src={`/storage/${item.thumbnail}`}
+                                                            alt={item.title}
+                                                            className="h-12 w-16 rounded-xl object-cover"
+                                                        />
                                                     ) : (
                                                         <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-gray-100">
                                                             <Newspaper className="h-5 w-5 text-gray-300" />
@@ -203,19 +322,28 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                                 </td>
                                                 <td className="px-5 py-4 max-w-xs">
                                                     <p className="font-semibold text-gray-900 leading-snug">
-                                                        {truncateText(item.title, 45)}
+                                                        {truncateText(
+                                                            item.title,
+                                                            45,
+                                                        )}
                                                     </p>
                                                     <span className="mt-1 inline-block rounded-lg bg-gray-100 px-2 py-0.5 font-mono text-[10px] text-gray-400">
                                                         {item.slug}
                                                     </span>
                                                 </td>
                                                 <td className="px-5 py-4">
-                                                    <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${
-                                                        item.status === "published"
-                                                            ? "bg-emerald-50 text-emerald-700"
-                                                            : "bg-amber-50 text-amber-700"
-                                                    }`}>
-                                                        {item.status === "published" ? "Published" : "Draft"}
+                                                    <span
+                                                        className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                                                            item.status ===
+                                                            "published"
+                                                                ? "bg-emerald-50 text-emerald-700"
+                                                                : "bg-amber-50 text-amber-700"
+                                                        }`}
+                                                    >
+                                                        {item.status ===
+                                                        "published"
+                                                            ? "Published"
+                                                            : "Draft"}
                                                     </span>
                                                 </td>
                                                 <td className="px-5 py-4">
@@ -224,29 +352,62 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                                             {item.category}
                                                         </span>
                                                     ) : (
-                                                        <span className="text-gray-300 text-xs">—</span>
+                                                        <span className="text-gray-300 text-xs">
+                                                            —
+                                                        </span>
                                                     )}
                                                 </td>
                                                 <td className="px-5 py-4 text-sm text-gray-700">
-                                                    {item.author ?? <span className="text-gray-300 text-xs">—</span>}
+                                                    {item.author ?? (
+                                                        <span className="text-gray-300 text-xs">
+                                                            —
+                                                        </span>
+                                                    )}
                                                 </td>
                                                 <td className="px-5 py-4 font-semibold text-gray-700">
                                                     {item.like ?? 0}
                                                 </td>
+                                                <td className="px-5 py-4 font-semibold text-gray-700">
+                                                    {item.views ?? 0}
+                                                </td>
                                                 <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
-                                                    {formatDate(item.created_at)}
+                                                    {formatDate(
+                                                        item.created_at,
+                                                    )}
                                                 </td>
                                                 <td className="px-5 py-4">
                                                     <div className="flex items-center gap-1.5">
                                                         <Link
-                                                            href={route("news.edit", { news: item.slug })}
+                                                            href={route(
+                                                                "news.edit",
+                                                                {
+                                                                    news: item.slug,
+                                                                },
+                                                            )}
                                                             title="Edit"
                                                             className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-emerald-50 hover:text-primary"
                                                         >
                                                             <Edit2 className="h-4 w-4" />
                                                         </Link>
+
+                                                        <Link
+                                                            href={route(
+                                                                "admin.comments",
+                                                                {
+                                                                    slug: item.slug,
+                                                                },
+                                                            )}
+                                                            title="Komentar"
+                                                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-500"
+                                                        >
+                                                            <MessageCircle className="h-4 w-4" />
+                                                        </Link>
                                                         <button
-                                                            onClick={() => setDeleteTarget(item)}
+                                                            onClick={() =>
+                                                                setDeleteTarget(
+                                                                    item,
+                                                                )
+                                                            }
                                                             title="Hapus"
                                                             className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
                                                         >
@@ -264,8 +425,12 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-300 mb-4">
                                     <Newspaper className="h-7 w-7" />
                                 </span>
-                                <p className="font-semibold text-gray-500">Belum ada berita</p>
-                                <p className="mt-1 text-xs text-gray-400">Mulai tambahkan berita atau pengumuman baru.</p>
+                                <p className="font-semibold text-gray-500">
+                                    Belum ada berita
+                                </p>
+                                <p className="mt-1 text-xs text-gray-400">
+                                    Mulai tambahkan berita atau pengumuman baru.
+                                </p>
                                 <Link
                                     href={route("news.create")}
                                     className="mt-4 flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110"
@@ -282,15 +447,32 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                         <div className="flex items-center justify-center gap-2">
                             <button
                                 disabled={pagination.current_page === 1}
-                                onClick={() => router.get(route("news.index"), { page: pagination.current_page - 1, search, status, category })}
+                                onClick={() =>
+                                    router.get(route("news.index"), {
+                                        page: pagination.current_page - 1,
+                                        search,
+                                        status,
+                                        category,
+                                    })
+                                }
                                 className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-30"
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </button>
-                            {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => (
+                            {Array.from(
+                                { length: pagination.last_page },
+                                (_, i) => i + 1,
+                            ).map((page) => (
                                 <button
                                     key={page}
-                                    onClick={() => router.get(route("news.index"), { page, search, status, category })}
+                                    onClick={() =>
+                                        router.get(route("news.index"), {
+                                            page,
+                                            search,
+                                            status,
+                                            category,
+                                        })
+                                    }
                                     className={`h-9 min-w-[36px] rounded-xl px-3 text-sm font-semibold transition ${
                                         page === pagination.current_page
                                             ? "bg-primary text-white"
@@ -301,8 +483,18 @@ const AdminBerita = ({ news, pagination, filters = {} }) => {
                                 </button>
                             ))}
                             <button
-                                disabled={pagination.current_page === pagination.last_page}
-                                onClick={() => router.get(route("news.index"), { page: pagination.current_page + 1, search, status, category })}
+                                disabled={
+                                    pagination.current_page ===
+                                    pagination.last_page
+                                }
+                                onClick={() =>
+                                    router.get(route("news.index"), {
+                                        page: pagination.current_page + 1,
+                                        search,
+                                        status,
+                                        category,
+                                    })
+                                }
                                 className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-30"
                             >
                                 <ChevronRight className="h-4 w-4" />

@@ -25,6 +25,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -39,6 +40,8 @@ Route::get('/quran', function () {
 Route::get('/berita', [NewsController::class, 'publicIndex'])->name('berita.index');
 Route::get('/berita/{slug}', [NewsController::class, 'publicShow'])->name('berita.show');
 Route::post('/berita/{slug}/like', [NewsController::class, 'addLike'])->name('berita.like');
+Route::post('/berita/{slug}/komentar', [CommentController::class, 'store'])->name('berita.comment.store');
+
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -59,6 +62,9 @@ Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(fu
     Route::post('/berita/{news}', [NewsController::class, 'update'])->name('news.update');
     Route::put('/berita/{news}', [NewsController::class, 'update']); 
     Route::post('/berita/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
+
+    Route::get('/berita/{slug}/komentar', [CommentController::class, 'adminIndex'])->name('admin.comments');
+    Route::delete('/komentar/{comment}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
 
     Route::post('/ai/generate-news', [AiController::class, 'generateNews'])->name('ai.generate-news');
 });

@@ -16,6 +16,7 @@ class News extends Model
         'excerpt',
         'content',
         'like',
+        'views',
         'status',
     ];
 
@@ -51,5 +52,15 @@ class News extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function positiveComments()
+    {
+        return $this->hasMany(Comment::class)->where('sentiment', 'positive');
     }
 }

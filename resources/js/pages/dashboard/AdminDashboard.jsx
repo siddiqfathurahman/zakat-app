@@ -22,7 +22,7 @@ import {
 } from "recharts";
 
 
-const buildStatCards = (totalUsers) => [
+const buildStatCards = (totalUsers, totalNews) => [
     {
         label: "Total User",
         value: totalUsers,
@@ -33,7 +33,7 @@ const buildStatCards = (totalUsers) => [
     },
     {
         label: "Berita & Artikel",
-        value: "452",
+        value: totalNews,
         badge: "+5",
         badgeColor: "text-secondary bg-amber-50",
         icon: Newspaper,
@@ -119,8 +119,8 @@ function Avatar({ name, size = "h-9 w-9", text = "text-sm" }) {
 }
 
 
-const AdminDashboard = ({ authUser, totalUsers }) => {
-    const statCards = buildStatCards(totalUsers);
+const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
+    const statCards = buildStatCards(totalUsers, totalNews);
     return (
         <DashboardLayout>
             <div className="w-full ">
@@ -202,7 +202,7 @@ const AdminDashboard = ({ authUser, totalUsers }) => {
                                         {card.label}
                                     </p>
                                     <p
-                                        className={`mt-1 text-lg font-extrabold ${
+                                        className={`mt-1 text-3xl font-extrabold ${
                                             card.highlight
                                                 ? "text-primary"
                                                 : "text-gray-900"
