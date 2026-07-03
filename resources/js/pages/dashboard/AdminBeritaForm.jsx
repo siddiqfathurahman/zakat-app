@@ -14,7 +14,6 @@ const AdminBeritaForm = ({ news = null }) => {
         news?.thumbnail ? `/storage/${news.thumbnail}` : null
     );
 
-    // AI state
     const [aiPrompt, setAiPrompt] = useState("");
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState("");
@@ -73,7 +72,7 @@ const AdminBeritaForm = ({ news = null }) => {
 
     return (
         <DashboardLayout>
-            <div className="p-6">
+            <div className="p-4">
                 {/* Header */}
                 <div className="mb-6 flex items-center gap-4">
                     <Link
@@ -83,7 +82,7 @@ const AdminBeritaForm = ({ news = null }) => {
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="md:text-2xl text-xl font-bold text-gray-900">
                             {isEdit ? "Edit Berita" : "Tambah Berita"}
                         </h1>
                         <p className="text-sm text-gray-500 mt-0.5">
@@ -94,8 +93,6 @@ const AdminBeritaForm = ({ news = null }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-col lg:flex-row gap-6">
-
-                        {/* ── Kolom kiri: konten utama ── */}
                         <div className="flex-1 space-y-5">
                             {/* Judul */}
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
@@ -155,10 +152,7 @@ const AdminBeritaForm = ({ news = null }) => {
                             </div>
                         </div>
 
-                        {/* ── Kolom kanan: sidebar ── */}
                         <div className="lg:w-72 space-y-5">
-
-                            {/* ── Panel AI Generate ── */}
                             <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-xl border border-violet-200 p-5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500 text-white">
@@ -203,6 +197,42 @@ const AdminBeritaForm = ({ news = null }) => {
                                         </>
                                     )}
                                 </button>
+                            </div>
+
+                            {/* Thumbnail */}
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Thumbnail</h3>
+                                {thumbnailPreview ? (
+                                    <div className="relative">
+                                        <img
+                                            src={thumbnailPreview}
+                                            alt="Preview"
+                                            className="w-full h-40 object-cover rounded-lg border border-gray-200"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={removeThumbnail}
+                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+                                        <Upload size={24} className="text-gray-400 mb-2" />
+                                        <span className="text-xs text-gray-500 text-center">Klik untuk upload gambar</span>
+                                        <span className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP (maks. 2MB)</span>
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                                            onChange={handleThumbnailChange}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                )}
+                                {errors.thumbnail && (
+                                    <p className="text-red-500 text-xs mt-2">{errors.thumbnail}</p>
+                                )}
                             </div>
 
                             {/* Publikasi */}
@@ -279,42 +309,6 @@ const AdminBeritaForm = ({ news = null }) => {
                                         Batal
                                     </Link>
                                 </div>
-                            </div>
-
-                            {/* Thumbnail */}
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Thumbnail</h3>
-                                {thumbnailPreview ? (
-                                    <div className="relative">
-                                        <img
-                                            src={thumbnailPreview}
-                                            alt="Preview"
-                                            className="w-full h-40 object-cover rounded-lg border border-gray-200"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={removeThumbnail}
-                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow"
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
-                                        <Upload size={24} className="text-gray-400 mb-2" />
-                                        <span className="text-xs text-gray-500 text-center">Klik untuk upload gambar</span>
-                                        <span className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP (maks. 2MB)</span>
-                                        <input
-                                            type="file"
-                                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                                            onChange={handleThumbnailChange}
-                                            className="hidden"
-                                        />
-                                    </label>
-                                )}
-                                {errors.thumbnail && (
-                                    <p className="text-red-500 text-xs mt-2">{errors.thumbnail}</p>
-                                )}
                             </div>
 
                             {/* Info (edit mode) */}

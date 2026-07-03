@@ -71,6 +71,18 @@ const DeleteModal = ({ news, onConfirm, onCancel, loading }) => {
     );
 };
 
+const StatusBadge = ({ status }) => (
+    <span
+        className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+            status === "published"
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-amber-50 text-amber-700"
+        }`}
+    >
+        {status === "published" ? "Published" : "Draft"}
+    </span>
+);
+
 const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
     const [search, setSearch] = useState(filters.search || "");
     const [status, setStatus] = useState(filters.status || "");
@@ -124,6 +136,19 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
     const truncateText = (text, length) =>
         text?.length > length ? text.substring(0, length) + "..." : text;
 
+    const getPageNumbers = () => {
+        if (!pagination) return [];
+        const { current_page, last_page } = pagination;
+        const delta = 1;
+        const pages = new Set();
+        pages.add(1);
+        pages.add(last_page);
+        for (let p = current_page - delta; p <= current_page + delta; p++) {
+            if (p > 1 && p < last_page) pages.add(p);
+        }
+        return Array.from(pages).sort((a, b) => a - b);
+    };
+
     return (
         <DashboardLayout>
             <DeleteModal
@@ -134,19 +159,19 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
             />
 
             <div className="w-full">
-                <div className="flex items-center justify-between bg-white border border-gray-200 p-4">
+                <div className="flex items-center justify-between bg-white border border-gray-200 p-3 md:p-4 hidden sm:block">
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900">
+                        <h1 className="text-lg md:text-xl font-bold text-gray-900">
                             Manajemen Berita
                         </h1>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className=" text-xs text-gray-400 mt-0.5 ">
                             Kelola seluruh artikel dan pengumuman masjid.
                         </p>
                     </div>
                 </div>
 
                 {/* ── Kotak Statistik ── */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10 mx-10">
+                <div className="grid grid-cols-2 gap-3 px-4 mt-6 md:mx-10 md:mt-10 md:gap-4 md:px-0 lg:grid-cols-4">
                     <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
                         <div className="flex items-center justify-between mb-3">
                             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">
@@ -156,7 +181,7 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                 Total
                             </span>
                         </div>
-                        <p className="text-3xl font-extrabold text-gray-900">
+                        <p className="text-xl md:text-3xl font-extrabold text-gray-900 truncate">
                             {stats.totalNews ?? 0}
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">
@@ -173,7 +198,7 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                 Total
                             </span>
                         </div>
-                        <p className="text-3xl font-extrabold text-gray-900">
+                        <p className="text-xl md:text-3xl font-extrabold text-gray-900 truncate">
                             {stats.totalLikes ?? 0}
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">
@@ -190,7 +215,7 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                 Total
                             </span>
                         </div>
-                        <p className="text-3xl font-extrabold text-gray-900">
+                        <p className="text-xl md:text-3xl font-extrabold text-gray-900 truncate">
                             {stats.totalComments ?? 0}
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">
@@ -207,7 +232,7 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                 Total
                             </span>
                         </div>
-                        <p className="text-3xl font-extrabold text-gray-900">
+                        <p className="text-xl md:text-3xl font-extrabold text-gray-900 truncate">
                             {stats.totalViews >= 1000
                                 ? (stats.totalViews / 1000).toFixed(1) + "K"
                                 : (stats.totalViews ?? 0)}
@@ -218,11 +243,11 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                     </div>
                 </div>
 
-                <div className="space-y-5 px-4 py-8 md:px-6">
+                <div className="space-y-5 px-4 py-6 md:py-8 md:px-6">
                     <div className="flex justify-end">
                         <Link
                             href={route("news.create")}
-                            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110"
+                            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110 w-full sm:w-auto"
                         >
                             <Plus className="h-4 w-4" />
                             Tambah Berita
@@ -244,27 +269,33 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                         className="w-full rounded-xl border border-gray-200 py-2.5 pl-11 pr-4 text-sm text-gray-700 transition focus:border-primary"
                                     />
                                 </div>
-                                <select
-                                    value={status}
-                                    onChange={handleStatusFilter}
-                                    className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-600 transition focus:border-primary sm:w-44"
-                                >
-                                    <option value="">Semua Status</option>
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                </select>
-                                <select
-                                    value={category}
-                                    onChange={handleCategoryFilter}
-                                    className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-600 transition focus:border-primary sm:w-44"
-                                >
-                                    <option value="">Semua Kategori</option>
-                                    {CATEGORIES.map((cat) => (
-                                        <option key={cat} value={cat}>
-                                            {cat}
+                                <div className="flex gap-3">
+                                    <select
+                                        value={status}
+                                        onChange={handleStatusFilter}
+                                        className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-600 transition focus:border-primary sm:w-44 sm:flex-none"
+                                    >
+                                        <option value="">Status</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="published">
+                                            Published
                                         </option>
-                                    ))}
-                                </select>
+                                    </select>
+                                    <select
+                                        value={category}
+                                        onChange={handleCategoryFilter}
+                                        className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-600 transition focus:border-primary sm:w-44 sm:flex-none"
+                                    >
+                                        <option value="">
+                                            Kategori
+                                        </option>
+                                        {CATEGORIES.map((cat) => (
+                                            <option key={cat} value={cat}>
+                                                {cat}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <button
                                     type="submit"
                                     className="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:brightness-110"
@@ -277,151 +308,254 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
 
                     <div className="rounded-2xl bg-white shadow-sm shadow-gray-200/60 overflow-hidden">
                         {news && news.length > 0 ? (
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="border-b border-gray-100">
-                                            {[
-                                                "THUMBNAIL",
-                                                "JUDUL & SLUG",
-                                                "STATUS",
-                                                "KATEGORI",
-                                                "PENULIS",
-                                                "LIKE",
-                                                "VIEWS",
-                                                "TANGGAL",
-                                                "AKSI",
-                                            ].map((h) => (
-                                                <th
-                                                    key={h}
-                                                    className="px-5 py-3.5 text-left text-[11px] font-bold tracking-wide text-primary"
-                                                >
-                                                    {h}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {news.map((item) => (
-                                            <tr
-                                                key={item.id}
-                                                className="group hover:bg-gray-50/60 transition"
-                                            >
-                                                <td className="px-5 py-4">
-                                                    {item.thumbnail ? (
-                                                        <img
-                                                            src={`/storage/${item.thumbnail}`}
-                                                            alt={item.title}
-                                                            className="h-12 w-16 rounded-xl object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-gray-100">
-                                                            <Newspaper className="h-5 w-5 text-gray-300" />
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="px-5 py-4 max-w-xs">
+                            <>
+                                {/* Mobile: list card */}
+                                <div className="divide-y divide-gray-50 md:hidden">
+                                    {news.map((item) => (
+                                        <div key={item.id} className="p-4">
+                                            <div className="flex gap-3">
+                                                {item.thumbnail ? (
+                                                    <img
+                                                        src={`/storage/${item.thumbnail}`}
+                                                        alt={item.title}
+                                                        className="h-16 w-20 flex-shrink-0 rounded-xl object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="flex h-16 w-20 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100">
+                                                        <Newspaper className="h-6 w-6 text-gray-300" />
+                                                    </div>
+                                                )}
+                                                <div className="min-w-0 flex-1">
                                                     <p className="font-semibold text-gray-900 leading-snug">
                                                         {truncateText(
                                                             item.title,
-                                                            45,
+                                                            50,
                                                         )}
                                                     </p>
-                                                    <span className="mt-1 inline-block rounded-lg bg-gray-100 px-2 py-0.5 font-mono text-[10px] text-gray-400">
-                                                        {item.slug}
-                                                    </span>
-                                                </td>
-                                                <td className="px-5 py-4">
-                                                    <span
-                                                        className={`rounded-full px-3 py-1 text-[11px] font-bold ${
-                                                            item.status ===
-                                                            "published"
-                                                                ? "bg-emerald-50 text-emerald-700"
-                                                                : "bg-amber-50 text-amber-700"
-                                                        }`}
-                                                    >
-                                                        {item.status ===
-                                                        "published"
-                                                            ? "Published"
-                                                            : "Draft"}
-                                                    </span>
-                                                </td>
-                                                <td className="px-5 py-4">
-                                                    {item.category ? (
-                                                        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
-                                                            {item.category}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-gray-300 text-xs">
-                                                            —
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-5 py-4 text-sm text-gray-700">
-                                                    {item.author ?? (
-                                                        <span className="text-gray-300 text-xs">
-                                                            —
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-5 py-4 font-semibold text-gray-700">
-                                                    {item.like ?? 0}
-                                                </td>
-                                                <td className="px-5 py-4 font-semibold text-gray-700">
-                                                    {item.views ?? 0}
-                                                </td>
-                                                <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
+                                                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                                                        <StatusBadge
+                                                            status={
+                                                                item.status
+                                                            }
+                                                        />
+                                                        {item.category && (
+                                                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                                                                {
+                                                                    item.category
+                                                                }
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
+                                                <span>
+                                                    {item.author ?? "—"}
+                                                </span>
+                                                <span>
                                                     {formatDate(
                                                         item.created_at,
                                                     )}
-                                                </td>
-                                                <td className="px-5 py-4">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Link
-                                                            href={route(
-                                                                "news.edit",
-                                                                {
-                                                                    news: item.slug,
-                                                                },
-                                                            )}
-                                                            title="Edit"
-                                                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-emerald-50 hover:text-primary"
-                                                        >
-                                                            <Edit2 className="h-4 w-4" />
-                                                        </Link>
+                                                </span>
+                                            </div>
 
-                                                        <Link
-                                                            href={route(
-                                                                "admin.comments",
-                                                                {
-                                                                    slug: item.slug,
-                                                                },
-                                                            )}
-                                                            title="Komentar"
-                                                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-500"
-                                                        >
-                                                            <MessageCircle className="h-4 w-4" />
-                                                        </Link>
-                                                        <button
-                                                            onClick={() =>
-                                                                setDeleteTarget(
-                                                                    item,
-                                                                )
-                                                            }
-                                                            title="Hapus"
-                                                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </button>
-                                                    </div>
-                                                </td>
+                                            <div className="mt-2 flex items-center justify-between">
+                                                <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                    <span className="flex items-center gap-1">
+                                                        <Heart className="h-3.5 w-3.5" />
+                                                        {item.like ?? 0}
+                                                    </span>
+                                                    <span className="flex items-center gap-1">
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                        {item.views ?? 0}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Link
+                                                        href={route(
+                                                            "news.edit",
+                                                            {
+                                                                news: item.slug,
+                                                            },
+                                                        )}
+                                                        title="Edit"
+                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-emerald-50 hover:text-primary"
+                                                    >
+                                                        <Edit2 className="h-4 w-4" />
+                                                    </Link>
+                                                    <Link
+                                                        href={route(
+                                                            "admin.comments",
+                                                            {
+                                                                slug: item.slug,
+                                                            },
+                                                        )}
+                                                        title="Komentar"
+                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-500"
+                                                    >
+                                                        <MessageCircle className="h-4 w-4" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() =>
+                                                            setDeleteTarget(
+                                                                item,
+                                                            )
+                                                        }
+                                                        title="Hapus"
+                                                        className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Desktop: tabel */}
+                                <div className="hidden overflow-x-auto md:block">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-gray-100">
+                                                {[
+                                                    "THUMBNAIL",
+                                                    "JUDUL & SLUG",
+                                                    "STATUS",
+                                                    "KATEGORI",
+                                                    "PENULIS",
+                                                    "LIKE",
+                                                    "VIEWS",
+                                                    "TANGGAL",
+                                                    "AKSI",
+                                                ].map((h) => (
+                                                    <th
+                                                        key={h}
+                                                        className="px-5 py-3.5 text-left text-[11px] font-bold tracking-wide text-primary"
+                                                    >
+                                                        {h}
+                                                    </th>
+                                                ))}
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {news.map((item) => (
+                                                <tr
+                                                    key={item.id}
+                                                    className="group hover:bg-gray-50/60 transition"
+                                                >
+                                                    <td className="px-5 py-4">
+                                                        {item.thumbnail ? (
+                                                            <img
+                                                                src={`/storage/${item.thumbnail}`}
+                                                                alt={
+                                                                    item.title
+                                                                }
+                                                                className="h-12 w-16 rounded-xl object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-gray-100">
+                                                                <Newspaper className="h-5 w-5 text-gray-300" />
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-4 max-w-xs">
+                                                        <p className="font-semibold text-gray-900 leading-snug">
+                                                            {truncateText(
+                                                                item.title,
+                                                                45,
+                                                            )}
+                                                        </p>
+                                                        <span className="mt-1 inline-block rounded-lg bg-gray-100 px-2 py-0.5 font-mono text-[10px] text-gray-400">
+                                                            {item.slug}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        <StatusBadge
+                                                            status={
+                                                                item.status
+                                                            }
+                                                        />
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        {item.category ? (
+                                                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                                                                {
+                                                                    item.category
+                                                                }
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-gray-300 text-xs">
+                                                                —
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-4 text-sm text-gray-700">
+                                                        {item.author ?? (
+                                                            <span className="text-gray-300 text-xs">
+                                                                —
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-4 font-semibold text-gray-700">
+                                                        {item.like ?? 0}
+                                                    </td>
+                                                    <td className="px-5 py-4 font-semibold text-gray-700">
+                                                        {item.views ?? 0}
+                                                    </td>
+                                                    <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
+                                                        {formatDate(
+                                                            item.created_at,
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <Link
+                                                                href={route(
+                                                                    "news.edit",
+                                                                    {
+                                                                        news: item.slug,
+                                                                    },
+                                                                )}
+                                                                title="Edit"
+                                                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-emerald-50 hover:text-primary"
+                                                            >
+                                                                <Edit2 className="h-4 w-4" />
+                                                            </Link>
+
+                                                            <Link
+                                                                href={route(
+                                                                    "admin.comments",
+                                                                    {
+                                                                        slug: item.slug,
+                                                                    },
+                                                                )}
+                                                                title="Komentar"
+                                                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-500"
+                                                            >
+                                                                <MessageCircle className="h-4 w-4" />
+                                                            </Link>
+                                                            <button
+                                                                onClick={() =>
+                                                                    setDeleteTarget(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                                title="Hapus"
+                                                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <div className="flex flex-col items-center justify-center py-20 text-center px-4">
                                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-300 mb-4">
                                     <Newspaper className="h-7 w-7" />
                                 </span>
@@ -444,7 +578,7 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
 
                     {/* Pagination */}
                     {pagination && pagination.last_page > 1 && (
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex flex-wrap items-center justify-center gap-2">
                             <button
                                 disabled={pagination.current_page === 1}
                                 onClick={() =>
@@ -459,29 +593,34 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </button>
-                            {Array.from(
-                                { length: pagination.last_page },
-                                (_, i) => i + 1,
-                            ).map((page) => (
-                                <button
-                                    key={page}
-                                    onClick={() =>
-                                        router.get(route("news.index"), {
-                                            page,
-                                            search,
-                                            status,
-                                            category,
-                                        })
-                                    }
-                                    className={`h-9 min-w-[36px] rounded-xl px-3 text-sm font-semibold transition ${
-                                        page === pagination.current_page
-                                            ? "bg-primary text-white"
-                                            : "border border-gray-200 text-gray-500 hover:bg-gray-50"
-                                    }`}
-                                >
-                                    {page}
-                                </button>
+
+                            {getPageNumbers().map((page, idx, arr) => (
+                                <React.Fragment key={page}>
+                                    {idx > 0 && page - arr[idx - 1] > 1 && (
+                                        <span className="px-1 text-sm text-gray-400">
+                                            ...
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={() =>
+                                            router.get(route("news.index"), {
+                                                page,
+                                                search,
+                                                status,
+                                                category,
+                                            })
+                                        }
+                                        className={`h-9 min-w-[36px] rounded-xl px-3 text-sm font-semibold transition ${
+                                            page === pagination.current_page
+                                                ? "bg-primary text-white"
+                                                : "border border-gray-200 text-gray-500 hover:bg-gray-50"
+                                        }`}
+                                    >
+                                        {page}
+                                    </button>
+                                </React.Fragment>
                             ))}
+
                             <button
                                 disabled={
                                     pagination.current_page ===

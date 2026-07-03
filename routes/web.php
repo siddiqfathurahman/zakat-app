@@ -26,6 +26,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\BannerController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -62,11 +63,16 @@ Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(fu
     Route::post('/berita/{news}', [NewsController::class, 'update'])->name('news.update');
     Route::put('/berita/{news}', [NewsController::class, 'update']); 
     Route::post('/berita/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
-
     Route::get('/berita/{slug}/komentar', [CommentController::class, 'adminIndex'])->name('admin.comments');
     Route::delete('/komentar/{comment}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
-
     Route::post('/ai/generate-news', [AiController::class, 'generateNews'])->name('ai.generate-news');
+
+
+    Route::get('/iklan', [BannerController::class, 'index'])->name('admin.iklan');
+    Route::post('/iklan', [BannerController::class, 'store'])->name('admin.iklan.store');
+    Route::post('/iklan/{banner}', [BannerController::class, 'update'])->name('admin.iklan.update');
+    Route::post('/iklan/{banner}/toggle', [BannerController::class, 'toggleActive'])->name('admin.iklan.toggle');
+    Route::delete('/iklan/{banner}', [BannerController::class, 'destroy'])->name('admin.iklan.destroy');
 });
 
 

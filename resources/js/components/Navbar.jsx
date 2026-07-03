@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { LogIn, X } from "lucide-react";
 
@@ -9,30 +9,72 @@ const NAV_LINKS = [
   { label: "Qurban", href: "/qurban" },
 ];
 
+// Hook: Auto Hide Navbar
+function useAutoHideNavbar() {
+  const [visible, setVisible] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    lastY.current = window.scrollY;
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const diff = currentY - lastY.current;
+
+      setScrolled(currentY > 10);
+
+      if (currentY < 80) {
+        setVisible(true);
+      } else if (diff > 5) {
+        setVisible(false);
+      } else if (diff < -5) {
+        setVisible(true);
+      }
+
+      lastY.current = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  return { visible, scrolled };
+}
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { url } = usePage();
+  const { visible, scrolled } = useAutoHideNavbar();
 
   const isActive = (href) => {
-    // Menentukan apakah menu aktif berdasarkan URL path saat ini
     return url === href || url.startsWith(href + "/");
   };
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="h-20" />
+      <header
+        className={`fixed top-0 left-0 right-0 z-40 bg-white border-b transition-all duration-300 ease-in-out ${
+          scrolled ? "border-gray-200 shadow-sm" : "border-transparent"
+        } ${visible ? "translate-y-0" : "-translate-y-full"}`}
+      >
         <nav className="content px-6 flex items-center justify-between h-20">
           <Link href="/" className="flex-shrink-0">
             <img
               src="/logo-hijau.svg"
               alt="Logo Masjid Al Anhar"
-              className="md:h-16 h-12 w-auto"
+              className="h-12 md:h-16 w-auto"
             />
           </Link>
 
           <ul className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map(({ label, href }) => {
               const active = isActive(href);
+
               return (
                 <li key={label}>
                   <Link
@@ -50,10 +92,13 @@ const Navbar = () => {
             })}
           </ul>
 
-          <a href="/login" className="hidden md:flex items-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
+          <Link
+            href="/login"
+            className="hidden md:flex items-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-200"
+          >
             <span>Login</span>
             <LogIn className="w-4 h-4" />
-          </a>
+          </Link>
 
           <button
             onClick={() => setIsOpen(true)}
@@ -81,8 +126,7 @@ const Navbar = () => {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-
-        <div className="flex items-right justify-end px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-end px-5 py-4 border-b border-gray-100">
           <button
             onClick={() => setIsOpen(false)}
             aria-label="Close Menu"
@@ -95,6 +139,7 @@ const Navbar = () => {
         <ul className="flex-1 px-5 py-2">
           {NAV_LINKS.map(({ label, href }) => {
             const active = isActive(href);
+
             return (
               <li
                 key={label}
@@ -117,14 +162,18 @@ const Navbar = () => {
         </ul>
 
         <div className="p-5 border-t border-gray-100">
-          <a href="/login" className="w-full flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-3 rounded-lg transition-all duration-200">
+          <Link
+            href="/login"
+            onClick={() => setIsOpen(false)}
+            className="w-full flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-white text-sm font-medium px-5 py-3 rounded-lg transition-all duration-200"
+          >
             <span>Login</span>
             <LogIn className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </aside>
     </>
   );
 };
 
-export default Navbar;                                                 
+export default Navbar;

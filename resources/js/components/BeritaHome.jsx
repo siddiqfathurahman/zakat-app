@@ -6,14 +6,15 @@ const AUTHOR = "Admin Alanhar";
 
 const BeritaHome = ({ news = [] }) => {
     const hero = news[0] ?? null;
-    const latestNews = news[1] ?? null; // Hanya 1 berita terbaru
 
-    const formatDate = (d) =>
-        new Date(d).toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-        });
+    const truncateWords = (text, limit) => {
+        if (!text) return "";
+
+        const words = text.split(" ");
+        if (words.length <= limit) return text;
+
+        return words.slice(0, limit).join(" ") + "...";
+    };
 
     return (
         <div className="w-full">
@@ -42,7 +43,13 @@ const BeritaHome = ({ news = [] }) => {
                     <h1 className="text-white text-2xl md:text-4xl font-bold leading-snug mb-2 max-w-[800px]">
                         {hero?.title}
                     </h1>
-                    <p className="text-white/80 text-sm md:text-lg leading-relaxed md:mb-6 mb-2 max-w-[800px]">
+                    {/* Mobile */}
+                    <p className="text-white/80 text-sm leading-relaxed mb-2 max-w-[800px] md:hidden">
+                        {truncateWords(hero?.excerpt, 15)}
+                    </p>
+
+                    {/* Desktop */}
+                    <p className="hidden md:block text-white/80 text-lg leading-relaxed mb-6 max-w-[800px]">
                         {hero?.excerpt}
                     </p>
                     {hero ? (

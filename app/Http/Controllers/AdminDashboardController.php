@@ -7,6 +7,7 @@ use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\SiteView;
 
 class AdminDashboardController extends Controller
 {
@@ -16,6 +17,8 @@ class AdminDashboardController extends Controller
         $totalUsers = User::count();
         $totalNews = News::count();
 
+        $totalSiteViews = SiteView::getTotal();
+
         return Inertia::render('dashboard/AdminDashboard', [
             'authUser' => [
                 'name'     => $authUser->name,
@@ -24,6 +27,7 @@ class AdminDashboardController extends Controller
             ],
             'totalUsers'     => $totalUsers,
             'totalNews'      => $totalNews,
+            'totalSiteViews' => $totalSiteViews,
         ]);
     }
 }

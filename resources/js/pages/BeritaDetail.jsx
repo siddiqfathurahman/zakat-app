@@ -183,7 +183,6 @@ const BeritaDetail = ({ news, comments = [] }) => {
                                 ) : (
                                     <>
                                         <Share2 className="h-4 w-4" />
-                                        Bagikan
                                     </>
                                 )}
                             </button>

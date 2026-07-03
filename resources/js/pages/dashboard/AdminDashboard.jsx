@@ -8,7 +8,6 @@ import {
     Eye,
     Pencil,
     Trash2,
-    TrendingUp,
 } from "lucide-react";
 import {
     AreaChart,
@@ -22,11 +21,10 @@ import {
 } from "recharts";
 
 
-const buildStatCards = (totalUsers, totalNews) => [
+const buildStatCards = (totalUsers, totalNews, totalSiteViews) => [
     {
         label: "Total User",
         value: totalUsers,
-        badge: null,
         icon: Users,
         iconBg: "bg-emerald-50 text-emerald-600",
         highlight: false,
@@ -34,23 +32,20 @@ const buildStatCards = (totalUsers, totalNews) => [
     {
         label: "Berita & Artikel",
         value: totalNews,
-        badge: "+5",
         badgeColor: "text-secondary bg-amber-50",
         icon: Newspaper,
         iconBg: "bg-amber-50 text-secondary",
     },
     {
-        label: "Donasi Masuk (Bulan Ini)",
-        value: "86",
-        badge: "New",
+        label: "Jumlah Pengunjung",
+        value: totalSiteViews,
         badgeColor: "text-sky-600 bg-sky-50",
-        icon: HandCoins,
+        icon: Eye,
         iconBg: "bg-sky-50 text-sky-600",
     },
     {
         label: "Saldo Kas",
         value: "Rp 124.5M",
-        badge: null,
         icon: Wallet,
         iconBg: "bg-teal-50 text-primary",
         highlight: true,
@@ -105,6 +100,7 @@ const avatarColors = [
     "bg-violet-600",
     "bg-teal-600",
 ];
+
 const avatarColor = (name) =>
     avatarColors[name.charCodeAt(0) % avatarColors.length];
 
@@ -119,23 +115,23 @@ function Avatar({ name, size = "h-9 w-9", text = "text-sm" }) {
 }
 
 
-const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
-    const statCards = buildStatCards(totalUsers, totalNews);
+const AdminDashboard = ({ authUser, totalUsers, totalNews, totalSiteViews }) => {
+    const statCards = buildStatCards(totalUsers, totalNews, totalSiteViews);
     return (
         <DashboardLayout>
             <div className="w-full ">
-                <div className="flex items-center justify-between bg-white border border-gray-200 p-4 md:p-4">
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-900">
+               <div className="hidden sm:flex items-center justify-between bg-white border border-gray-200 p-3">
+                    <div className="">
+                        <h1 className="text-lg md:text-xl font-bold text-gray-900">
                             Dashboard
                         </h1>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className=" text-xs text-gray-400 mt-0.5 ">
                             Berikut adalah ringkasan performa Masjid Al Anhar
                             hari ini.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         {/* Notifikasi */}
                         <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
                             <Bell className="h-4 w-4" />
@@ -163,7 +159,7 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
 
                 <div className=" space-y-6 px-4 py-6 md:px-6">
                     <div>
-                        <p className="md:text-3xl text-xl font-bold text-primary">
+                        <p className="text-lg font-bold text-primary sm:text-xl md:text-3xl">
                             Selamat Datang Kembali {authUser.role}, {authUser.name}!
                         </p>
                         <p className="text-xs text-gray-400">
@@ -187,22 +183,12 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
                                         >
                                             <Icon className="h-5 w-5" />
                                         </span>
-                                        {card.badge && (
-                                            <span
-                                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${card.badgeColor}`}
-                                            >
-                                                {card.badge}
-                                            </span>
-                                        )}
-                                        {!card.badge && i === 3 && (
-                                            <Eye className="h-4 w-4 text-gray-300" />
-                                        )}
                                     </div>
                                     <p className="mt-3 text-xs text-gray-400">
                                         {card.label}
                                     </p>
                                     <p
-                                        className={`mt-1 text-3xl font-extrabold ${
+                                        className={`mt-1 text-xl sm:text-2xl md:text-3xl font-extrabold truncate ${
                                             card.highlight
                                                 ? "text-primary"
                                                 : "text-gray-900"
@@ -216,7 +202,7 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
                     </div>
 
                     {/* ── Chart Keuangan ── */}
-                    <div className="rounded-2xl bg-white p-5 shadow-sm shadow-gray-200/60">
+                    <div className="rounded-2xl bg-white p-4 md:p-5 shadow-sm shadow-gray-200/60">
                         <div className="mb-5 flex items-center justify-between">
                             <p className="text-sm font-bold text-gray-900">
                                 Statistik Keuangan Bulanan
@@ -338,7 +324,7 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
                     </div>
 
                     {/* ── Aktivitas Terkini ── */}
-                    <div className="rounded-2xl bg-white p-5 shadow-sm shadow-gray-200/60">
+                    <div className="rounded-2xl bg-white p-4 md:p-5 shadow-sm shadow-gray-200/60">
                         <div className="mb-4 flex items-center justify-between">
                             <p className="text-sm font-bold text-gray-900">
                                 Aktivitas Terkini
@@ -348,7 +334,45 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews }) => {
                             </button>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        {/* Mobile: list card */}
+                        <div className="space-y-3 md:hidden">
+                            {activities.map((row, i) => (
+                                <div
+                                    key={i}
+                                    className="flex items-start justify-between rounded-xl border border-gray-100 p-3"
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <Avatar
+                                            name={row.name}
+                                            size="h-9 w-9"
+                                            text="text-xs"
+                                        />
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-800">
+                                                {row.name}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                {row.activity}
+                                            </p>
+                                            <p className="mt-1 text-[11px] text-gray-400">
+                                                {row.date}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-emerald-50 hover:text-primary transition">
+                                            <Pencil className="h-3.5 w-3.5" />
+                                        </button>
+                                        <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 transition">
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop: tabel */}
+                        <div className="hidden overflow-x-auto md:block">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-gray-100">

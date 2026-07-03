@@ -1,11 +1,11 @@
-import React from "react";
 import { Link } from "@inertiajs/react";
 import AppLayout from "../Layout/AppLayout";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, X } from "lucide-react";
 import JadwalSholat from "../components/JadwalSholat";
 import { BookOpen, GraduationCap, HandHeart } from "lucide-react";
 import { Wallet } from "lucide-react";
 import BeritaHome from "../components/BeritaHome";
+import { useState, useEffect } from "react";
 
 const agendaItems = [
     {
@@ -36,9 +36,49 @@ const partnerLogos = [
     { name: "PRM", logo: "/logo-prm.png" },
 ];
 
-export default function Home({ news = [] }) {
+export default function Home({ news = [], banner = null }) {
+    const [showBanner, setShowBanner] = useState(false);
+
+    useEffect(() => {
+        if (!banner) return;
+
+        const key = `banner_shown_${banner.id}`;
+        const alreadyShown = sessionStorage.getItem(key);
+
+        if (!alreadyShown) {
+            const t = setTimeout(() => {
+                setShowBanner(true);
+                sessionStorage.setItem(key, "1"); 
+            }, 800);
+            return () => clearTimeout(t);
+        }
+    }, [banner]);
+
     return (
         <AppLayout>
+
+            {showBanner && banner && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-black/20"
+                        onClick={() => setShowBanner(false)}
+                    />
+                    <div className="relative w-full max-w-lg rounded-2xl overflow-hidden">
+                        <button
+                            onClick={() => setShowBanner(false)}
+                            className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 transition"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                        <img
+                            src={banner.image}
+                            alt={banner.title}
+                            className="w-full object-cover"
+                        />
+                    </div>
+                </div>
+            )}
+
             <BeritaHome news={news} />
 
             <JadwalSholat />
