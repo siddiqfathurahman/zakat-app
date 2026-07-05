@@ -2,12 +2,9 @@ import DashboardLayout from "../../Layout/DashboardLayout";
 import {
     Users,
     Newspaper,
-    HandCoins,
     Wallet,
     Bell,
     Eye,
-    Pencil,
-    Trash2,
 } from "lucide-react";
 import {
     AreaChart,
@@ -20,8 +17,22 @@ import {
     ResponsiveContainer,
 } from "recharts";
 
+// ==== Format Rupiah ====
+const formatRupiah = (value) =>
+    new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+    }).format(value ?? 0);
 
-const buildStatCards = (totalUsers, totalNews, totalSiteViews) => [
+const formatRupiahShort = (value) => {
+    if (value >= 1_000_000_000) return `Rp${(value / 1_000_000_000).toFixed(1)}M`;
+    if (value >= 1_000_000) return `Rp${(value / 1_000_000).toFixed(1)}jt`;
+    if (value >= 1_000) return `Rp${(value / 1_000).toFixed(0)}rb`;
+    return formatRupiah(value);
+};
+
+const buildStatCards = (totalUsers, totalNews, totalSiteViews, totalSaldoKas) => [
     {
         label: "Total User",
         value: totalUsers,
@@ -45,43 +56,10 @@ const buildStatCards = (totalUsers, totalNews, totalSiteViews) => [
     },
     {
         label: "Saldo Kas",
-        value: "Rp 124.5M",
+        value: formatRupiah(totalSaldoKas),
         icon: Wallet,
         iconBg: "bg-teal-50 text-primary",
         highlight: true,
-    },
-];
-
-const chartData = [
-    { bulan: "Jan", pemasukan: 62, pengeluaran: 40 },
-    { bulan: "Feb", pemasukan: 55, pengeluaran: 42 },
-    { bulan: "Mar", pemasukan: 70, pengeluaran: 45 },
-    { bulan: "Apr", pemasukan: 60, pengeluaran: 48 },
-    { bulan: "Mei", pemasukan: 58, pengeluaran: 44 },
-    { bulan: "Jun", pemasukan: 65, pengeluaran: 50 },
-    { bulan: "Jul", pemasukan: 72, pengeluaran: 52 },
-    { bulan: "Agu", pemasukan: 68, pengeluaran: 53 },
-    { bulan: "Sep", pemasukan: 78, pengeluaran: 55 },
-    { bulan: "Okt", pemasukan: 85, pengeluaran: 58 },
-    { bulan: "Nov", pemasukan: 95, pengeluaran: 60 },
-    { bulan: "Des", pemasukan: 120, pengeluaran: 62 },
-];
-
-const activities = [
-    {
-        name: "Ahmad Fauzi",
-        activity: "Mengedit keuangan",
-        date: "12 Mei 2024, 14:20",
-    },
-    {
-        name: "Siti Aminah",
-        activity: "Pendaftaran Akun Baru",
-        date: "12 Mei 2024, 13:05",
-    },
-    {
-        name: "Drs. H. Fulyadi",
-        activity: "Update Pengumuman Berita",
-        date: "12 Mei 2024, 10:20",
     },
 ];
 
@@ -114,9 +92,46 @@ function Avatar({ name, size = "h-9 w-9", text = "text-sm" }) {
     );
 }
 
+// Custom tooltip untuk grafik
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div
+                style={{
+                    background: "white",
+                    border: "none",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                    padding: "10px 14px",
+                    fontSize: "12px",
+                }}
+            >
+                <p style={{ fontWeight: 700, marginBottom: 6 }}>{label}</p>
+                {payload.map((p) => (
+                    <p key={p.dataKey} style={{ color: p.color, margin: "2px 0" }}>
+                        {p.name === "pemasukan" ? "Pemasukan" : "Pengeluaran"}:{" "}
+                        <strong>{formatRupiah(p.value)}</strong>
+                    </p>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
 
-const AdminDashboard = ({ authUser, totalUsers, totalNews, totalSiteViews }) => {
-    const statCards = buildStatCards(totalUsers, totalNews, totalSiteViews);
+const AdminDashboard = ({
+    authUser,
+    totalUsers,
+    totalNews,
+    totalSiteViews,
+    totalSaldoKas,
+    grafikBulanan,
+    aktivitasTerkini,
+}) => {
+    const statCards = buildStatCards(totalUsers, totalNews, totalSiteViews, totalSaldoKas ?? 0);
+    const chartData = grafikBulanan ?? [];
+    const activities = aktivitasTerkini ?? [];
+
     return (
         <DashboardLayout>
             <div className="w-full ">
@@ -208,119 +223,119 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews, totalSiteViews }) => 
                                 Statistik Keuangan Bulanan
                             </p>
                             <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-primary">
-                                Tahun 2024
+                                12 Bulan Terakhir
                             </span>
                         </div>
 
-                        <ResponsiveContainer width="100%" height={260}>
-                            <AreaChart
-                                data={chartData}
-                                margin={{
-                                    top: 4,
-                                    right: 8,
-                                    left: -20,
-                                    bottom: 0,
-                                }}
-                            >
-                                <defs>
-                                    <linearGradient
-                                        id="gradPemasukan"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset="5%"
-                                            stopColor="#0d4f3c"
-                                            stopOpacity={0.25}
-                                        />
-                                        <stop
-                                            offset="95%"
-                                            stopColor="#0d4f3c"
-                                            stopOpacity={0.02}
-                                        />
-                                    </linearGradient>
-                                    <linearGradient
-                                        id="gradPengeluaran"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset="5%"
-                                            stopColor="#b8924a"
-                                            stopOpacity={0.2}
-                                        />
-                                        <stop
-                                            offset="95%"
-                                            stopColor="#b8924a"
-                                            stopOpacity={0.02}
-                                        />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid
-                                    strokeDasharray="3 3"
-                                    stroke="#f0f0f0"
-                                />
-                                <XAxis
-                                    dataKey="bulan"
-                                    tick={{ fontSize: 11, fill: "#9ca3af" }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    tick={{ fontSize: 11, fill: "#9ca3af" }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        borderRadius: "12px",
-                                        border: "none",
-                                        boxShadow:
-                                            "0 4px 16px rgba(0,0,0,0.08)",
-                                        fontSize: "12px",
+                        {chartData.length === 0 ? (
+                            <p className="py-10 text-center text-sm text-gray-400">
+                                Belum ada data keuangan.
+                            </p>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={260}>
+                                <AreaChart
+                                    data={chartData}
+                                    margin={{
+                                        top: 4,
+                                        right: 8,
+                                        left: 10,
+                                        bottom: 0,
                                     }}
-                                />
-                                <Legend
-                                    iconType="circle"
-                                    iconSize={8}
-                                    wrapperStyle={{
-                                        fontSize: "12px",
-                                        paddingTop: "12px",
-                                    }}
-                                    formatter={(value) =>
-                                        value === "pemasukan"
-                                            ? "Pemasukan (Donasi)"
-                                            : "Pengeluaran (Operasional)"
-                                    }
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="pemasukan"
-                                    stroke="#0d4f3c"
-                                    strokeWidth={2.5}
-                                    fill="url(#gradPemasukan)"
-                                    dot={{
-                                        r: 3.5,
-                                        fill: "#0d4f3c",
-                                        strokeWidth: 0,
-                                    }}
-                                    activeDot={{ r: 5 }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="pengeluaran"
-                                    stroke="#b8924a"
-                                    strokeWidth={2}
-                                    strokeDasharray="5 4"
-                                    fill="url(#gradPengeluaran)"
-                                    dot={false}
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                                >
+                                    <defs>
+                                        <linearGradient
+                                            id="gradPemasukan"
+                                            x1="0"
+                                            y1="0"
+                                            x2="0"
+                                            y2="1"
+                                        >
+                                            <stop
+                                                offset="5%"
+                                                stopColor="#0d4f3c"
+                                                stopOpacity={0.25}
+                                            />
+                                            <stop
+                                                offset="95%"
+                                                stopColor="#0d4f3c"
+                                                stopOpacity={0.02}
+                                            />
+                                        </linearGradient>
+                                        <linearGradient
+                                            id="gradPengeluaran"
+                                            x1="0"
+                                            y1="0"
+                                            x2="0"
+                                            y2="1"
+                                        >
+                                            <stop
+                                                offset="5%"
+                                                stopColor="#b8924a"
+                                                stopOpacity={0.2}
+                                            />
+                                            <stop
+                                                offset="95%"
+                                                stopColor="#b8924a"
+                                                stopOpacity={0.02}
+                                            />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        stroke="#f0f0f0"
+                                    />
+                                    <XAxis
+                                        dataKey="bulan"
+                                        tick={{ fontSize: 11, fill: "#9ca3af" }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+                                    <YAxis
+                                        tick={{ fontSize: 10, fill: "#9ca3af" }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tickFormatter={(v) => formatRupiahShort(v)}
+                                        width={65}
+                                    />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Legend
+                                        iconType="circle"
+                                        iconSize={8}
+                                        wrapperStyle={{
+                                            fontSize: "12px",
+                                            paddingTop: "12px",
+                                        }}
+                                        formatter={(value) =>
+                                            value === "pemasukan"
+                                                ? "Pemasukan"
+                                                : "Pengeluaran"
+                                        }
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="pemasukan"
+                                        stroke="#0d4f3c"
+                                        strokeWidth={2.5}
+                                        fill="url(#gradPemasukan)"
+                                        dot={{
+                                            r: 3.5,
+                                            fill: "#0d4f3c",
+                                            strokeWidth: 0,
+                                        }}
+                                        activeDot={{ r: 5 }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="pengeluaran"
+                                        stroke="#b8924a"
+                                        strokeWidth={2}
+                                        strokeDasharray="5 4"
+                                        fill="url(#gradPengeluaran)"
+                                        dot={false}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
 
                     {/* ── Aktivitas Terkini ── */}
@@ -329,107 +344,97 @@ const AdminDashboard = ({ authUser, totalUsers, totalNews, totalSiteViews }) => 
                             <p className="text-sm font-bold text-gray-900">
                                 Aktivitas Terkini
                             </p>
-                            <button className="text-xs font-semibold text-primary hover:underline">
+                            <a
+                                href="/admin/keuangan"
+                                className="text-xs font-semibold text-primary hover:underline"
+                            >
                                 Lihat Semua
-                            </button>
+                            </a>
                         </div>
 
-                        {/* Mobile: list card */}
-                        <div className="space-y-3 md:hidden">
-                            {activities.map((row, i) => (
-                                <div
-                                    key={i}
-                                    className="flex items-start justify-between rounded-xl border border-gray-100 p-3"
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <Avatar
-                                            name={row.name}
-                                            size="h-9 w-9"
-                                            text="text-xs"
-                                        />
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-800">
-                                                {row.name}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                {row.activity}
-                                            </p>
-                                            <p className="mt-1 text-[11px] text-gray-400">
-                                                {row.date}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-emerald-50 hover:text-primary transition">
-                                            <Pencil className="h-3.5 w-3.5" />
-                                        </button>
-                                        <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 transition">
-                                            <Trash2 className="h-3.5 w-3.5" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Desktop: tabel */}
-                        <div className="hidden overflow-x-auto md:block">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-gray-100">
-                                        {[
-                                            "USER",
-                                            "AKTIVITAS",
-                                            "TANGGAL",
-                                            "AKSI",
-                                        ].map((h) => (
-                                            <th
-                                                key={h}
-                                                className="pb-3 text-left text-[11px] font-bold tracking-wide text-primary"
-                                            >
-                                                {h}
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
+                        {activities.length === 0 ? (
+                            <p className="py-6 text-center text-sm text-gray-400">
+                                Belum ada aktivitas tercatat.
+                            </p>
+                        ) : (
+                            <>
+                                {/* Mobile: list card */}
+                                <div className="space-y-3 md:hidden">
                                     {activities.map((row, i) => (
-                                        <tr
-                                            key={i}
-                                            className="hover:bg-gray-50/60"
+                                        <div
+                                            key={row.id ?? i}
+                                            className="flex items-start gap-3 rounded-xl border border-gray-100 p-3"
                                         >
-                                            <td className="py-3 pr-4">
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar
-                                                        name={row.name}
-                                                        size="h-8 w-8"
-                                                        text="text-xs"
-                                                    />
-                                                    <span className="font-semibold text-gray-800">
-                                                        {row.name}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="py-3 pr-4 text-gray-500">
-                                                {row.activity}
-                                            </td>
-                                            <td className="py-3 pr-4 text-gray-400 text-xs whitespace-nowrap">
-                                                {row.date}
-                                            </td>
-                                            <td className="py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-emerald-50 hover:text-primary transition">
-                                                        <Pencil className="h-3.5 w-3.5" />
-                                                    </button>
-                                                    <button className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 transition">
-                                                        <Trash2 className="h-3.5 w-3.5" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                            <Avatar
+                                                name={row.user}
+                                                size="h-9 w-9"
+                                                text="text-xs"
+                                            />
+                                            <div>
+                                                <p className="text-sm font-semibold text-gray-800">
+                                                    {row.user}
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                    {row.aktivitas}
+                                                </p>
+                                                <p className="mt-1 text-[11px] text-gray-400">
+                                                    {row.waktu}
+                                                </p>
+                                            </div>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                </div>
+
+                                {/* Desktop: tabel */}
+                                <div className="hidden overflow-x-auto md:block">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-gray-100">
+                                                {[
+                                                    "USER",
+                                                    "AKTIVITAS",
+                                                    "WAKTU",
+                                                ].map((h) => (
+                                                    <th
+                                                        key={h}
+                                                        className="pb-3 text-left text-[11px] font-bold tracking-wide text-primary"
+                                                    >
+                                                        {h}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {activities.map((row, i) => (
+                                                <tr
+                                                    key={row.id ?? i}
+                                                    className="hover:bg-gray-50/60"
+                                                >
+                                                    <td className="py-3 pr-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <Avatar
+                                                                name={row.user}
+                                                                size="h-8 w-8"
+                                                                text="text-xs"
+                                                            />
+                                                            <span className="font-semibold text-gray-800">
+                                                                {row.user}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-3 pr-4 text-gray-500">
+                                                        {row.aktivitas}
+                                                    </td>
+                                                    <td className="py-3 text-gray-400 text-xs whitespace-nowrap">
+                                                        {row.waktu}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

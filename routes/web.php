@@ -27,12 +27,19 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\AdminKeuanganController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KasController;    
+use App\Http\Controllers\LaporanKeuanganController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/infaqdonasi', function () {
     return Inertia::render('InfaqDonasi');
 });
+
+Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan.index');
 
 Route::get('/quran', function () {
     return Inertia::render('Quran');
@@ -50,7 +57,21 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
- 
+
+    // ==== MODUL KEUANGAN ====
+    Route::get('/keuangan', [AdminKeuanganController::class, 'index'])->name('admin.keuangan.dashboard');
+
+
+    Route::prefix('keuangan')->name('admin.keuangan.')->group(function () {
+        Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+        Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
+        Route::post('/transaksi/{transaksi}/update', [TransaksiController::class, 'update'])->name('transaksi.update');
+        Route::post('/transaksi/{transaksi}/destroy', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+
+        Route::post('/kategori/quick', [KategoriController::class, 'quickStore'])->name('kategori.quick');
+        Route::post('/kas/quick', [KasController::class, 'quickStore'])->name('kas.quick');
+    });
+
     Route::get('/user', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('users.store');
     Route::post('/user/{id}/update', [UserController::class, 'update'])->name('users.update');

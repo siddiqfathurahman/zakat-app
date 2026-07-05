@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Comment;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -129,7 +131,14 @@ class NewsController extends Controller
             }
             $validated['slug'] = $slug;
 
-            News::create($validated);
+            $news = News::create($validated);
+
+            ActivityLog::catat(
+                'Menambahkan berita: ' . $news->title,
+                Auth::id(),
+                null,
+                $news
+            );
 
             return redirect()->route('news.index')
                 ->with('success', 'Berita berhasil dibuat');
@@ -180,6 +189,13 @@ class NewsController extends Controller
 
             $news->update($validated);
 
+            ActivityLog::catat(
+                'Mengedit berita: ' . $news->title,
+                Auth::id(),
+                null,
+                $news
+            );
+
             return redirect()->route('news.index')
                 ->with('success', 'Berita berhasil diperbarui');
 
@@ -196,10 +212,16 @@ class NewsController extends Controller
     public function destroy(News $news)
     {
         try {
+            $title = $news->title;
             if ($news->thumbnail && \Storage::disk('public')->exists($news->thumbnail)) {
                 \Storage::disk('public')->delete($news->thumbnail);
             }
             $news->delete();
+
+            ActivityLog::catat(
+                'Menghapus berita: ' . $title,
+                Auth::id()
+            );
 
             return redirect()->route('news.index')
                 ->with('success', 'Berita berhasil dihapus');

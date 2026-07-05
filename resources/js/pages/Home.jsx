@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
 import AppLayout from "../Layout/AppLayout";
-import { ArrowRight, CheckCircle2, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleDollarSign, X } from "lucide-react";
 import JadwalSholat from "../components/JadwalSholat";
 import { BookOpen, GraduationCap, HandHeart } from "lucide-react";
 import { Wallet } from "lucide-react";
@@ -317,11 +317,18 @@ export default function Home({ news = [], banner = null }) {
                                 pahalanya. Mari berkontribusi dalam pembangunan
                                 peradaban umat.
                             </p>
+                            <div className="flex flex-col md:flex-row gap-3 mt-7 ">
+                                <a href="/laporan-keuangan" className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-primary shadow-md transition hover:brightness-105">
+                                    Laporan Keuangan
+                                    <CircleDollarSign className="h-4 w-4" />
+                                </a>
+                                <a href="/infaqdonasi" className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-primary shadow-md transition hover:brightness-105">
+                                    Donasi Sekarang
+                                    <Wallet className="h-4 w-4" />
+                                </a>
 
-                            <a href="/infaqdonasi" className="mt-7 inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-primary shadow-md transition hover:brightness-105">
-                                Donasi Sekarang
-                                <Wallet className="h-4 w-4" />
-                            </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>

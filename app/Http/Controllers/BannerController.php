@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -55,6 +57,11 @@ class BannerController extends Controller
             'end_date'   => $request->end_date,
         ]);
 
+        ActivityLog::catat(
+            'Menambahkan iklan: ' . $request->title,
+            Auth::id()
+        );
+
         return back()->with('success', 'Banner berhasil ditambahkan.');
     }
 
@@ -85,21 +92,39 @@ class BannerController extends Controller
             'end_date'   => $request->end_date,
         ]);
 
+        ActivityLog::catat(
+            'Mengedit iklan: ' . $banner->title,
+            Auth::id()
+        );
+
         return back()->with('success', 'Banner berhasil diperbarui.');
     }
 
     public function toggleActive(Banner $banner)
     {
         $banner->update(['is_active' => !$banner->is_active]);
+
+        ActivityLog::catat(
+            ($banner->is_active ? 'Mengaktifkan' : 'Menonaktifkan') . ' iklan: ' . $banner->title,
+            Auth::id()
+        );
+
         return back()->with('success', $banner->is_active ? 'Banner diaktifkan.' : 'Banner dinonaktifkan.');
     }
 
     public function destroy(Banner $banner)
     {
+        $title = $banner->title;
         if ($banner->image && Storage::disk('public')->exists($banner->image)) {
             Storage::disk('public')->delete($banner->image);
         }
         $banner->delete();
+
+        ActivityLog::catat(
+            'Menghapus iklan: ' . $title,
+            Auth::id()
+        );
+
         return back()->with('success', 'Banner berhasil dihapus.');
     }
 }
