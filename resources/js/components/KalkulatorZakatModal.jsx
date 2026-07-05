@@ -5,8 +5,7 @@ import { X, Calculator } from "lucide-react";
  * KalkulatorZakatModal
  *
  * Kalkulator Zakat Fitrah: jumlah jiwa x 2.5kg x harga beras/kg.
- * Harga beras (HARGA_BERAS_PER_KG) masih dummy, silakan sambungkan
- * ke data harga real (API/setting admin) nanti.
+ * Harga beras diambil dari database melalui props (ZakatHomeController → ZakatHome).
  */
 
 const formatRupiah = (value) =>
@@ -16,20 +15,24 @@ const formatRupiah = (value) =>
     maximumFractionDigits: 0,
   }).format(isNaN(value) ? 0 : value);
 
-const HARGA_BERAS_PER_KG = 15000; // dummy
 const BERAT_FITRAH_PER_JIWA = 2.5; // kg
 
-function KalkulatorZakatModal({ open, onClose }) {
+function KalkulatorZakatModal({ open, onClose, hargaBerasPerKg = 0, hargaPer25Kg = 0 }) {
   const [jumlahJiwa, setJumlahJiwa] = useState(1);
 
   const fitrahKg = useMemo(
     () => jumlahJiwa * BERAT_FITRAH_PER_JIWA,
     [jumlahJiwa]
   );
-  const fitrahRupiah = useMemo(
-    () => fitrahKg * HARGA_BERAS_PER_KG,
-    [fitrahKg]
-  );
+
+  // Jika harga_2_5kg tersedia di DB, gunakan itu langsung × jiwa
+  // Jika tidak, hitung dari harga per kg × total beras
+  const fitrahRupiah = useMemo(() => {
+    if (hargaPer25Kg > 0) {
+      return jumlahJiwa * hargaPer25Kg;
+    }
+    return fitrahKg * hargaBerasPerKg;
+  }, [fitrahKg, jumlahJiwa, hargaBerasPerKg, hargaPer25Kg]);
 
   if (!open) return null;
 
@@ -78,8 +81,16 @@ function KalkulatorZakatModal({ open, onClose }) {
           className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-primary"
         />
         <p className="mt-1.5 text-[11px] text-gray-400">
-          Standar {BERAT_FITRAH_PER_JIWA} kg beras per jiwa, harga beras{" "}
-          {formatRupiah(HARGA_BERAS_PER_KG)}/kg
+          Standar {BERAT_FITRAH_PER_JIWA} kg beras per jiwa
+          {hargaBerasPerKg > 0 && (
+            <> · Harga beras {formatRupiah(hargaBerasPerKg)}/kg</>
+          )}
+          {hargaPer25Kg > 0 && (
+            <> · atau {formatRupiah(hargaPer25Kg)}/2,5 kg</>
+          )}
+          {hargaBerasPerKg === 0 && hargaPer25Kg === 0 && (
+            <span className="text-amber-500"> · Harga beras belum diatur admin</span>
+          )}
         </p>
 
         {/* Hasil */}
@@ -93,7 +104,11 @@ function KalkulatorZakatModal({ open, onClose }) {
               Total Bayar (uang)
             </span>
             <span className="text-lg font-extrabold text-primary">
-              {formatRupiah(fitrahRupiah)}
+              {hargaBerasPerKg === 0 && hargaPer25Kg === 0 ? (
+                <span className="text-sm text-gray-400">—</span>
+              ) : (
+                formatRupiah(fitrahRupiah)
+              )}
             </span>
           </div>
         </div>

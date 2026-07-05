@@ -32,6 +32,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\KasController;    
 use App\Http\Controllers\LaporanKeuanganController;
+use App\Http\Controllers\ZakatHomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -98,9 +99,7 @@ Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(fu
 
 
 Route::prefix('zakat')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('ZakatHome');
-    });
+    Route::get('/', [ZakatHomeController::class, 'index'])->name('zakat.home');
 
     Route::middleware(['auth', 'role:super admin,admin,zakat'])->prefix('input')->group(function () {
         Route::get('/', function () {
