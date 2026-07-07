@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\SettingBeras;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SettingBerasController extends Controller
@@ -14,6 +14,7 @@ class SettingBerasController extends Controller
             [],
             [
                 'toko' => '',
+                'tahun' => date('Y'),
                 'harga_per_kg' => 0,
                 'harga_2_5kg' => 0,
                 'harga_sak' => 0,
@@ -33,6 +34,7 @@ class SettingBerasController extends Controller
     {
         $request->validate([
             'toko' => 'required|string',
+            'tahun' => 'required|numeric|digits:4',
             'harga_per_kg' => 'required|numeric|min:0',
             'harga_sak' => 'nullable|string',
         ]);
@@ -41,6 +43,7 @@ class SettingBerasController extends Controller
             [],
             [
                 'toko' => '-',
+                'tahun' => date('Y'),
                 'harga_per_kg' => 0,
                 'harga_2_5kg' => 0,
                 'harga_sak' => '-',
@@ -49,6 +52,7 @@ class SettingBerasController extends Controller
 
         $setting->update([
             'toko' => $request->toko,
+            'tahun' => $request->tahun,
             'harga_per_kg' => $request->harga_per_kg,
             'harga_2_5kg' => $request->harga_per_kg * 2.5,
             'harga_sak' => $request->harga_sak,

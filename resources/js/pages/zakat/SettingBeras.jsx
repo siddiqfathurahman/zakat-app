@@ -13,7 +13,7 @@ import ZakatLayout from "../../Layout/ZakatLayout";
 import SuccessNotification from "../../components/SuccessNotification";
 
 export default function SettingBeras({
-    setting = { toko: "", harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },
+    setting = { toko: "", tahun: new Date().getFullYear(), harga_per_kg: 0, harga_2_5kg: 0, harga_sak: 0 },
     flash,
 }) {
     // QZ Security Setup
@@ -47,6 +47,7 @@ export default function SettingBeras({
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         toko: setting.toko || "",
+         tahun: setting.tahun || new Date().getFullYear(),
         harga_per_kg: setting.harga_per_kg || 0,
         harga_sak: setting.harga_sak || 0,
     });
@@ -54,6 +55,7 @@ export default function SettingBeras({
     const handleOpenModal = () => {
         setFormData({
             toko: setting.toko || "",
+            tahun: setting.tahun || new Date().getFullYear(),
             harga_per_kg: setting.harga_per_kg || 0,
             harga_sak: setting.harga_sak || 0,
         });
@@ -99,6 +101,7 @@ export default function SettingBeras({
         setIsModalOpen(false);
         setFormData({
             toko: "",
+            tahun: new Date().getFullYear(),
             harga_per_kg: "",
             harga_sak: "",
         });
@@ -167,6 +170,17 @@ export default function SettingBeras({
                                     </div>
                                     <p className="text-2xl font-bold text-gray-700">
                                         {setting.toko || "-"}
+                                    </p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4 mb-3">
+                                    <div className="flex items-center gap-2 text-gray-700 mb-1">
+                                        <Calendar size={16} />
+                                        <span className="text-xs font-medium">
+                                            Tahun
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-gray-700">
+                                        {setting.tahun || "-"}
                                     </p>
                                 </div>
                                 <div className="bg-green-50 rounded-lg p-4 mb-3">
@@ -371,6 +385,26 @@ export default function SettingBeras({
                                             required
                                         />
                                     </div>
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Tahun{" "}
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={formData.tahun}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                tahun: Number(e.target.value) || "",
+                                            })
+                                        }
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                                        placeholder={new Date().getFullYear()}
+                                        required
+                                    />
                                 </div>
 
                                 {/* Harga 2.5 KG (AUTO / READ ONLY) */}

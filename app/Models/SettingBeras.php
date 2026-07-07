@@ -10,6 +10,7 @@ class SettingBeras extends Model
 
     protected $fillable = [
         'toko',
+        'tahun',
         'harga_per_kg',
         'harga_2_5kg',
         'harga_sak',

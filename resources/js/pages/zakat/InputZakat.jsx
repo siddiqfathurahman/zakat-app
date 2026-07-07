@@ -3,8 +3,10 @@ import { Link, router } from "@inertiajs/react";
 import { Save, Wheat, Banknote, X, Check, Printer } from "lucide-react";
 
 export default function InputZakat({
-    setting = { harga_2_5kg: 0, printer_connected: false, printer_name: "" },
+    setting = { tahun: new Date().getFullYear(), harga_2_5kg: 0, printer_connected: false, printer_name: "" },
 }) {
+
+    const labelTahun = `ZAKAT FITRAH ${setting.tahun || new Date().getFullYear()} H`;
     // QZ Security Setup
     if (typeof window !== "undefined" && window.qz) {
         qz.security.setCertificatePromise(function (resolve, reject) {
@@ -308,7 +310,7 @@ export default function InputZakat({
                 {
                     type: "raw",
                     format: "base64",
-                    data: textToBase64("ZAKAT FITRAH 1447 H\n"),
+                    data: textToBase64(`${labelTahun}\n`),
                 },
                 { type: "raw", format: "base64", data: BOLD_OFF },
                 { type: "raw", format: "base64", data: textToBase64(line) },
@@ -450,7 +452,7 @@ export default function InputZakat({
                 {
                     type: "raw",
                     format: "base64",
-                    data: textToBase64("ZAKAT FITRAH 1447 H\n"),
+                    data: textToBase64(`${labelTahun}\n`),
                 },
                 { type: "raw", format: "base64", data: BOLD_OFF },
                 { type: "raw", format: "base64", data: textToBase64(line) },
@@ -886,7 +888,7 @@ export default function InputZakat({
                                 <h3 className="font-bold text-base mb-1">
                                     BUKTI PEMBAYARAN
                                 </h3>
-                                <p className="text-xs">ZAKAT FITRAH 1447 H</p>
+                                <p className="text-xs">{labelTahun}</p>
                             </div>
 
                             <div className="space-y-2 mb-4 border-b-2 border-dashed border-gray-300 pb-4">
