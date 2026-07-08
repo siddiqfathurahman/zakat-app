@@ -25,8 +25,11 @@ class SettingBerasController extends Controller
             ]
         );
 
+        $archives = \App\Models\ZakatArchive::orderBy('tahun', 'desc')->get();
+
         return Inertia::render('zakat/SettingBeras', [
             'setting' => $setting,
+            'archives' => $archives,
         ]);
     }
 
@@ -36,7 +39,7 @@ class SettingBerasController extends Controller
             'toko' => 'required|string',
             'tahun' => 'required|numeric|digits:4',
             'harga_per_kg' => 'required|numeric|min:0',
-            'harga_sak' => 'nullable|string',
+            'harga_sak' => 'nullable|numeric|min:0',
         ]);
 
         $setting = SettingBeras::firstOrCreate(
@@ -46,7 +49,7 @@ class SettingBerasController extends Controller
                 'tahun' => date('Y'),
                 'harga_per_kg' => 0,
                 'harga_2_5kg' => 0,
-                'harga_sak' => '-',
+                'harga_sak' => 0,
             ]
         );
 
@@ -55,7 +58,7 @@ class SettingBerasController extends Controller
             'tahun' => $request->tahun,
             'harga_per_kg' => $request->harga_per_kg,
             'harga_2_5kg' => $request->harga_per_kg * 2.5,
-            'harga_sak' => $request->harga_sak,
+            'harga_sak' => $request->harga_sak ?? 0,
         ]);
 
         return redirect()->back()->with('success', 'Harga beras berhasil disimpan');

@@ -344,12 +344,6 @@ const AdminDashboard = ({
                             <p className="text-sm font-bold text-gray-900">
                                 Aktivitas Terkini
                             </p>
-                            <a
-                                href="/admin/keuangan"
-                                className="text-xs font-semibold text-primary hover:underline"
-                            >
-                                Lihat Semua
-                            </a>
                         </div>
 
                         {activities.length === 0 ? (

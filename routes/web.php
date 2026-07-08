@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ZakatArchiveController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PembayarZakatController;
@@ -100,6 +101,8 @@ Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(fu
 
 Route::prefix('zakat')->group(function () {
     Route::get('/', [ZakatHomeController::class, 'index'])->name('zakat.home');
+    Route::get('/archive/{id}/download', [\App\Http\Controllers\ZakatArchiveController::class, 'download'])->name('zakat.archive.download');
+    Route::get('/archive/{id}/download-public', [ZakatArchiveController::class, 'downloadPublic'])->name('zakat.archive.download-public');
 
     Route::middleware(['auth', 'role:super admin,admin,zakat'])->prefix('input')->group(function () {
         Route::get('/', function () {
@@ -148,6 +151,11 @@ Route::prefix('zakat')->group(function () {
         Route::get('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'index'])->name('setting-beras.index');
         Route::post('/setting-beras', [\App\Http\Controllers\SettingBerasController::class, 'store'])->name('setting-beras.store');
         Route::post('/setting-beras/{id}/update', [\App\Http\Controllers\SettingBerasController::class, 'update'])->name('setting-beras.update');
+
+        // Route untuk pengarsipan
+        Route::post('/archive', [\App\Http\Controllers\ZakatArchiveController::class, 'archive'])->name('zakat.archive.store');
+        Route::post('/archive/{id}/destroy', [\App\Http\Controllers\ZakatArchiveController::class, 'destroy'])->name('zakat.archive.destroy');
+        
 
         // Route untuk laporan belanja
         Route::get('/laporan-belanja', [LaporanBelanjaController::class, 'index'])->name('laporan-belanja.index');

@@ -101,6 +101,15 @@ class ZakatHomeController extends Controller
             ],
 
             'pemohon' => $pemohon,
+
+            'archives' => \App\Models\ZakatArchive::orderBy('tahun', 'desc')->get()->map(function($archive) {
+                return [
+                    'id' => $archive->id,
+                    'tahun' => $archive->tahun,
+                    'summary' => $archive->summary_data,
+                    'created_at' => $archive->created_at->format('d M Y'),
+                ];
+            }),
         ]);
     }
 }

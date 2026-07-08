@@ -93,6 +93,7 @@ const ZakatHome = () => {
         distribusi,
         hargaBeras,
         pemohon,
+        archives = [],
     } = usePage().props;
 
     const statCards = [
@@ -149,19 +150,12 @@ const ZakatHome = () => {
                                 Laporan dan Statistik Zakat
                             </h1>
                             <p className="mt-1 text-sm text-gray-400">
-                                Tinjau progres pengelolaan zakat Masjid Al Anhar
-                                pada Ramadhan 1445H.
+                                Tinjau progres pengelolaan zakat Masjid Al Anhar.
                                 <br />
                                 Data diperbaharui setiap 24 jam.
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <button className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
-                                <Download className="h-3.5 w-3.5" />
-                                Unduh Laporan PDF
-                            </button>
-                        </div>
                     </div>
 
                     {/* Stat Cards */}
@@ -331,6 +325,69 @@ const ZakatHome = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Public Zakat Archives Section */}
+                    {archives && archives.length > 0 && (
+                        <div className="mt-16">
+                            <h2 className="text-2xl font-extrabold text-primary font-second">
+                                Arsip Laporan Zakat Fitrah
+                            </h2>
+                            <p className="mt-1 text-sm text-gray-400">
+                                Unduh laporan pertanggungjawaban pengelolaan zakat fitrah dari tahun-tahun sebelumnya.
+                            </p>
+
+                            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {archives.map((archive) => {
+                                    const summary = archive.summary || {};
+                                    return (
+                                        <div
+                                            key={archive.id}
+                                            className="rounded-2xl bg-white p-5 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+                                        >
+                                            <div>
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-primary">
+                                                        Tahun {archive.tahun}
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-400">
+                                                        Diarsipkan: {archive.created_at}
+                                                    </span>
+                                                </div>
+                                                <div className="space-y-2 text-xs text-gray-600 mb-6">
+                                                    <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                                        <span>Muzakki:</span>
+                                                        <span className="font-semibold text-gray-900">{summary.jumlah_pembayar || 0} orang</span>
+                                                    </div>
+                                                    <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                                        <span>Total Beras:</span>
+                                                        <span className="font-semibold text-amber-600">{(summary.total_beras || 0).toLocaleString("id-ID")} kg</span>
+                                                    </div>
+                                                    <div className="flex justify-between pb-1">
+                                                        <span>Total Uang:</span>
+                                                        <span className="font-semibold text-emerald-600">
+                                                            {new Intl.NumberFormat("id-ID", {
+                                                                style: "currency",
+                                                                currency: "IDR",
+                                                                minimumFractionDigits: 0
+                                                            }).format(summary.total_uang || 0)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <a
+                                                href={`/zakat/archive/${archive.id}/download-public`}
+                                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary hover:bg-emerald-800 py-2.5 text-xs font-bold text-white transition-colors"
+                                            >
+                                                <Download className="h-4 w-4" />
+                                                Unduh Laporan PDF
+                                            </a>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                 </section>
 
                 <KalkulatorZakatModal

@@ -191,9 +191,10 @@ export default function CatatTransaksiModal({
                                 <button
                                     type="button"
                                     onClick={handleTambahKategori}
-                                    className="rounded-xl bg-emerald-700 px-3 py-2 text-sm font-medium text-white"
+                                    className="flex items-center justify-center rounded-xl bg-emerald-700 p-2 text-white transition hover:bg-emerald-800"
+                                    aria-label="Tambah kategori"
                                 >
-                                    Tambah
+                                    <Plus size={18} strokeWidth={2.5} />
                                 </button>
                             </div>
                         )}
