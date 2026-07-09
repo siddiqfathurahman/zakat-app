@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RealtimequrbanController;
 use App\Http\Controllers\ZakatArchiveController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -175,9 +176,7 @@ Route::prefix('zakat')->group(function () {
 
 // qurban route
 Route::prefix('qurban')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('QurbanHome');
-    });
+    Route::get('/', [\App\Http\Controllers\QurbanHomeController::class, 'index'])->name('qurban.home');
 
     Route::middleware(['auth', 'role:super admin,admin,qurban'])->prefix('input')->group(function () {
         Route::get('/', function () {
@@ -196,6 +195,13 @@ Route::prefix('qurban')->group(function () {
         Route::post('/shohibul/store', [ShohibulqurbanController::class, 'store'])->name('shohibul.store');
         Route::post('/shohibul/{shohibulqurban}/update', [ShohibulqurbanController::class, 'update'])->name('shohibul.update');
         Route::post('/shohibul/{shohibulqurban}/destroy', [ShohibulqurbanController::class, 'destroy'])->name('shohibul.destroy');
+
+        // realtime monitoring qurban
+Route::get('/realtime', [RealtimequrbanController::class, 'index'])->name('qurban.realtime.index');
+Route::post('/realtime/sembelih/{realtimeQurban}', [RealtimequrbanController::class, 'updateSembelih'])->name('qurban.realtime.sembelih');
+Route::post('/realtime/potong/{realtimeQurban}', [RealtimequrbanController::class, 'updatePotong'])->name('qurban.realtime.potong');
+Route::post('/realtime/timbang/{realtimeQurban}', [RealtimequrbanController::class, 'updateTimbang'])->name('qurban.realtime.timbang');
+Route::post('/realtime/kirim/{shohibulqurban}', [RealtimequrbanController::class, 'updateKirim'])->name('qurban.realtime.kirim');
 
         // jatah lembaga qurban
         Route::get('/jatah-lembaga', [JatahlembagaqurbanController::class, 'index'])->name('jatah-lembaga.index');

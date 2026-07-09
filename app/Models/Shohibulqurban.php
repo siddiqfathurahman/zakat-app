@@ -16,5 +16,12 @@ class Shohibulqurban extends Model
         'nomor_hewan',
         'jenis_hewan',
         'note',
+        'status_kirim',
+        'waktu_kirim',
+    ];
+
+    protected $casts = [
+        'status_kirim' => 'boolean',
+        'waktu_kirim' => 'datetime',
     ];
 }

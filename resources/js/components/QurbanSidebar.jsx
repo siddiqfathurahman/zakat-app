@@ -7,6 +7,7 @@ import {
   Settings,
   Sliders,
   Building2,
+  Eye,
 } from "lucide-react";  
 
 export default function QurbanSidebar() {
@@ -15,6 +16,11 @@ export default function QurbanSidebar() {
             name: "Dashboard",
             href: "/qurban/input/dashboard",
             icon: LayoutDashboard, 
+        },
+        {
+            name: "Real Time",
+            href: "/qurban/input/realtime",
+            icon: Eye, 
         },
         {
             name: "Shohibul",

@@ -3,65 +3,10 @@ import {
   ShoppingBag,
   Archive,
   RefreshCw,
-  MapPin,
   Wallet,
-  Navigation,
 } from "lucide-react";
 
-const lastUpdate = "10 JULI 2024 – 14:20 WIB";
-
-const kantongStats = [
-  { label: "Total Kantong", value: "2,240 Bags", icon: ShoppingBag },
-  { label: "Total Kantong Kambing", value: "450 Bags", icon: Archive },
-  { label: "Total Kantong Kambing", value: "450 Bags", icon: Archive },
-];
-
-const pemotongan = [
-  { hewan: "Sapi", selesai: 12, total: 15, color: "#0d4f3c" },
-  { hewan: "Kambing", selesai: 28, total: 45, color: "#b8924a" },
-];
-const totalPemotonganPct = Math.round(
-  (pemotongan.reduce((s, h) => s + h.selesai, 0) /
-    pemotongan.reduce((s, h) => s + h.total, 0)) *
-    100
-);
-
-const penimbangan = [
-  { hewan: "Sapi", selesai: 3200, total: 3500, satuan: "Kg", color: "#0d4f3c" },
-  { hewan: "Kambing", selesai: 980, total: 1300, satuan: "Kg", color: "#b8924a" },
-];
-const totalBobotBersih = penimbangan.reduce((s, h) => s + h.selesai, 0);
-
-const shohibulProgress = 70; 
-
-const shohibulRT = [
-  { rt: "RT 48", terkirim: 30, total: 30 },
-  { rt: "RT 49", terkirim: 28, total: 30 },
-  { rt: "RT 50", terkirim: 35, total: 35 },
-  { rt: "RT 51", terkirim: 20, total: 25 },
-  { rt: "RT 52", terkirim: 10, total: 25 },
-  { rt: "RT 53", terkirim: 0, total: 30 },
-  { rt: "RT 56", terkirim: 0, total: 35 },
-  { rt: "RT 57", terkirim: 0, total: 30 },
-];
-const totalTerkirim = shohibulRT.reduce((s, r) => s + r.terkirim, 0);
-const totalShohibul = shohibulRT.reduce((s, r) => s + r.total, 0);
-
-const distribusiRT = [
-  { rt: "RT 48", sapi: 0, kambing: 0, pct: 100 },
-  { rt: "RT 49", sapi: 2, kambing: 4, pct: 95 },
-  { rt: "RT 50", sapi: 0, kambing: 0, pct: 100 },
-  { rt: "RT 51", sapi: 10, kambing: 8, pct: 80 },
-  { rt: "RT 52", sapi: 84, kambing: 56, pct: 40 },
-  { rt: "RT 53", sapi: 110, kambing: 0, pct: 0 },
-  { rt: "RT 56", sapi: 130, kambing: 0, pct: 0 },
-  { rt: "RT 57", sapi: 125, kambing: 0, pct: 0 },
-];
-
-const hasilKulit = {
-  nominal: "Rp 12.450.000",
-  keterangan: "100% Hasil penjualan Kulit digunakan untuk baksos oleh Remaja Masjid"
-};
+const kantongIcons = [ShoppingBag, Archive, Archive];
 
 const formatPct = (done, total) =>
   total === 0 ? 0 : Math.round((done / total) * 100);
@@ -102,14 +47,30 @@ function DonutChart({ pct }) {
   );
 }
 
-const QurbanHome = () => {
+const QurbanHome = ({
+  lastUpdate,
+  kantongStats = [],
+  pemotongan = [],
+  penimbangan = [],
+  totalBobotBersih = 0,
+  shohibulProgress = 0,
+  shohibulRT = [],
+  totalTerkirim = 0,
+  totalShohibul = 0,
+  distribusiRT = [],
+  hasilKulit = { nominal: "Rp 0", keterangan: "" },
+}) => {
+  const totalPemotonganSelesai = pemotongan.reduce((s, h) => s + h.selesai, 0);
+  const totalPemotonganTotal = pemotongan.reduce((s, h) => s + h.total, 0);
+  const totalPemotonganPct = formatPct(totalPemotonganSelesai, totalPemotonganTotal);
+
   return (
     <AppLayout>
       <div className="w-full">
         <section className="content space-y-5 px-4 py-8 md:px-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-                <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 mb-2 text-[10px] font-bold tracking-wide text-primary">
+              <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 mb-2 text-[10px] font-bold tracking-wide text-primary">
                 UPDATE REAL-TIME
               </span>
               <p className="md:text-3xl text-xl font-second font-bold text-primary">Dashboard Laporan Qurban</p>
@@ -122,10 +83,10 @@ const QurbanHome = () => {
               LAST UPDATE: {lastUpdate}
             </span>
           </div>
-          
+
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {kantongStats.map((item, i) => {
-              const Icon = item.icon;
+              const Icon = kantongIcons[i] || ShoppingBag;
               return (
                 <div key={i} className="flex items-center justify-between rounded-2xl border border-dashed border-primary/30 bg-white px-5 py-4 shadow-sm">
                   <div>
@@ -159,6 +120,11 @@ const QurbanHome = () => {
                       </span>
                     </div>
                     <ProgressBar pct={formatPct(h.selesai, h.total)} color={h.color} />
+                    {h.waktu && (
+                      <p className="mt-1 text-right text-[11px] font-semibold text-gray-400">
+                        Selesai pukul {h.waktu} WIB
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -175,21 +141,28 @@ const QurbanHome = () => {
                 <span>Kg</span>
               </div>
               <div className="space-y-5">
-                {penimbangan.map((h, i) => (
-                  <div key={i}>
-                    <div className="mb-1.5 flex items-center justify-between text-sm">
-                      <span className="font-bold text-gray-800">{h.hewan}</span>
-                      <span className="font-extrabold" style={{ color: h.color }}>
-                        {h.selesai.toLocaleString("id-ID")} / {h.total.toLocaleString("id-ID")} {h.satuan}
-                      </span>
-                    </div>
-                    <ProgressBar pct={formatPct(h.selesai, h.total)} color={h.color} />
+              {penimbangan.map((h, i) => (
+                <div key={i}>
+                  <div className="mb-1.5 flex items-center justify-between text-sm">
+                    <span className="font-bold text-gray-800">{h.hewan}</span>
+                    <span className="font-extrabold" style={{ color: h.color }}>
+                      {h.selesai.toLocaleString("id-ID")} / {h.total.toLocaleString("id-ID")} {h.satuan}
+                    </span>
                   </div>
-                ))}
+                  <ProgressBar pct={formatPct(h.selesai, h.total)} color={h.color} />
+                  {h.waktu && (
+                    <p className="mt-1 text-right text-[11px] font-semibold text-gray-400">
+                      Selesai pukul {h.waktu} WIB
+                    </p>
+                  )}
+                </div>
+              ))}
               </div>
               <p className="mt-5 text-xs text-gray-400">
                 Total bobot bersih:{" "}
-                <span className="font-bold text-primary">{totalBobotBersih.toLocaleString("id-ID")} Kg</span>
+                <span className="font-bold text-primary">
+                  {Number(totalBobotBersih).toLocaleString("id-ID")} Kg
+                </span>
               </p>
             </div>
 
@@ -210,7 +183,7 @@ const QurbanHome = () => {
 
               <div className="mt-4 grid grid-cols-2 gap-2">
                 {shohibulRT.map((r, i) => {
-                  const full = r.terkirim === r.total;
+                  const full = r.terkirim === r.total && r.total > 0;
                   return (
                     <div
                       key={i}
@@ -220,6 +193,11 @@ const QurbanHome = () => {
                       <p className={`text-md font-extrabold ${full ? "text-secondary" : "text-white"}`}>
                         {r.terkirim} / {r.total}
                       </p>
+                      {r.waktu && (
+                        <p className="mt-0.5 text-[9px] font-semibold text-secondary">
+                          {r.waktu} WIB
+                        </p>
+                      )}
                     </div>
                   );
                 })}
