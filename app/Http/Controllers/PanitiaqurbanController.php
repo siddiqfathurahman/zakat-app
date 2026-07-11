@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Panitiaqurban;
+use App\Models\Settingqurban;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,8 +15,11 @@ class PanitiaqurbanController extends Controller
     public function index()
     {
         $panitiaqurbans = Panitiaqurban::all();
+        $setting = Settingqurban::first();
+        
         return Inertia::render('qurban/PanitiaQurban', [
             'panitiaqurbans' => $panitiaqurbans,
+            'setting' => $setting,
         ]);
     }
     

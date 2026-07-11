@@ -139,12 +139,9 @@ export default function SettingBeras({
         }
     };
 
-    // ---------------------------------------------
-    // State Notifikasi & Konfirmasi (pengganti alert/confirm)
-    // ---------------------------------------------
     const [notification, setNotification] = useState({
         open: false,
-        type: "success", // "success" | "error"
+        type: "success",
         title: "",
         message: "",
     });

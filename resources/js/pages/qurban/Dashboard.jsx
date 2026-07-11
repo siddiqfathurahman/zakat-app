@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { router } from '@inertiajs/react';
 import QurbanLayout from '../../Layout/QurbanLayout';
+import { useRealtimeChannel } from '../../hooks/useRealtime';
 
 export default function Dashboard({
     totalBungkus = 0,
@@ -8,7 +10,8 @@ export default function Dashboard({
     bungkusKambing = 0,
     jumlahKambing = 0,
     penjualanKulit = '0',
-    rtData = []
+    rtData = [],
+    noteKulit = ''
 }) {
     const [selectedRT, setSelectedRT] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -22,6 +25,20 @@ export default function Dashboard({
         setModalOpen(false);
         setTimeout(() => setSelectedRT(null), 300);
     };
+
+    // Refresh khusus rtData saat ada perubahan status penerima (klaim/shohibul)
+    // dari halaman manapun (PenerimaQurban, scan QR, dsb). Cukup reload field
+    // ini saja karena field lain (bungkus, jumlah hewan) tidak dipengaruhi
+    // oleh perubahan status penerima.
+    const refreshRtData = useCallback(() => {
+        router.reload({
+            only: ['rtData'],
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }, []);
+
+    useRealtimeChannel('penerima-qurban', 'penerima-qurban.updated', refreshRtData);
 
     const sudahPersen = selectedRT
         ? Math.round((selectedRT.sudahAmbil / (selectedRT.total || 1)) * 100)
@@ -132,6 +149,7 @@ export default function Dashboard({
                         <div>
                             <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Penjualan Kulit</p>
                             <p className="text-xs text-orange-500">hasil penjualan kulit hewan</p>
+                            <p className="text-xs text-orange-500">Note : {noteKulit}</p>
                         </div>
                     </div>
                     <div className="text-right">
@@ -240,43 +258,6 @@ export default function Dashboard({
                                     </div>
                                 )}
                             </div>
-
-                            {/* Sudah Ambil
-                            {(selectedRT.listSudah ?? []).length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-green-400 inline-block" />
-                                        <h3 className="text-sm font-semibold text-green-600 uppercase tracking-wide">
-                                            Sudah Mengambil ({selectedRT.sudahAmbil ?? 0})
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        {(selectedRT.listSudah ?? []).map((p, i) => (
-                                            <div
-                                                key={i}
-                                                className="flex items-center justify-between bg-green-50 border border-green-100 rounded-lg px-3 py-2"
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-500 text-sm">✓</span>
-                                                    <span className="text-sm text-gray-600 line-through decoration-gray-400">{p.nama}</span>
-                                                </div>
-                                                <div className="flex gap-1.5 text-[10px]">
-                                                    {p.sapi > 0 && (
-                                                        <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full">
-                                                            🐄 {p.sapi}
-                                                        </span>
-                                                    )}
-                                                    {p.kambing > 0 && (
-                                                        <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                                                            🐐 {p.kambing}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )} */}
                         </div>
 
                         {/* Footer */}

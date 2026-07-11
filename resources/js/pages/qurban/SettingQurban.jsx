@@ -8,6 +8,8 @@ export default function SettingQurban({ setting = null }) {
 
     const [form, setForm] = useState({
         jual_kulit:          setting?.jual_kulit          ?? '',
+        note_kulit:          setting?.note_kulit          ?? '',
+        tahun:               setting?.tahun               ?? '',
         operasional_kambing: setting?.operasional_kambing ?? '',
         tanggal_pengambilan: setting?.tanggal_pengambilan ?? '',
         waktu_pengambilan:   setting?.waktu_pengambilan ?? '',
@@ -85,6 +87,11 @@ export default function SettingQurban({ setting = null }) {
         const err = {};
         if (form.jual_kulit === '' || isNaN(form.jual_kulit))
             err.jual_kulit = 'Wajib diisi dan harus angka';
+        if (!form.note_kulit.trim()) {
+            err.note_kulit = 'Wajib diisi';
+        }
+        if (form.tahun === '' || isNaN(form.tahun))
+            err.tahun = 'Wajib diisi dan harus angka';
         if (form.operasional_kambing === '' || isNaN(form.operasional_kambing))
             err.operasional_kambing = 'Wajib diisi dan harus angka';
         if (!form.tanggal_pengambilan) err.tanggal_pengambilan = 'Wajib diisi';
@@ -180,6 +187,32 @@ export default function SettingQurban({ setting = null }) {
                                 </p>
                             </div>
 
+                            <div>
+                                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
+                                    Note Hasil Jual Kulit <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        name="note_kulit"
+                                        value={form.note_kulit}
+                                        onChange={handleChange}
+                                        placeholder="Masukan Note"
+                                        className={`w-full border rounded-xl pl-4 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition ${
+                                            errors.note_kulit
+                                                ? 'border-red-400 focus:border-red-400'
+                                                : 'border-gray-200 focus:border-orange-400'
+                                        }`}
+                                    />
+                                </div>
+                                {errors.note_kulit && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.note_kulit}</p>
+                                )}
+                                <p className="text-xs text-gray-400 mt-1">
+                                    Note dari hasil penjualan kulit hewan qurban.
+                                </p>
+                            </div>
+
                             {/* Operasional Kambing */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
@@ -255,6 +288,27 @@ export default function SettingQurban({ setting = null }) {
                                 />
                                 {errors.waktu_pengambilan && (
                                     <p className="text-xs text-red-500 mt-1">{errors.waktu_pengambilan}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">
+                                    Tahun <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="tahun"
+                                    value={form.tahun}
+                                    onChange={handleChange}
+                                    placeholder="contoh: 2026"
+                                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 transition ${
+                                        errors.tahun
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-200 focus:border-orange-400'
+                                    }`}
+                                />
+                                {errors.tahun && (
+                                    <p className="text-xs text-red-500 mt-1">{errors.tahun}</p>
                                 )}
                             </div>
 
@@ -384,6 +438,10 @@ export default function SettingQurban({ setting = null }) {
                                 <p className="text-xs text-gray-400 mb-0.5">Hasil Jual Kulit</p>
                                 <p className="text-lg font-bold text-orange-700">{fmt(form.jual_kulit)}</p>
                             </div>
+                            <div>
+                                <p className="text-xs text-gray-400 mb-0.5">Note Jual Kulit</p>
+                                <p className="text-lg font-bold text-orange-700">{form.note_kulit}</p>
+                            </div>
                             <div className="border-t border-gray-100 pt-4">
                                 <p className="text-xs text-gray-400 mb-0.5">Biaya Operasional Kambing</p>
                                 <p className="text-lg font-bold text-green-700">{fmt(form.operasional_kambing)}</p>
@@ -392,6 +450,7 @@ export default function SettingQurban({ setting = null }) {
                                 <p className="text-xs text-gray-400 mb-0.5">Pengambilan</p>
                                 <p className="text-sm font-semibold text-gray-800">{form.tanggal_pengambilan || '-'}</p>
                                 <p className="text-sm text-gray-600">{form.waktu_pengambilan || '-'}</p>
+                                <p className="text-sm text-gray-600">{form.tahun || '-'}</p>
                                 <p className="text-sm text-gray-600">{form.tempat_pengambilan || '-'}</p>
                             </div>
                         </div>

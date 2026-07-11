@@ -242,14 +242,14 @@
         <!-- ── JUDUL ── -->
         <div class="judul-wrapper">
             <div class="judul">Surat Keterangan Penerima Qurban</div>
-            <div class="nomor-surat">
-                No : SKQ/1447H/{{ str_pad($penerima->id, 4, '0', STR_PAD_LEFT) }}/RW{{ str_pad($penerima->rw, 2, '0', STR_PAD_LEFT) }}
-            </div>
+        <div class="nomor-surat">
+            No : SKQ/{{ $setting->tahun ?? '1447' }}H/{{ str_pad($penerima->id, 4, '0', STR_PAD_LEFT) }}/RW{{ str_pad($penerima->rw, 2, '0', STR_PAD_LEFT) }}
+        </div>
         </div>
 
         <!-- ── PEMBUKA ── -->
         <p class="pembuka">
-            Panitia Pelaksana Qurban Masjid Al-Anhar 1447 H dengan ini menyatakan bahwa nama yang tercantum di bawah ini adalah penerima daging qurban. Surat ini digunakan sebagai pengganti kupon untuk pengambilan daging qurban.
+            Panitia Pelaksana Qurban Masjid Al-Anhar {{ $setting->tahun ?? '1447' }} H dengan ini menyatakan bahwa nama yang tercantum di bawah ini adalah penerima daging qurban. Surat ini digunakan sebagai pengganti kupon untuk pengambilan daging qurban.
         </p>
 
         <!-- ── DATA PENERIMA ── -->

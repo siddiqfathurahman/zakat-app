@@ -20,6 +20,8 @@ class SettingqurbanController extends Controller
     {
         $request->validate([
             'jual_kulit'          => 'required|numeric|min:0',
+            'note_kulit'          => 'required|string',
+            'tahun'               => 'required|numeric|min:0',
             'operasional_kambing' => 'required|numeric|min:0',
         ]);
 
@@ -38,6 +40,8 @@ class SettingqurbanController extends Controller
     {
         $request->validate([
             'jual_kulit'          => 'required|numeric|min:0',
+            'note_kulit'          => 'required|string',
+            'tahun'               => 'required|numeric|min:0',
             'operasional_kambing' => 'required|numeric|min:0',
         ]);
 

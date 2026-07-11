@@ -1,4 +1,7 @@
+import { useCallback, useEffect, useState } from "react";
+import { router } from "@inertiajs/react";
 import AppLayout from "../Layout/AppLayout";
+import { useRealtimeChannel } from "../hooks/useRealtime";
 import {
   ShoppingBag,
   Archive,
@@ -10,6 +13,24 @@ const kantongIcons = [ShoppingBag, Archive, Archive];
 
 const formatPct = (done, total) =>
   total === 0 ? 0 : Math.round((done / total) * 100);
+
+const formatLastUpdate = (date) => {
+  const datePart = new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta",
+  }).format(date);
+
+  const timePart = new Intl.DateTimeFormat("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Jakarta",
+  }).format(date);
+
+  return `${datePart} – ${timePart} WIB`;
+};
 
 function ProgressBar({ pct, color }) {
   return (
@@ -58,11 +79,45 @@ const QurbanHome = ({
   totalTerkirim = 0,
   totalShohibul = 0,
   distribusiRT = [],
+  noteKulit = [],
   hasilKulit = { nominal: "Rp 0", keterangan: "" },
 }) => {
   const totalPemotonganSelesai = pemotongan.reduce((s, h) => s + h.selesai, 0);
   const totalPemotonganTotal = pemotongan.reduce((s, h) => s + h.total, 0);
   const totalPemotonganPct = formatPct(totalPemotonganSelesai, totalPemotonganTotal);
+
+  const [displayLastUpdate, setDisplayLastUpdate] = useState(lastUpdate);
+
+  useEffect(() => {
+    setDisplayLastUpdate(lastUpdate);
+  }, [lastUpdate]);
+
+  const refreshDashboard = useCallback(() => {
+    setDisplayLastUpdate(formatLastUpdate(new Date()));
+
+    router.reload({
+      only: [
+        "kantongStats",
+        "pemotongan",
+        "penimbangan",
+        "totalBobotBersih",
+        "shohibulProgress",
+        "shohibulRT",
+        "totalTerkirim",
+        "totalShohibul",
+        "distribusiRT",
+        "hasilKulit",
+        "noteKulit",
+        "lastUpdate",
+      ],
+      preserveScroll: true,
+      preserveState: true,
+    });
+  }, []);
+
+  useRealtimeChannel("realtime-qurban", "realtime-qurban.updated", refreshDashboard);
+  useRealtimeChannel("shohibul-delivery", "delivery.updated", refreshDashboard);
+  useRealtimeChannel("penerima-qurban", "penerima-qurban.updated", refreshDashboard);
 
   return (
     <AppLayout>
@@ -80,7 +135,7 @@ const QurbanHome = ({
             </div>
             <span className="flex items-center gap-1.5 rounded-full border border-primary/30 px-3 py-1.5 text-[11px] font-bold text-primary whitespace-nowrap self-start">
               <RefreshCw className="h-3 w-3" />
-              LAST UPDATE: {lastUpdate}
+              LAST UPDATE: {displayLastUpdate}
             </span>
           </div>
 
@@ -101,10 +156,8 @@ const QurbanHome = ({
             })}
           </div>
 
-          {/* ── Grid Utama: 3 kolom, Shohibul span 2 baris ── */}
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_1.1fr]" style={{ gridTemplateRows: "auto auto" }}>
 
-            {/* Laporan Pemotongan — baris 1, kol 1 */}
             <div className="rounded-2xl border border-dashed border-primary/30 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between text-xs font-semibold text-gray-400">
                 <span>Laporan Pemotongan</span>
@@ -134,7 +187,6 @@ const QurbanHome = ({
               </p>
             </div>
 
-            {/* Progres Penimbangan — baris 1, kol 2 */}
             <div className="rounded-2xl border border-dashed border-primary/30 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between text-xs font-semibold text-gray-400">
                 <span>Progres Penimbangan</span>
@@ -166,7 +218,6 @@ const QurbanHome = ({
               </p>
             </div>
 
-            {/* Pengiriman Shohibul — kol 3, span 2 baris */}
             <div
               className="rounded-2xl bg-primary p-5 text-white shadow-sm"
               style={{ gridRow: "1 / span 2" }}
@@ -212,7 +263,6 @@ const QurbanHome = ({
               </button>
             </div>
 
-            {/* Distribusi Wilayah — baris 2, kol 1–2 */}
             <div className="rounded-2xl border border-dashed border-primary/30 bg-white p-5 shadow-sm lg:col-span-2">
               <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm font-bold text-primary">Distribusi Wilayah (RT)</p>
@@ -246,10 +296,8 @@ const QurbanHome = ({
                 ))}
               </div>
             </div>
-
           </div>
 
-          {/* ── Hasil Penjualan Kulit ── */}
           <div className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 shadow-sm">
             <div>
               <p className="text-[11px] font-bold tracking-widest text-white/60">
@@ -258,13 +306,12 @@ const QurbanHome = ({
               <p className="mt-1 text-2xl font-extrabold text-secondary">
                 {hasilKulit.nominal}
               </p>
-              <p className="mt-1 text-xs text-white/60">{hasilKulit.keterangan}</p>
+              <p className="mt-1 text-xs text-white/60">{noteKulit}</p>
             </div>
             <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white/15 text-secondary">
               <Wallet className="h-6 w-6" />
             </span>
           </div>
-
         </section>
       </div>
     </AppLayout>

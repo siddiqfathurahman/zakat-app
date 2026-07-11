@@ -10,6 +10,8 @@ class Settingqurban extends Model
 
     protected $fillable = [
         'jual_kulit',
+        'note_kulit',
+        'tahun',
         'operasional_kambing',
         'tanggal_pengambilan',
         'waktu_pengambilan',

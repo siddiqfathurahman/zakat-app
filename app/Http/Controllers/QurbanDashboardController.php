@@ -56,6 +56,7 @@ class QurbanDashboardController extends Controller
         // 4. Hasil Penjualan Kulit (Settingqurban)
         $setting = Settingqurban::first();
         $penjualanKulit = $setting ? $setting->jual_kulit : 0;
+        $noteKulit = $setting ? $setting->note_kulit : '';
         $penjualanKulitFormatted = number_format($penjualanKulit, 0, ',', '.'); 
 
         return Inertia::render('qurban/Dashboard', [
@@ -65,6 +66,7 @@ class QurbanDashboardController extends Controller
             'bungkusKambing' => $bungkusKambing,
             'jumlahKambing' => $jumlahKambing,
             'penjualanKulit' => $penjualanKulitFormatted,
+            'noteKulit' => $noteKulit,
             'rtData' => $rtDataFormatted
         ]);
     }

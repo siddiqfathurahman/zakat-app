@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PenerimaqurbanStatusUpdated;
 use App\Models\Penerimaqurban;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,7 +16,6 @@ class PenerimaqurbanController extends Controller
     public function index()
     {
         $data = Penerimaqurban::latest()->get();
-        // pass the configs collection as is so we can filter by kategori
         $configs = \App\Models\Jatahconfigqurban::all();
         $setting = \App\Models\Settingqurban::first();
 
@@ -44,7 +44,6 @@ class PenerimaqurbanController extends Controller
         $rt = str_pad($validated['rt'], 2, '0', STR_PAD_LEFT);
         $rw = str_pad($validated['rw'], 2, '0', STR_PAD_LEFT);
 
-        // Ambil kode terakhir berdasarkan RT & RW
         $lastKode = Penerimaqurban::where('rt', $validated['rt'])
             ->where('rw', $validated['rw'])
             ->orderByDesc('kode_unik')
@@ -52,12 +51,10 @@ class PenerimaqurbanController extends Controller
 
         $nomor = 1;
 
-        // Ambil angka terakhir dari kode_unik
         if ($lastKode && preg_match('/-(\d+)$/', $lastKode, $match)) {
             $nomor = ((int) $match[1]) + 1;
         }
 
-        // Pastikan benar-benar unik
         do {
             $noUrut = str_pad($nomor, 3, '0', STR_PAD_LEFT);
             $kodeUnik = "QURBAN-{$rt}{$rw}-{$noUrut}";
@@ -69,7 +66,9 @@ class PenerimaqurbanController extends Controller
 
         $validated['kode_unik'] = $kodeUnik;
 
-        Penerimaqurban::create($validated);
+        $penerima = Penerimaqurban::create($validated);
+
+        PenerimaqurbanStatusUpdated::dispatch($penerima);
 
         return redirect()->back()->with('success', 'Data berhasil ditambahkan');
     }
@@ -92,6 +91,8 @@ class PenerimaqurbanController extends Controller
 
         $penerimaqurban->update($validated);
 
+        PenerimaqurbanStatusUpdated::dispatch($penerimaqurban->fresh());
+
         return redirect()->back()->with('success', 'Data berhasil diupdate');
     }
 
@@ -112,24 +113,20 @@ class PenerimaqurbanController extends Controller
     {
         $query = Penerimaqurban::query();
 
-        // Filter RT
         if ($request->filled('rt')) {
             $query->where('rt', $request->rt);
         }
 
-        // Filter agama
         if ($request->filled('agama')) {
             $query->where('agama', $request->agama);
         }
 
-        // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $penerimas = $query->orderBy('rt')->orderBy('agama')->get();
 
-        // Build filter info labels
         $filterInfo = [];
         if ($request->filled('rt'))     $filterInfo[] = 'RT ' . $request->rt;
         if ($request->filled('agama'))  $filterInfo[] = ucfirst($request->agama);
@@ -142,7 +139,7 @@ class PenerimaqurbanController extends Controller
     }
 
     /**
-     * 🔥 Scan QR (untuk fetch data via AJAX dari React)
+     * Scan QR (untuk fetch data via AJAX dari React)
      */
     public function scan($kode)
     {
@@ -158,7 +155,7 @@ class PenerimaqurbanController extends Controller
     }
 
     /**
-     * 🔥 Claim (update status)
+     * Claim (update status)
      */
     public function claim($kode)
     {
@@ -176,6 +173,8 @@ class PenerimaqurbanController extends Controller
             'status' => 'claimed'
         ]);
 
+        PenerimaqurbanStatusUpdated::dispatch($penerima->fresh());
+
         return response()->json([
             'message' => 'Berhasil diambil',
             'data' => $penerima
@@ -189,7 +188,7 @@ class PenerimaqurbanController extends Controller
     {
         $penerima = Penerimaqurban::findOrFail($id);
         $setting = \App\Models\Settingqurban::first();
-        
+
         return view('print.surat-keterangan', compact('penerima', 'setting'));
     }
 }

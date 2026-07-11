@@ -1,9 +1,9 @@
     import React, { useState, useMemo, useEffect } from 'react';
     import { router, usePage } from '@inertiajs/react';
     import QurbanLayout from '../../Layout/QurbanLayout';
-import CetakCocard from './CetakCocard';
+    import CetakCocard from './CetakCocard';
 
-    export default function PanitiaQurban({ panitiaqurbans = [] }) {
+    export default function PanitiaQurban({ panitiaqurbans = [], setting = {} }) {
 
     const JABATAN_OPTIONS = [
         'Penasehat',
@@ -272,7 +272,7 @@ import CetakCocard from './CetakCocard';
 
 
                 <div className="mb-2 justify-end items-end flex">
-                    <CetakCocard panitiaqurbans={panitiaqurbans} />
+                    <CetakCocard panitiaqurbans={panitiaqurbans} setting={setting}  />
                 </div>
 
                 {/* Filter Box */}

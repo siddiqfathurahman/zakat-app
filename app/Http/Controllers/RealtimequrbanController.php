@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RealtimeQurbanUpdated;
+use App\Events\ShohibulQurbanDeliveryUpdated;
 use App\Models\RealtimeQurban;
 use App\Models\Shohibulqurban;
 use Illuminate\Http\Request;
@@ -116,6 +118,8 @@ class RealtimequrbanController extends Controller
             'waktu_sembelih' => $new ? now() : null,
         ]);
 
+        RealtimeQurbanUpdated::dispatch($realtimeQurban, 'sembelih');
+
         return back();
     }
 
@@ -126,6 +130,8 @@ class RealtimequrbanController extends Controller
             'status_potong' => $new,
             'waktu_potong' => $new ? now() : null,
         ]);
+
+        RealtimeQurbanUpdated::dispatch($realtimeQurban, 'potong');
 
         return back();
     }
@@ -140,6 +146,8 @@ class RealtimequrbanController extends Controller
             'waktu_timbang' => now(),
         ]);
 
+        RealtimeQurbanUpdated::dispatch($realtimeQurban, 'timbang');
+
         return back();
     }
 
@@ -150,6 +158,8 @@ class RealtimequrbanController extends Controller
             'status_kirim' => $new,
             'waktu_kirim' => $new ? now() : null,
         ]);
+
+        ShohibulQurbanDeliveryUpdated::dispatch($shohibulqurban);
 
         return back();
     }

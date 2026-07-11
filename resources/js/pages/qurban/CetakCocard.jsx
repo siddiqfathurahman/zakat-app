@@ -36,7 +36,7 @@ function fitText(doc, text, maxW) {
 }
 
 // ─── Gambar satu kartu cocard ─────────────────────────────────────────────────
-function drawCocard(doc, row, x, y) {
+function drawCocard(doc, row, x, y, setting) {
     const c = getRwColor(row.rw);
     const r = 0; // sudut rounded (mm)
 
@@ -72,7 +72,12 @@ function drawCocard(doc, row, x, y) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
-    doc.text("1447H / 2026", x + CARD_W / 2, y + 13, { align: "center" });
+doc.text(
+    `${setting?.tahun}`,
+    x + CARD_W / 2,
+    y + 13,
+    { align: "center" }
+);
 
     // ── Kotak Nama (PUTIH) ────────────────────────────────────────────────────
     const BOX_PADDING = 7;
@@ -130,7 +135,7 @@ function drawCocard(doc, row, x, y) {
 }
 
 // ─── Generate PDF ─────────────────────────────────────────────────────────────
-async function generatePDF(data, onProgress) {
+async function generatePDF(data, setting, onProgress) {
     const doc = new jsPDF({
         unit:        "mm",
         format:      [PAGE_W, PAGE_H],
@@ -146,7 +151,7 @@ async function generatePDF(data, onProgress) {
         const x    = MARGIN + col * (CARD_W + GAP_X);
         const y    = MARGIN + row * (CARD_H + GAP_Y);
 
-        drawCocard(doc, data[i], x, y);
+        drawCocard(doc, data[i], x, y, setting);
 
         if (onProgress) onProgress(Math.round(((i + 1) / data.length) * 100));
     }
@@ -155,7 +160,7 @@ async function generatePDF(data, onProgress) {
 }
 
 // ─── Komponen Utama ───────────────────────────────────────────────────────────
-export default function CetakCocard({ panitiaqurbans = [] }) {
+export default function CetakCocard({ panitiaqurbans = [], setting = {} }) {
     const [generating, setGenerating] = useState(false);
     const [progress,   setProgress]   = useState(0);
     const [filterRw,   setFilterRw]   = useState("all");
@@ -179,7 +184,7 @@ export default function CetakCocard({ panitiaqurbans = [] }) {
         setGenerating(true);
         setProgress(0);
         try {
-            const doc    = await generatePDF(filtered, setProgress);
+            const doc    = await generatePDF(filtered, setting, setProgress);
             const suffix = filterRw === "all" ? "semua" : `rw${filterRw}`;
             doc.save(`cocard-panitia-${suffix}.pdf`);
         } catch (err) {

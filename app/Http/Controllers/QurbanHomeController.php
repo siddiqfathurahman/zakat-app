@@ -119,11 +119,11 @@ class QurbanHomeController extends Controller
         $setting = Settingqurban::first();
         $hasilKulit = [
             'nominal' => 'Rp '.number_format($setting->jual_kulit ?? 0, 0, ',', '.'),
-            'keterangan' => '100% Hasil penjualan Kulit digunakan untuk baksos oleh Remaja Masjid',
         ];
+        $noteKulit = $setting ? $setting->note_kulit : '';
 
         return Inertia::render('QurbanHome', [
-            'lastUpdate' => now()->translatedFormat('d F Y – H:i').' WIB',
+            'lastUpdate' => now()->timezone('Asia/Jakarta')->translatedFormat('d F Y – H:i').' WIB',
             'kantongStats' => $kantongStats,
             'pemotongan' => $pemotongan,
             'penimbangan' => $penimbangan,
@@ -134,6 +134,7 @@ class QurbanHomeController extends Controller
             'totalShohibul' => $totalShohibul,
             'distribusiRT' => $distribusiRT,
             'hasilKulit' => $hasilKulit,
+            'noteKulit' => $noteKulit,
         ]);
     }
 }
