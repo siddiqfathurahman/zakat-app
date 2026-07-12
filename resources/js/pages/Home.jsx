@@ -54,13 +54,24 @@ export default function Home({ news = [], banner = null }) {
         }
     }, [banner]);
 
+    useEffect(() => {
+        if (showBanner) {
+            const originalOverflow = document.body.style.overflow;
+            document.body.style.overflow = "hidden";
+
+            return () => {
+                document.body.style.overflow = originalOverflow;
+            };
+        }
+    }, [showBanner]);
+
     return (
         <AppLayout>
 
             {showBanner && banner && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-black/20"
+                        className="absolute inset-0 bg-black/50"
                         onClick={() => setShowBanner(false)}
                     />
                     <div className="relative w-full max-w-lg rounded-2xl overflow-hidden">

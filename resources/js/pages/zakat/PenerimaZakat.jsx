@@ -46,11 +46,9 @@ export default function PenerimaZakat({
     const [isLoadingAI, setIsLoadingAI] = useState(false);
     const [isAIResultModalOpen, setIsAIResultModalOpen] = useState(false);
 
-    // Filter state
     const [searchQuery, setSearchQuery] = useState(filters?.search || "");
     const [selectedRT, setSelectedRT] = useState(filters?.rt || "");
 
-    // State untuk konfigurasi jatah
     const [jatahConfig, setJatahConfig] = useState({
         1: configs[1] || "",
         2: configs[2] || "",
@@ -187,7 +185,6 @@ export default function PenerimaZakat({
         );
     };
 
-    // Handle filter dan search
     const handleSearch = (e) => {
         e.preventDefault();
         router.get(
@@ -221,7 +218,6 @@ export default function PenerimaZakat({
         );
     };
 
-    // Pagination
     const handlePageChange = (url) => {
         if (url) {
             router.get(
@@ -276,35 +272,34 @@ export default function PenerimaZakat({
                     </div>
                 )}
 
-                {/* Header */}
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">
                         Penerima Zakat
                     </h1>
                 </div>
 
-                {/* Konfigurasi Jatah Section */}
                 <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-2">
                             <Settings className="text-green-600" size={24} />
                             <h2 className="text-xl font-semibold text-gray-800">
                                 Konfigurasi Jatah per Jiwa
                             </h2>
                         </div>
-                        <div className="flex gap-2">
+
+                        <div className="flex flex-col gap-2 sm:flex-row">
                             <button
                                 onClick={() => setIsConfirmSaveModalOpen(true)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                                className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 sm:w-auto"
                             >
-                                💾 Simpan Konfigurasi
+                                Simpan Konfigurasi
                             </button>
+
                             <button
                                 onClick={() => setIsConfirmApplyModalOpen(true)}
-                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700 sm:w-auto"
                             >
-                                <Check size={18} />
-                                Terapkan ke Semua Penerima
+                                Terapkan ke Data Penerima
                             </button>
                         </div>
                     </div>
@@ -362,54 +357,48 @@ export default function PenerimaZakat({
                     </div>
                 </div>
 
-                {/* Data Penerima Zakat Section */}
                 <div className="bg-white rounded-lg shadow-sm">
                     <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-2">
                                 <Users className="text-green-600" size={24} />
                                 <h2 className="text-xl font-semibold text-gray-800">
                                     Data Penerima Zakat
                                 </h2>
                             </div>
-                            <div className="flex gap-2"></div>
                         </div>
 
-                        {/* Filter Section */}
                         <form
                             onSubmit={handleSearch}
-                            className="flex gap-3 items-end"
+                            className="flex flex-col gap-3 lg:flex-row lg:items-end"
                         >
                             <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="mb-1 block text-sm font-medium text-gray-700">
                                     Cari Nama
                                 </label>
                                 <div className="relative">
                                     <Search
-                                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                                         size={18}
                                     />
                                     <input
                                         type="text"
                                         value={searchQuery}
-                                        onChange={(e) =>
-                                            setSearchQuery(e.target.value)
-                                        }
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Cari nama penerima..."
-                                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
                                 </div>
                             </div>
-                            <div className="w-48">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+
+                            <div className="w-full lg:w-48">
+                                <label className="mb-1 block text-sm font-medium text-gray-700">
                                     Filter RT
                                 </label>
                                 <select
                                     value={selectedRT}
-                                    onChange={(e) =>
-                                        setSelectedRT(e.target.value)
-                                    }
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    onChange={(e) => setSelectedRT(e.target.value)}
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                                 >
                                     <option value="">Semua RT</option>
                                     {rtList.map((rt) => (
@@ -419,32 +408,38 @@ export default function PenerimaZakat({
                                     ))}
                                 </select>
                             </div>
+
                             <button
                                 type="submit"
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition"
+                                className="w-full rounded-lg bg-green-600 px-6 py-2 text-white transition hover:bg-green-700 lg:w-auto"
                             >
                                 Cari
                             </button>
+
                             <button
+                                type="button"
                                 onClick={handlePrint}
-                                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 lg:w-auto"
                             >
                                 <Printer size={18} />
                                 Cetak Data
                             </button>
+
                             <button
+                                type="button"
                                 onClick={() => handleOpenModal()}
-                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700 lg:w-auto"
                             >
-                                <span>+</span> Tambah Penerima
+                                <span>+</span>
+                                Tambah Penerima
                             </button>
+
                             <button
+                                type="button"
                                 onClick={handleCompareAI}
-                                className="bg-amber-600 text-white px-4 py-2 rounded-lg"
+                                className="w-full rounded-lg bg-amber-600 px-4 py-2 text-white transition hover:bg-amber-700 lg:w-auto"
                             >
-                                {isLoadingAI
-                                    ? "Memproses"
-                                    : "Compare Penerima"}
+                                {isLoadingAI ? "Memproses..." : "Compare Penerima"}
                             </button>
                         </form>
                     </div>
@@ -553,7 +548,6 @@ export default function PenerimaZakat({
                         </table>
                     </div>
 
-                    {/* Pagination */}
                     {penerimas.last_page > 1 && (
                         <div className="p-4">
                             <div className="flex items-center justify-between">
@@ -599,7 +593,6 @@ export default function PenerimaZakat({
                                         </button>
                                     ))}
 
-                                    {/* Next Button */}
                                     <button
                                         onClick={() =>
                                             handlePageChange(
@@ -622,7 +615,6 @@ export default function PenerimaZakat({
                 </div>
             </div>
 
-            {/* Modal Hasil AI Detection */}
             {isAIResultModalOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -889,7 +881,6 @@ export default function PenerimaZakat({
                 </div>
             )}
 
-            {/* Modal Confirm Save Config */}
             {isConfirmSaveModalOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -924,7 +915,6 @@ export default function PenerimaZakat({
                 </div>
             )}
 
-            {/* Modal Confirm Apply */}
             {isConfirmApplyModalOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"

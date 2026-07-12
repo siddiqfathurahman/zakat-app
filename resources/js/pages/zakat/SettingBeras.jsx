@@ -333,7 +333,7 @@ export default function SettingBeras({
         <ZakatLayout>
             <SuccessNotification message={flash?.success} />
             <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-                <div className="mb-6 flex gap-40">
+                <div className="mb-6 flex flex-col md:flex-row gap-20">
                     <div>
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800">
@@ -344,8 +344,8 @@ export default function SettingBeras({
                             </p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm border-2 border-green-400 ring-2 ring-green-200 max-w-md mt-6">
-                            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold px-4 py-2 rounded-t-lg ">
+                        <div className="bg-white rounded-xl shadow-sm  max-w-md mt-6">
+                            <div className="bg-green-700 text-white text-xs font-semibold px-4 py-2 rounded-t-lg ">
                                 Harga Beras
                             </div>
                             <div className="p-6">
@@ -442,8 +442,8 @@ export default function SettingBeras({
                             </p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm border-2 border-blue-400 ring-2 ring-blue-200 max-w-md mt-6">
-                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-t-lg">
+                        <div className="bg-white rounded-xl shadow-sm max-w-md mt-6">
+                            <div className="bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-t-lg">
                                 Pengaturan Printer Thermal
                             </div>
                             <div className="p-6">
@@ -512,7 +512,6 @@ export default function SettingBeras({
                     </div>
                 </div>
 
-                {/* Section Arsip Zakat */}
                 <div className="mt-12 border-t border-gray-200 pt-8">
                     <h2 className="text-2xl font-bold text-gray-800">
                         Arsip Data Zakat Fitrah
@@ -522,7 +521,6 @@ export default function SettingBeras({
                     </p>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Card Jalankan Arsip */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center gap-3 text-green-700 mb-4">
@@ -549,7 +547,6 @@ export default function SettingBeras({
                             </button>
                         </div>
 
-                        {/* List Arsip PDF */}
                         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
                                 <Package size={20} className="text-green-600" />
@@ -618,7 +615,6 @@ export default function SettingBeras({
                     </div>
                 </div>
 
-                {/* Archive Warning Modal */}
                 {isArchiveModalOpen && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                         <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
@@ -686,7 +682,6 @@ export default function SettingBeras({
                     </div>
                 )}
 
-                {/* Modal Edit Harga */}
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                         <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
@@ -722,7 +717,6 @@ export default function SettingBeras({
                                     />
                                 </div>
 
-                                {/* Harga per KG */}
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Harga per KG{" "}
@@ -770,7 +764,6 @@ export default function SettingBeras({
                                     />
                                 </div>
 
-                                {/* Harga 2.5 KG (AUTO / READ ONLY) */}
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Harga 2.5 KG (Zakat Fitrah)
@@ -785,7 +778,6 @@ export default function SettingBeras({
                                     />
                                 </div>
 
-                                {/* Harga per Sak (25 KG) */}
                                 <div className="mb-6">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Harga per Sak (25 KG)
@@ -812,7 +804,6 @@ export default function SettingBeras({
                                     </div>
                                 </div>
 
-                                {/* Buttons */}
                                 <div className="flex gap-3">
                                     <button
                                         type="button"
@@ -835,13 +826,11 @@ export default function SettingBeras({
                     </div>
                 )}
 
-                {/* Modal Notifikasi (pengganti alert) */}
                 <NotificationModal
                     notification={notification}
                     onClose={closeNotification}
                 />
 
-                {/* Modal Konfirmasi (pengganti confirm) */}
                 <ConfirmModal
                     confirmDialog={confirmDialog}
                     onCancel={closeConfirm}
