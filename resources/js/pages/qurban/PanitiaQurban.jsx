@@ -68,7 +68,6 @@
             { rt: "57", rw: "13" },
         ];
 
-        // ─── Stats ───
         const stats = useMemo(() => {
             const totalJobdesk = new Set(panitiaqurbans.map(r => r.jabatan)).size;
             const sudahAmbil = panitiaqurbans.filter(r => r.sudah_diambil == 1 || r.sudah_diambil === true).length;
@@ -80,8 +79,6 @@
             };
         }, [panitiaqurbans]);
 
-        // ─── Pagination ───
-        // ─── Filter ───
         const filtered = useMemo(() => {
             return panitiaqurbans.filter(r => {
                 const matchSearch = !search ||
@@ -96,7 +93,6 @@
             });
         }, [panitiaqurbans, search, filterJabatan, filterStatus]);
 
-        // ─── Pagination (ganti yang lama) ───
         const totalPages = Math.max(1, Math.ceil(filtered.length / PER));
         const paginated = filtered.slice((page - 1) * PER, page * PER);
         const showPagination = filtered.length > PER;
@@ -116,7 +112,6 @@
             pageNumbers.push(i);
         }
 
-        // ─── Modal helpers ───
         const openAdd = () => {
             setEditData(null);
             setForm({ nama: '', jabatan: '', rt: '', rw: '', sudah_diambil: '0' });
@@ -139,7 +134,6 @@
 
         const closeModal = () => setModalOpen(false);
 
-        // ─── Save ───
         const saveData = () => {
             const { nama, jabatan, rt, rw, sudah_diambil } = form;
             if (!nama || !jabatan || !rt || !rw) {
@@ -159,7 +153,6 @@
             }
         };
 
-        // ─── Toggle status sudah_diambil ───
         const toggleStatus = (row) => {
             const newStatus = row.sudah_diambil == 1 || row.sudah_diambil === true ? '0' : '1';
             router.post(`/qurban/input/panitia/${row.id}/update`, {
@@ -171,7 +164,6 @@
             });
         };
 
-        // ─── Delete ───
         const doDelete = () => {
             router.post(`/qurban/input/panitia/${confirmId}/destroy`, {}, {
                 onSuccess: () => setConfirmId(null),
@@ -180,7 +172,6 @@
 
         return (
             <QurbanLayout>
-                {/* Flash */}
                 {flash?.success && (
                     <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
                         {flash.success}
@@ -192,7 +183,6 @@
                     </div>
                 )}
 
-                {/* Header */}
                 <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Data Panitia Qurban</h1>
                     
@@ -207,7 +197,6 @@
                     </button>
                 </div>
 
-                {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     {[
                         {
@@ -275,7 +264,6 @@
                     <CetakCocard panitiaqurbans={panitiaqurbans} setting={setting}  />
                 </div>
 
-                {/* Filter Box */}
             <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
                 <div className="flex flex-wrap gap-3 items-end">
                     <div className="flex-1 min-w-[180px]">
@@ -329,7 +317,6 @@
                 </div>
             </div>
 
-                {/* Info row */}
             <div className="text-sm text-gray-500 mb-2">
                 Menampilkan <span className="font-semibold text-gray-700">{start} - {end}</span> dari{' '}
                 <span className="font-semibold text-gray-700">{filtered.length}</span> data
@@ -338,9 +325,8 @@
                 )}
             </div>
 
-                {/* Table */}
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                    <table className="w-full text-sm">
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
+                    <table className="min-w-[900px] w-full text-sm">
                         <thead>
                             <tr className="bg-orange-700 text-white">
                                 {['No', 'Nama', 'Jabatan', 'RT/RW', 'Status Ambil', 'Aksi'].map(h => (
@@ -432,7 +418,6 @@
                     </table>
                 </div>
 
-                {/* Pagination */}
                 {showPagination && (
                     <div className="flex justify-center items-center gap-1.5 mt-5">
                         <button onClick={() => setPage(1)} disabled={page === 1}
@@ -466,7 +451,6 @@
                     </div>
                 )}
 
-                {/* Modal Tambah / Edit */}
                 {modalOpen && (
                     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
@@ -596,7 +580,6 @@
                     </div>
                 )}
 
-                {/* Confirm Delete */}
                 {confirmId && (
                     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                         <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">

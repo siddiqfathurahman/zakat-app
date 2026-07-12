@@ -8,34 +8,35 @@ import {
   Sliders,
   Building2,
   Eye,
-} from "lucide-react";  
+  X,
+} from "lucide-react";
 
-export default function QurbanSidebar() {
+export default function QurbanSidebar({ isOpen, onClose }) {
     const menuItems = [
         {
             name: "Dashboard",
             href: "/qurban/input/dashboard",
-            icon: LayoutDashboard, 
+            icon: LayoutDashboard,
         },
         {
             name: "Real Time",
             href: "/qurban/input/realtime",
-            icon: Eye, 
+            icon: Eye,
         },
         {
             name: "Shohibul",
             href: "/qurban/input/shohibul",
-            icon: Users, 
+            icon: Users,
         },
         {
             name: "Panitia",
             href: "/qurban/input/panitia",
-            icon: Users, 
+            icon: Users,
         },
         {
             name: "Penerima",
             href: "/qurban/input/penerima",
-            icon: UserCheck, 
+            icon: UserCheck,
         },
         {
             name: "Formula Jatah",
@@ -45,7 +46,7 @@ export default function QurbanSidebar() {
         {
             name: "Jatah Lembaga",
             href: "/qurban/input/jatah-lembaga",
-            icon: Building2, 
+            icon: Building2,
         },
         {
             name: "Settings",
@@ -59,61 +60,88 @@ export default function QurbanSidebar() {
     };
 
     return (
-        <aside className="w-64 bg-orange-700 text-white flex flex-col h-full">
-            <div className="p-6 border-b border-orange-500">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                        <img src="/logo-qurban.png" alt="Logo Qurban" className="h-auto w-8" />
+        <>
+            {/* Backdrop overlay for mobile */}
+            {isOpen && (
+                <div
+                    onClick={onClose}
+                    className="md:hidden fixed inset-0 bg-black/50 z-40"
+                />
+            )}
+
+            <aside
+                className={`
+                    w-64 bg-orange-700 text-white flex flex-col h-full
+                    fixed md:static top-0 left-0 z-50
+                    transform transition-transform duration-300 ease-in-out
+                    ${isOpen ? "translate-x-0" : "-translate-x-full"}
+                    md:translate-x-0
+                `}
+            >
+                <div className="p-6 border-b border-orange-500">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                                <img src="/logo-qurban.png" alt="Logo Qurban" className="h-auto w-8" />
+                            </div>
+                            <div>
+                                <h1 className="font-bold text-2xl">E-Qurban</h1>
+                            </div>
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="md:hidden p-1 rounded-lg hover:bg-orange-500 transition-colors"
+                            aria-label="Tutup menu"
+                        >
+                            <X size={22} />
+                        </button>
                     </div>
-                    <div>
-                        <h1 className="font-bold text-2xl">E-Qurban</h1>
-                    </div>
-                    
+                    <p className="text-xs pt-2 text-orange-100">Panitia Qurban Masjid Al-Anhar</p>
                 </div>
-                <p className="text-xs pt-2 text-orange-100">Panitia Qurban Masjid Al-Anhar</p>
-            </div>
 
-            <nav className="flex-1 px-3 py-6">
-                <ul className="space-y-2">
-                    {menuItems.map((item) => {
-                        const Icon = item.icon;
-                        const active = isActive(item.href);
+                <nav className="flex-1 px-3 py-6 overflow-y-auto">
+                    <ul className="space-y-2">
+                        {menuItems.map((item) => {
+                            const Icon = item.icon;
+                            const active = isActive(item.href);
 
-                        return (
-                            <li key={item.name}>
-                                <Link
-                                    href={item.href}
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                        active
-                                            ? "bg-white text-orange-700 font-medium"
-                                            : "text-orange-50 hover:bg-orange-500"
-                                    }`}
-                                >
-                                    <Icon size={20} />
-                                    <span>{item.name}</span>
-                                </Link>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
+                            return (
+                                <li key={item.name}>
+                                    <Link
+                                        href={item.href}
+                                        onClick={onClose}
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                                            active
+                                                ? "bg-white text-orange-700 font-medium"
+                                                : "text-orange-50 hover:bg-orange-500"
+                                        }`}
+                                    >
+                                        <Icon size={20} />
+                                        <span>{item.name}</span>
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
 
-            <div className="p-4 flex flex-col gap-2">
-                <a
-                    href="/qurban/input"
-                    className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-white text-orange-800 hover:bg-orange-100 transition-colors"
-                >
-                    Kembali ke Input
-                </a>
-                <Link
-                    href="/logout"
-                    method="post"
-                    as="button"
-                    className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
-                >
-                    Logout
-                </Link>
-            </div>
-        </aside>
+                <div className="p-4 flex flex-col gap-2">
+                    <a
+                        href="/qurban/input"
+                        className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-white text-orange-800 hover:bg-orange-100 transition-colors"
+                    >
+                        Kembali ke Input
+                    </a>
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        className="w-full flex justify-center items-center px-4 py-2 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                    >
+                        Logout
+                    </Link>
+                </div>
+            </aside>
+        </>
     );
 }

@@ -18,7 +18,6 @@ const BeritaHome = ({ news = [] }) => {
 
     return (
         <div className="w-full">
-            {/* ── Hero Banner ── */}
             <div className="relative w-full h-[570px] md:h-[650px] overflow-hidden flex items-end">
                 {hero?.thumbnail ? (
                     <img

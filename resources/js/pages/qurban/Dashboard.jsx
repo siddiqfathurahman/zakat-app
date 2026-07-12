@@ -104,7 +104,7 @@ export default function Dashboard({
                     <p className="text-xs font-semibold uppercase tracking-widest mb-3 text-gray-500">
                         Jatah bungkus per RT
                     </p>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
                         {rtData.map((item, index) => {
                             const persen = Math.round(((item.sudahAmbil ?? 0) / (item.total || 1)) * 100);
                             return (
@@ -123,7 +123,6 @@ export default function Dashboard({
                                     <p className="text-3xl font-bold text-blue-700 leading-none">{item.kambing}</p>
                                     <p className="text-xs text-blue-500 font-medium mb-2">kambing</p>
 
-                                    {/* Progress mini */}
                                     {item.total > 0 && (
                                         <div className="w-full">
                                             <div className="w-full bg-gray-100 rounded-full h-1.5">
@@ -159,7 +158,6 @@ export default function Dashboard({
                 </div>
             </div>
 
-            {/* ===== MODAL DETAIL RT ===== */}
             {modalOpen && selectedRT && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -170,7 +168,6 @@ export default function Dashboard({
                         className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
                         style={{ animation: 'modalIn 0.25s ease-out' }}
                     >
-                        {/* Header Modal */}
                         <div className="bg-orange-700 px-6 py-4 flex items-center justify-between">
                             <div>
                                 <h2 className="text-white text-2xl font-bold">{selectedRT.rt}</h2>
@@ -183,7 +180,6 @@ export default function Dashboard({
                             </button>
                         </div>
 
-                        {/* Stats Row */}
                         <div className="grid grid-cols-3 divide-x divide-gray-100 bg-gray-50 border-b border-gray-200">
                             <div className="px-4 py-3 text-center">
                                 <p className="text-2xl font-bold text-gray-800">{selectedRT.total ?? 0}</p>
@@ -199,7 +195,6 @@ export default function Dashboard({
                             </div>
                         </div>
 
-                        {/* Progress Bar */}
                         <div className="px-6 py-3 border-b border-gray-100">
                             <div className="flex justify-between text-xs text-gray-500 mb-1">
                                 <span>Progress Pengambilan</span>
@@ -260,7 +255,6 @@ export default function Dashboard({
                             </div>
                         </div>
 
-                        {/* Footer */}
                         <div className="px-6 py-3 border-t border-gray-100 bg-gray-50">
                             <button
                                 onClick={closeModal}
@@ -274,7 +268,6 @@ export default function Dashboard({
                 </div>
             )}
 
-            {/* Animasi modal */}
             <style>{`
                 @keyframes modalIn {
                     from { opacity: 0; transform: scale(0.92) translateY(16px); }

@@ -45,7 +45,6 @@ function KalkulatorZakatModal({ open, onClose, hargaBerasPerKg = 0, hargaPer25Kg
         className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="mb-5 flex items-start justify-between">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-primary">
@@ -69,7 +68,6 @@ function KalkulatorZakatModal({ open, onClose, hargaBerasPerKg = 0, hargaPer25Kg
           </button>
         </div>
 
-        {/* Input Jumlah Jiwa */}
         <label className="mb-1.5 block text-sm font-semibold text-gray-700">
           Jumlah Jiwa
         </label>
@@ -93,7 +91,6 @@ function KalkulatorZakatModal({ open, onClose, hargaBerasPerKg = 0, hargaPer25Kg
           )}
         </p>
 
-        {/* Hasil */}
         <div className="mt-5 rounded-xl bg-emerald-50/60 p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Total Beras</span>

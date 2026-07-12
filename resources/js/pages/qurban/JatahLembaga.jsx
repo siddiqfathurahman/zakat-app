@@ -19,14 +19,12 @@ export default function JatahLembaga({ jatah = [] }) {
     const [page, setPage] = useState(1);
     const PER = 10;
 
-    // ─── Stats ───
     const stats = useMemo(() => ({
         totalLembaga: jatah.length,
         totalSapi: jatah.reduce((acc, r) => acc + Number(r.jumlah_sapi || 0), 0),
         totalKambing: jatah.reduce((acc, r) => acc + Number(r.jumlah_kambing || 0), 0),
     }), [jatah]);
 
-    // ─── Pagination ───
     const totalPages = Math.max(1, Math.ceil(jatah.length / PER));
     const paginated = jatah.slice((page - 1) * PER, page * PER);
     const showPagination = jatah.length > PER;
@@ -43,7 +41,6 @@ export default function JatahLembaga({ jatah = [] }) {
     const start = jatah.length === 0 ? 0 : (page - 1) * PER + 1;
     const end = Math.min(page * PER, jatah.length);
 
-    // ─── Modal helpers ───
     const openAdd = () => {
         setEditData(null);
         setForm({ nama_lembaga: '', jumlah_sapi: '', jumlah_kambing: '' });
@@ -64,7 +61,6 @@ export default function JatahLembaga({ jatah = [] }) {
 
     const closeModal = () => setModalOpen(false);
 
-    // ─── Save ───
     const saveData = () => {
         const { nama_lembaga, jumlah_sapi, jumlah_kambing } = form;
         if (!nama_lembaga || jumlah_sapi === '' || jumlah_kambing === '') {
@@ -84,7 +80,6 @@ export default function JatahLembaga({ jatah = [] }) {
         }
     };
 
-    // ─── Delete ───
     const doDelete = () => {
         router.post(`/qurban/input/jatah-lembaga/${confirmId}/destroy`, {}, {
             onSuccess: () => setConfirmId(null),
@@ -93,7 +88,6 @@ export default function JatahLembaga({ jatah = [] }) {
 
     return (
         <QurbanLayout>
-            {/* Flash */}
             {flash?.success && (
                 <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
                     {flash.success}
@@ -105,7 +99,6 @@ export default function JatahLembaga({ jatah = [] }) {
                 </div>
             )}
 
-            {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Data Jatah Lembaga Qurban</h1>
                 <button
@@ -119,7 +112,6 @@ export default function JatahLembaga({ jatah = [] }) {
                 </button>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-6">
                 {[
                     {
@@ -128,11 +120,7 @@ export default function JatahLembaga({ jatah = [] }) {
                         sub: 'lembaga terdaftar',
                         color: 'bg-orange-50 border-orange-200',
                         valColor: 'text-orange-700',
-                        icon: (
-                            <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                        ),
+                        
                     },
                     {
                         label: 'Total Jatah Sapi',
@@ -140,9 +128,6 @@ export default function JatahLembaga({ jatah = [] }) {
                         sub: 'bungkus sapi',
                         color: 'bg-blue-50 border-blue-200',
                         valColor: 'text-blue-700',
-                        icon: (
-                            <span className="text-2xl">🐄</span>
-                        ),
                     },
                     {
                         label: 'Total Jatah Kambing',
@@ -150,13 +135,9 @@ export default function JatahLembaga({ jatah = [] }) {
                         sub: 'bungkus kambing',
                         color: 'bg-green-50 border-green-200',
                         valColor: 'text-green-700',
-                        icon: (
-                            <span className="text-2xl">🐐</span>
-                        ),
                     },
                 ].map((s) => (
                     <div key={s.label} className={`rounded-xl p-4 border ${s.color} flex items-center gap-4`}>
-                        <div className="flex-shrink-0">{s.icon}</div>
                         <div>
                             <div className="text-xs text-gray-500 mb-0.5">{s.label}</div>
                             <div className={`text-3xl font-bold ${s.valColor}`}>{s.val}</div>
@@ -166,13 +147,11 @@ export default function JatahLembaga({ jatah = [] }) {
                 ))}
             </div>
 
-            {/* Info row */}
             <div className="text-sm text-gray-500 mb-2">
                 Menampilkan <span className="font-semibold text-gray-700">{start} - {end}</span> dari{' '}
                 <span className="font-semibold text-gray-700">{jatah.length}</span> data
             </div>
 
-            {/* Table */}
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-sm">
                     <thead>
@@ -241,7 +220,6 @@ export default function JatahLembaga({ jatah = [] }) {
                 </table>
             </div>
 
-            {/* Pagination — hanya muncul jika data > 10 */}
             {showPagination && (
                 <div className="flex justify-center items-center gap-1.5 mt-5">
                     <button
@@ -294,7 +272,6 @@ export default function JatahLembaga({ jatah = [] }) {
                 </div>
             )}
 
-            {/* Modal Tambah / Edit */}
             {modalOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
@@ -379,7 +356,6 @@ export default function JatahLembaga({ jatah = [] }) {
                 </div>
             )}
 
-            {/* Confirm Delete */}
             {confirmId && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">

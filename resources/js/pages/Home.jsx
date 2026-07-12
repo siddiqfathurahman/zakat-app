@@ -96,7 +96,6 @@ export default function Home({ news = [], banner = null }) {
 
             <section className="bg-gray-50 px-6 py-22 md:px-10 lg:px-10">
                 <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
-                    {/* Kolom Teks */}
                     <div>
                         <div className="mb-4 flex items-center gap-3">
                             <span className="h-6 w-1 bg-secondary" />
@@ -135,7 +134,6 @@ export default function Home({ news = [], banner = null }) {
                         </blockquote>
                     </div>
 
-                    {/* Kolom Gambar (dikosongkan / placeholder) */}
                     <div className="h-72 w-full overflow-hidden rounded-2xl md:h-96">
                         <img
                             src="/dakwah.webp"
@@ -148,7 +146,6 @@ export default function Home({ news = [], banner = null }) {
 
             <section className="bg-primary px-6 py-16 md:px-12 lg:px-20">
                 <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-2">
-                    {/* Visi */}
                     <div>
                         <div className="mb-5 flex items-center gap-3">
                             <span className="h-px w-4 bg-secondary" />
@@ -164,7 +161,6 @@ export default function Home({ news = [], banner = null }) {
                         </p>
                     </div>
 
-                    {/* Misi */}
                     <div>
                         <div className="mb-5 flex items-center gap-3">
                             <span className="h-px w-4 bg-secondary" />
@@ -192,8 +188,7 @@ export default function Home({ news = [], banner = null }) {
             </section>
 
             <section className="bg-gray-50 px-6 py-16 md:px-12 lg:px-20">
-                <div className="mx-auto max-w-5xl">
-                    {/* Header */}
+                <div className="mx-auto max-w-5xl">       
                     <div className="mb-14 text-center">
                         <h2 className="text-2xl font-extrabold text-primary font-second md:text-4xl">
                             Agenda Kegiatan Rutin
@@ -204,22 +199,19 @@ export default function Home({ news = [], banner = null }) {
                         </p>
                     </div>
 
-                    {/* ===== Timeline — Desktop / Tablet (md ke atas) ===== */}
                     <div className="relative hidden md:block">
-                        {/* garis vertikal tengah, di belakang icon (z-0) */}
                         <span className="absolute left-1/2 top-2 bottom-2 z-0 w-px -translate-x-1/2 bg-gray-300" />
 
                         <div className="space-y-14">
                             {agendaItems.map((item, index) => {
                                 const Icon = item.icon;
-                                const isEven = index % 2 === 0; // genap: teks kiri, jadwal kanan
+                                const isEven = index % 2 === 0; 
 
                                 return (
                                     <div
                                         key={index}
                                         className="grid grid-cols-[1fr_auto_1fr] items-center gap-6"
                                     >
-                                        {/* Kolom Kiri */}
                                         {isEven ? (
                                             <div className="text-right">
                                                 <h3 className="text-lg font-bold text-primary">
@@ -237,14 +229,12 @@ export default function Home({ news = [], banner = null }) {
                                             </div>
                                         )}
 
-                                        {/* Icon Tengah — di atas garis, dengan ring agar garis "terputus" rapi */}
                                         <div className="z-10 flex justify-center">
                                             <span className="ring-8 ring-indigo-50/60 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-md">
                                                 <Icon className="h-5 w-5" />
                                             </span>
                                         </div>
 
-                                        {/* Kolom Kanan */}
                                         {isEven ? (
                                             <div className="rounded-2xl bg-white px-5 py-4 shadow-sm shadow-gray-200/70 max-w-xs">
                                                 <span className="text-xs font-bold tracking-wide text-second">
@@ -267,7 +257,6 @@ export default function Home({ news = [], banner = null }) {
                         </div>
                     </div>
 
-                    {/* ===== Timeline — Mobile (di bawah md) ===== */}
                     <div className="relative block md:hidden">
                         <span className="absolute left-6 top-2 bottom-2 z-0 w-px bg-gray-300" />
 
@@ -279,12 +268,10 @@ export default function Home({ news = [], banner = null }) {
                                         key={index}
                                         className="relative flex gap-4 pl-0"
                                     >
-                                        {/* Icon di atas rel */}
                                         <span className="ring-8 ring-indigo-50/60 relative z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-md">
                                             <Icon className="h-5 w-5" />
                                         </span>
 
-                                        {/* Kartu konten */}
                                         <div className="min-w-0 flex-1 rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/70">
                                             <span className="inline-block text-[11px] font-bold tracking-wide text-second">
                                                 {item.schedule}
@@ -307,7 +294,6 @@ export default function Home({ news = [], banner = null }) {
             <section className="bg-gray-50 px-6 py-14 md:px-12 lg:px-20">
                 <div className="mx-auto max-w-5xl">
                     <div className="relative isolate overflow-hidden rounded-3xl">
-                        {/* Background image */}
                         <img
                             src="/dakwah.webp"
                             alt=""
@@ -345,7 +331,6 @@ export default function Home({ news = [], banner = null }) {
                 </div>
             </section>
 
-            {/* ===== Section 2: Lembaga Masjid Alanhar ===== */}
             <section className="bg-gray-50 px-6 py-14 md:px-12 lg:px-20">
                 <div className="mx-auto max-w-5xl text-center">
                     <h2 className="text-xl font-extrabold tracking-tight text-primary font-second md:text-4xl mb-20">

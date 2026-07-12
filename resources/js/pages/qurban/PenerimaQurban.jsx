@@ -27,7 +27,6 @@ const STATUS_CONFIG = {
 export default function PenerimaQurban({ penerimas = [], configs = {}, setting = null }) {
     const { flash } = usePage().props;
 
-    // ─── State ───
     const [search, setSearch] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
     const [filterAgama, setFilterAgama] = useState("");
@@ -109,7 +108,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
         setPage(1);
     }, [search, filterStatus, filterAgama]);
 
-    // ─── Filter ───
     const filtered = useMemo(() => {
         return penerimas.filter((r) => {
             const matchSearch =
@@ -141,7 +139,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
         return pages;
     }, [page, totalPages]);
 
-    // ─── Modal helpers ───
     const openAdd = () => {
         setEditData(null);
         setForm({ nama: "", rt: "", rw: "", agama: "muslim", jiwa: "" });
@@ -208,7 +205,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
     };
 
     const handleSaveJatahConfig = () => {
-        // payload format expecting array of objects with jiwa & kategori
         const payload = [
             ...[1, 2, 3, 4, 5].map((jiwa) => ({
                 jiwa,
@@ -217,7 +213,7 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 jatah_kambing: jatahConfig[jiwa].jatah_kambing,
             })),
             {
-                jiwa: 1, // Non-muslim uses 1 flat config
+                jiwa: 1,
                 kategori: "nonmuslim",
                 jatah_sapi: nonMuslimConfig.jatah_sapi,
                 jatah_kambing: nonMuslimConfig.jatah_kambing,
@@ -243,7 +239,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
         );
     };
 
-    // ─── QR Code renderer (pakai API google charts / simple canvas) ───
     const QRImage = ({ kode }) => (
         <img
             src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(kode)}`}
@@ -270,7 +265,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">
                     Data Penerima Qurban
@@ -297,24 +291,25 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
 
             </div>
 
-            {/* Konfigurasi Jatah Section */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-2">
                         <p className="text-xl font-semibold text-gray-800">
                             Konfigurasi Jatah per Jiwa
                         </p>
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="flex flex-col gap-2 sm:flex-row">
                         <button
                             onClick={() => setIsConfirmSaveOpen(true)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition"
+                            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700 sm:w-auto"
                         >
-                            💾 Simpan Konfigurasi
+                            Simpan Konfigurasi
                         </button>
+
                         <button
                             onClick={() => setIsConfirmApplyOpen(true)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition"
+                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700 sm:w-auto"
                         >
                             Terapkan ke Semua Penerima
                         </button>
@@ -446,24 +441,43 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             </div>
 
-            {/* Filter */}
-            <div className="flex justify-end gap-2 mb-3">
-                <CetakKuponButton penerimas={penerimas} setting={setting} />
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                <div className="w-full sm:w-auto">
+                    <CetakKuponButton
+                        penerimas={penerimas}
+                        setting={setting}
+                    />
+                </div>
+
                 <button
                     onClick={() => {
                         const params = new URLSearchParams();
-                        if (filterRt)     params.set('rt', filterRt);
-                        if (filterAgama)  params.set('agama', filterAgama);
-                        if (filterStatus) params.set('status', filterStatus);
-                        const url = `/qurban/input/penerima/print${params.toString() ? '?' + params.toString() : ''}`;
-                        window.open(url, '_blank');
+                        if (filterRt) params.set("rt", filterRt);
+                        if (filterAgama) params.set("agama", filterAgama);
+                        if (filterStatus) params.set("status", filterStatus);
+
+                        const url = `/qurban/input/penerima/print${
+                            params.toString() ? "?" + params.toString() : ""
+                        }`;
+
+                        window.open(url, "_blank");
                     }}
-                    className="flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 sm:w-auto"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                        />
                     </svg>
+
                     Print Data
                 </button>
             </div>
@@ -557,7 +571,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             </div>
 
-            {/* Info */}
             <div className="text-sm text-gray-500 mb-2">
                 Menampilkan{" "}
                 <span className="font-semibold text-gray-700">
@@ -576,7 +589,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 )}
             </div>
 
-            {/* Table */}
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -773,7 +785,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             </div>
 
-            {/* Pagination */}
             {showPagination && (
                 <div className="flex justify-center items-center gap-1.5 mt-5">
                     <button
@@ -851,7 +862,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Modal Tambah / Edit */}
             {modalOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
@@ -1001,7 +1011,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Modal Detail QR */}
             {detailData && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
@@ -1064,7 +1073,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Confirm Save Jatah */}
             {isConfirmSaveOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
@@ -1112,7 +1120,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Confirm Apply Jatah */}
             {isConfirmApplyOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
@@ -1161,7 +1168,6 @@ export default function PenerimaQurban({ penerimas = [], configs = {}, setting =
                 </div>
             )}
 
-            {/* Confirm Delete */}
             {confirmId && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">

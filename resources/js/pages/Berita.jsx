@@ -215,7 +215,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                       </div>
 
                       <div className="flex items-center gap-3">
-                          {/* Like */}
                           <button
                               onClick={() => handleLike(item.slug)}
                               className={`flex items-center gap-1 text-xs transition ${
@@ -229,7 +228,6 @@ const Berita = ({ news = [], pagination, filters = {} }) => {
                               {item.like ?? 0}
                           </button>
 
-                          {/* Komentar */}
                           <Link
                               href={route("berita.show", item.slug) + "#komentar"}
                               className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary transition"

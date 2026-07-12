@@ -65,7 +65,6 @@ export default function JadwalSholat() {
 
   return (
     <div className="content px-4 md:px-8 py-10 bg-gray-50">
-      {/* Header */}
       <div className="flex flex-wrap justify-between items-center gap-3 mb-5">
         <h2 className="text-2xl md:text-3xl font-bold font-second text-primary   ">Jadwal Sholat</h2>
         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-800">
@@ -80,7 +79,6 @@ export default function JadwalSholat() {
         </div>
       </div>
 
-      {/* Prayer Cards */}
       {timings ? (
         <>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
@@ -113,7 +111,6 @@ export default function JadwalSholat() {
             })}
           </div>
 
-          {/* Next bar */}
           <div className="px-4 py-3 flex flex-wrap justify-between items-center gap-2">
             <div>
               <div className="text-xs text-gray-800">Waktu sholat berikutnya</div>

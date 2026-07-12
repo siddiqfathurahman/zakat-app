@@ -104,9 +104,7 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
-      {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-2 border-b border-gray-200 bg-gray-50">
-        {/* Undo / Redo */}
         <MenuButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
@@ -124,7 +122,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Headings */}
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive("heading", { level: 1 })}
@@ -149,7 +146,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Text format */}
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive("bold")}
@@ -188,7 +184,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Alignment */}
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           isActive={editor.isActive({ textAlign: "left" })}
@@ -220,7 +215,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Lists */}
         <MenuButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive("bulletList")}
@@ -238,7 +232,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Blockquote & HR */}
         <MenuButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive("blockquote")}
@@ -255,7 +248,6 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
 
         <Divider />
 
-        {/* Link */}
         <MenuButton
           onClick={setLink}
           isActive={editor.isActive("link")}
@@ -265,10 +257,8 @@ const TiptapEditor = ({ value, onChange, placeholder = "Tulis konten berita di s
         </MenuButton>
       </div>
 
-      {/* Editor area */}
       <EditorContent editor={editor} className="bg-white" />
 
-      {/* Word count */}
       <div className="px-4 py-2 border-t border-gray-100 bg-gray-50 text-xs text-gray-400 text-right">
         {editor.storage.characterCount?.characters?.() ?? editor.getText().length} karakter
       </div>

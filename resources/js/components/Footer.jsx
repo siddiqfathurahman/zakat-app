@@ -5,8 +5,6 @@ const Footer = () => {
     <footer className="bg-primary text-white mt-20">
       <div className="content px-6 py-12">
         <div className="grid md:grid-cols-[1.5fr_1fr] gap-12">
-          
-          {/* Logo & Deskripsi */}
           <div>
             <img
               src="/logo-putih.svg"
@@ -20,8 +18,6 @@ const Footer = () => {
               menghadirkan manfaat bagi masyarakat melalui berbagai program
               keislaman, zakat, qurban, dan kajian Al-Qur'an.
             </p>
-
-            {/* Kontak */}
             <div className="mt-6 space-y-4">
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-white" />
@@ -39,10 +35,8 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Navigasi + Lokasi */}
           <div className="grid sm:grid-cols-2 gap-8">
             
-            {/* Navigasi */}
             <div>
               <h3 className="font-semibold text-lg mb-4">
                 Navigasi
@@ -87,7 +81,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Lokasi */}
             <div>
               <h3 className="font-semibold text-lg mb-4">
                 Lokasi Masjid
@@ -116,7 +109,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Footer */}
         <div className="border-t border-white/10 mt-10 pt-6 text-center text-sm text-white/70">
           © {new Date().getFullYear()} Masjid Al Anhar. Seluruh hak cipta
           dilindungi.

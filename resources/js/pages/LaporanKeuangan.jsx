@@ -132,7 +132,6 @@ export default function LaporanKeuangan() {
     return (
         <AppLayout>
             <div className="min-h-screen bg-slate-50">
-                {/* Header */}
                 <div className="content space-y-6 px-4 py-6 sm:px-8">
                     <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
                         <p className="text-xs font-semibold uppercase tracking-wide text-primary">
@@ -145,7 +144,6 @@ export default function LaporanKeuangan() {
                             <MapPin size={14} /> {profil.lokasi}
                         </p>
 
-                        {/* Hero ringkasan saldo */}
                         <p className="text-xs font-medium text-slate-500">
                             Total Saldo Kas
                         </p>
@@ -214,7 +212,6 @@ export default function LaporanKeuangan() {
                         </div>
                     </div>
 
-                    {/* Saldo per Dana (bar list) */}
                     <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                         <h2 className="mb-4 text-sm font-bold text-slate-900">
                             Saldo per Dana
@@ -257,7 +254,6 @@ export default function LaporanKeuangan() {
                         </div>
                     </div>
 
-                    {/* Arus kas 6 bulan */}
                     <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                         <h2 className="mb-4 text-sm font-bold text-slate-900">
                             Arus Kas 6 Bulan
@@ -347,13 +343,11 @@ export default function LaporanKeuangan() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Transaksi periode ini */}
                     <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                         <h2 className="mb-2 text-sm font-bold text-primary">
                             Transaksi - {filter.periode_label}
                         </h2>
 
-                        {/* Pemasukan */}
                         <div className="mt-4">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">
@@ -401,7 +395,6 @@ export default function LaporanKeuangan() {
                             </div>
                         </div>
 
-                        {/* Pengeluaran */}
                         <div className="mt-6">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold uppercase tracking-wide text-rose-700">

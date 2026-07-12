@@ -170,7 +170,6 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                     </div>
                 </div>
 
-                {/* ── Kotak Statistik ── */}
                 <div className="grid grid-cols-2 gap-3 px-4 mt-6 md:mx-10 md:mt-10 md:gap-4 md:px-0 lg:grid-cols-4">
                     <div className="rounded-2xl bg-white p-4 shadow-sm shadow-gray-200/60">
                         <div className="flex items-center justify-between mb-3">
@@ -309,7 +308,6 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                     <div className="rounded-2xl bg-white shadow-sm shadow-gray-200/60 overflow-hidden">
                         {news && news.length > 0 ? (
                             <>
-                                {/* Mobile: list card */}
                                 <div className="divide-y divide-gray-50 md:hidden">
                                     {news.map((item) => (
                                         <div key={item.id} className="p-4">
@@ -413,7 +411,6 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                                     ))}
                                 </div>
 
-                                {/* Desktop: tabel */}
                                 <div className="hidden overflow-x-auto md:block">
                                     <table className="w-full text-sm">
                                         <thead>
@@ -576,7 +573,6 @@ const AdminBerita = ({ news, pagination, filters = {}, stats = {} }) => {
                         )}
                     </div>
 
-                    {/* Pagination */}
                     {pagination && pagination.last_page > 1 && (
                         <div className="flex flex-wrap items-center justify-center gap-2">
                             <button

@@ -336,8 +336,6 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
         } catch (error) {
             console.error(error);
             alert("Gagal print: " + error.message);
-            // If failed to print, maybe still submit?
-            // In Zakat they stop if print fails to let user fix printer.
         }
     };
 
@@ -349,10 +347,8 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
         }
 
         if (form.jenis_hewan === 'kambing' && setting?.printer_connected) {
-            // Print then submit
             handlePrintAndSave();
         } else {
-            // Just submit
             executeSubmit();
         }
     };
@@ -373,7 +369,6 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
         );
     };
 
-    // Pagination page numbers
     const pageNumbers = useMemo(() => {
         const pages = [];
         const delta = 2;
@@ -399,7 +394,6 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
                 </div>
             )}
 
-            {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Data Shohibul Qurban</h1>
                 <div className="flex gap-2">
@@ -425,7 +419,6 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
                 </div>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-6">
                 {[
                     { label: 'Total Shohibul', val: stats.total, color: 'bg-orange-50 border-orange-200', valColor: 'text-orange-700' },
@@ -440,101 +433,116 @@ export default function Shohibul({ shohibulqurbans = [], filters = {}, setting =
                 ))}
             </div>
 
-            {/* Filter Box */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
-                <div className="flex flex-nowrap gap-3 items-end overflow-x-auto">
+            <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
+                    <div className="flex-1">
+                        <label className="mb-1 block text-xs font-medium text-black">
+                            Cari Nama / Panitia
+                        </label>
 
-                    <div className="min-w-[220px]">
-                    <label className="block text-xs text-black mb-1 font-medium">
-                        Cari Nama / Panitia
-                    </label>
-                    <div className="flex gap-2">
-                        <input
-                        type="text"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && applyFilters({ search: e.target.value })}
-                        placeholder="Cari..."
-                        className="w-200 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400"
-                        />
-                        <button
-                        onClick={() => applyFilters({ search })}
-                        className="bg-orange-700 hover:bg-orange-700 text-white px-3 py-2 rounded-lg text-sm flex items-center"
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onKeyDown={(e) =>
+                                    e.key === "Enter" &&
+                                    applyFilters({ search: e.target.value })
+                                }
+                                placeholder="Cari..."
+                                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none"
+                            />
+
+                            <button
+                                onClick={() => applyFilters({ search })}
+                                className="w-full rounded-lg bg-orange-700 px-4 py-2 text-sm text-white hover:bg-orange-800 sm:w-auto"
+                            >
+                                Cari
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="w-full lg:w-44">
+                        <label className="mb-1 block text-xs font-medium text-black">
+                            Jenis Hewan
+                        </label>
+
+                        <select
+                            value={jenisHewan}
+                            onChange={(e) => {
+                                setJenisHewan(e.target.value);
+                                setNomorHewan("");
+                                applyFilters({
+                                    jenis_hewan: e.target.value,
+                                    nomor_hewan: "",
+                                });
+                            }}
+                            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none"
                         >
-                        Cari
+                            <option value="">Semua</option>
+                            <option value="sapi">Sapi</option>
+                            <option value="kambing">Kambing</option>
+                        </select>
+                    </div>
+
+                    <div className="w-full lg:w-44">
+                        <label className="mb-1 block text-xs font-medium text-black">
+                            Nomor Hewan
+                        </label>
+
+                        <select
+                            value={nomorHewan}
+                            onChange={(e) => {
+                                setNomorHewan(e.target.value);
+                                applyFilters({
+                                    nomor_hewan: e.target.value,
+                                });
+                            }}
+                            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none"
+                        >
+                            <option value="">Semua</option>
+
+                            {nomorOptions.map((n) => (
+                                <option key={n} value={n}>
+                                    No {n}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="w-full lg:w-32">
+                        <label className="mb-1 block text-xs font-medium text-black">
+                            Urutan
+                        </label>
+
+                        <button
+                            onClick={() => {
+                                const nextSort =
+                                    sortUrutan === "asc" ? "desc" : "asc";
+                                setSortUrutan(nextSort);
+                                applyFilters({
+                                    sort_urutan: nextSort,
+                                });
+                            }}
+                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                        >
+                            {sortUrutan === "asc" ? (
+                                <ArrowDownAZ className="h-4 w-4" />
+                            ) : (
+                                <ArrowUpZA className="h-4 w-4" />
+                            )}
                         </button>
                     </div>
-                    </div>
-
-                    <div className="min-w-[160px]">
-                    <label className="block text-xs text-black mb-1 font-medium">
-                        Jenis Hewan
-                    </label>
-                    <select
-                        value={jenisHewan}
-                        onChange={e => {
-                        setJenisHewan(e.target.value);
-                        setNomorHewan('');
-                        applyFilters({ jenis_hewan: e.target.value, nomor_hewan: '' });
-                        }}
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400"
-                    >
-                        <option value="">Semua</option>
-                        <option value="sapi">Sapi</option>
-                        <option value="kambing">Kambing</option>
-                    </select>
-                    </div>
-
-                    <div className="min-w-[160px]">
-                    <label className="block text-xs text-black mb-1 font-medium">
-                        Nomor Hewan
-                    </label>
-                    <select
-                        value={nomorHewan}
-                        onChange={e => {
-                        setNomorHewan(e.target.value);
-                        applyFilters({ nomor_hewan: e.target.value });
-                        }}
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-400"
-                    >
-                        <option value="">Semua</option>
-                        {nomorOptions.map(n => (
-                        <option key={n} value={n}>No {n}</option>
-                        ))}
-                    </select>
-                    </div>
-
-                    <div className="min-w-[120px]">
-                    <label className="block text-xs text-black mb-1 font-medium">
-                        Urutan
-                    </label>
-                    <button
-                        onClick={() => {
-                        const nextSort = sortUrutan === 'asc' ? 'desc' : 'asc';
-                        setSortUrutan(nextSort);
-                        applyFilters({ sort_urutan: nextSort });
-                        }}
-                        className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-orange-700 hover:border-orange-300 hover:bg-orange-50 transition"
-                    >
-                        {sortUrutan === 'asc' ? (
-                        <ArrowDownAZ className="w-4 h-4" />
-                        ) : (
-                        <ArrowUpZA className="w-4 h-4" />
-                        )}
-                    </button>
-                    </div>
 
                 </div>
-                </div>
+            </div>
 
-            {/* Info row */}
             <div className="text-sm text-black mb-2">
                 Menampilkan <span className="font-semibold text-gray-700">{start} - {end}</span> dari <span className="font-semibold text-gray-700">{shohibulqurbans.length}</span> data
             </div>
 
-            {/* Table */}
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                <table className="w-full text-sm">
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
+                <table className="min-w-[900px] w-full text-sm">
                     <thead>
                         <tr className="bg-orange-700 text-white">
                             {['No', 'Nama Shohibul', 'Panitia', 'RT/RW', 'Jenis Hewan', 'No. Hewan', 'Slot', 'Aksi'].map(h => (

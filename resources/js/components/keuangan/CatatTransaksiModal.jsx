@@ -97,7 +97,6 @@ export default function CatatTransaksiModal({
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                    {/* Toggle jenis */}
                     <div className="grid grid-cols-2 gap-2 rounded-full bg-slate-100 p-1">
                         <button
                             type="button"
@@ -129,7 +128,7 @@ export default function CatatTransaksiModal({
                         </button>
                     </div>
 
-                    {/* Jumlah */}
+
                     <div>
                         <label className="mb-1 block text-sm font-medium text-slate-700">Jumlah</label>
                         <div className="flex items-center rounded-2xl border border-slate-200 px-4 py-3 focus-within:border-emerald-400">
@@ -148,7 +147,6 @@ export default function CatatTransaksiModal({
                         {errors.jumlah && <p className="mt-1 text-xs text-rose-600">{errors.jumlah}</p>}
                     </div>
 
-                    {/* Kas */}
                     <div>
                         <label className="mb-1 block text-sm font-medium text-slate-700">Kas</label>
                         <select
@@ -166,7 +164,6 @@ export default function CatatTransaksiModal({
                         {errors.kas_id && <p className="mt-1 text-xs text-rose-600">{errors.kas_id}</p>}
                     </div>
 
-                    {/* Kategori */}
                     <div>
                         <div className="mb-1 flex items-center justify-between">
                             <label className="block text-sm font-medium text-slate-700">Kategori</label>
@@ -216,7 +213,6 @@ export default function CatatTransaksiModal({
                         )}
                     </div>
 
-                    {/* Tanggal */}
                     <div>
                         <label className="mb-1 block text-sm font-medium text-slate-700">Tanggal</label>
                         <input
@@ -228,7 +224,6 @@ export default function CatatTransaksiModal({
                         {errors.tanggal && <p className="mt-1 text-xs text-rose-600">{errors.tanggal}</p>}
                     </div>
 
-                    {/* Keterangan */}
                     <div>
                         <label className="mb-1 block text-sm font-medium text-slate-700">Keterangan</label>
                         <textarea
@@ -239,8 +234,7 @@ export default function CatatTransaksiModal({
                             className="w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-base focus:border-emerald-400 focus:outline-none focus:ring-0"
                         />
                     </div>
-
-                    {/* Bukti */}
+                    
                     <div>
                         <label className="mb-1 block text-sm font-medium text-slate-700">
                             Bukti (kwitansi/nota) — opsional
