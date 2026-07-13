@@ -289,7 +289,7 @@ const QurbanHome = ({
                     <div className="mt-1.5">
                       <ProgressBar
                         pct={item.pct}
-                        color={item.pct === 100 ? "#0d4f3c" : item.pct >= 50 ? "#b8924a" : "#e5e7eb"}
+                        color={item.pct === 100 ? "#0d4f3c" : item.pct >= 1 ? "#b8924a" : "#e5e7eb"}
                       />
                     </div>
                   </div>

@@ -61,7 +61,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
 
-    // ==== MODUL KEUANGAN ====
+    //  keuangan
     Route::get('/keuangan', [AdminKeuanganController::class, 'index'])->name('admin.keuangan.dashboard');
 
 

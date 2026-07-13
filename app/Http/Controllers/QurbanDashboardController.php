@@ -14,17 +14,14 @@ class QurbanDashboardController extends Controller
 {
     public function index()
     {
-        // 1. Total Bungkus (Formulaqurban)
         $formula = Formulaqurban::latest()->first();
         $bungkusSapi = $formula ? $formula->total_bungkus_sapi : 0;
         $bungkusKambing = $formula ? $formula->total_bungkus_kambing : 0;
         $totalBungkus = $bungkusSapi + $bungkusKambing;
 
-        // 2. Jumlah Ekor Hewan (Shohibulqurban)
         $jumlahSapi = Shohibulqurban::where('jenis_hewan', 'sapi')->count();
         $jumlahKambing = Shohibulqurban::whereIn('jenis_hewan', ['kambing', 'domba'])->count();
 
-        // 3. Jatah Masing-masing RT (Penerimaqurban)
         $rtData = Penerimaqurban::select('rt', DB::raw('SUM(jatah_sapi) as sapi'), DB::raw('SUM(jatah_kambing) as kambing'))
             ->groupBy('rt')
             ->orderBy('rt')
@@ -33,13 +30,13 @@ class QurbanDashboardController extends Controller
         $rtDataFormatted = $rtData->map(function ($item) {
             $rtNumber = $item->rt;
 
-            // Semua penerima di RT ini
+
             $allPenerima = Penerimaqurban::where('rt', $rtNumber)
                 ->orderBy('nama')
                 ->get(['nama', 'status', 'jatah_sapi', 'jatah_kambing']);
 
-            $sudahAmbil = $allPenerima->filter(fn($p) => in_array($p->status, ['claimed', 'shohibul']))->values();
-            $belumAmbil = $allPenerima->filter(fn($p) => !in_array($p->status, ['claimed', 'shohibul']))->values();
+            $sudahAmbil = $allPenerima->filter(fn($p) => in_array($p->status, ['claimed']))->values();
+            $belumAmbil = $allPenerima->filter(fn($p) => !in_array($p->status, ['claimed']))->values();
 
             return [
                 'rt'             => 'RT ' . $rtNumber,
@@ -53,7 +50,6 @@ class QurbanDashboardController extends Controller
             ];
         });
 
-        // 4. Hasil Penjualan Kulit (Settingqurban)
         $setting = Settingqurban::first();
         $penjualanKulit = $setting ? $setting->jual_kulit : 0;
         $noteKulit = $setting ? $setting->note_kulit : '';

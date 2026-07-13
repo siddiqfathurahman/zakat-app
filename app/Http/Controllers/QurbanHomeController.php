@@ -13,7 +13,6 @@ class QurbanHomeController extends Controller
 {
     public function index()
     {
-        // 1. Total Kantong (dari Formulaqurban, sama seperti QurbanDashboardController)
         $formula = Formulaqurban::latest()->first();
         $bungkusSapi = $formula->total_bungkus_sapi ?? 0;
         $bungkusKambing = $formula->total_bungkus_kambing ?? 0;
@@ -33,7 +32,6 @@ class QurbanHomeController extends Controller
             ],
         ];
 
-        // 2. Laporan Pemotongan & Progres Penimbangan (dari RealtimeQurban)
         $realtime = RealtimeQurban::all();
 
         $pemotongan = [];
@@ -47,7 +45,6 @@ class QurbanHomeController extends Controller
             $sembelihCount = $group->where('status_sembelih', true)->count();
             $potongCount = $group->where('status_potong', true)->count();
 
-            // Laporan Pemotongan => pakai status_sembelih
             $pemotongan[] = [
                 'hewan' => ucfirst($jenis),
                 'selesai' => $sembelihCount,
@@ -58,7 +55,6 @@ class QurbanHomeController extends Controller
                     : null,
             ];
 
-            // Progres Penimbangan => pakai status_potong
             $penimbangan[] = [
                 'hewan' => ucfirst($jenis),
                 'selesai' => $potongCount,
@@ -73,7 +69,6 @@ class QurbanHomeController extends Controller
             $totalBobotBersih += $group->sum('berat_kg');
         }
 
-        // 3. Pengiriman Shohibul per RT (dari Shohibulqurban)
         $shohibul = Shohibulqurban::select('rt', 'status_kirim', 'waktu_kirim')->get();
 
         $shohibulRT = $shohibul->groupBy('rt')
@@ -97,13 +92,12 @@ class QurbanHomeController extends Controller
         $totalShohibul = $shohibul->count();
         $shohibulProgress = $totalShohibul > 0 ? round(($totalTerkirim / $totalShohibul) * 100) : 0;
 
-        // 4. Distribusi Wilayah (dari Penerimaqurban)
         $penerima = Penerimaqurban::select('rt', 'status', 'jatah_sapi', 'jatah_kambing')->get();
 
         $distribusiRT = $penerima->groupBy('rt')
             ->map(function ($group, $rt) {
                 $total = $group->count();
-                $sudahAmbil = $group->whereIn('status', ['claimed', 'shohibul'])->count();
+                $sudahAmbil = $group->where('status', 'claimed')->count();
 
                 return [
                     'rt' => 'RT '.$rt,
@@ -115,7 +109,6 @@ class QurbanHomeController extends Controller
             ->sortBy('rt')
             ->values();
 
-        // 5. Hasil Penjualan Kulit (dari Settingqurban)
         $setting = Settingqurban::first();
         $hasilKulit = [
             'nominal' => 'Rp '.number_format($setting->jual_kulit ?? 0, 0, ',', '.'),
