@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
-import { Printer, X } from 'lucide-react';
+import { Printer, X, Archive, Download, Trash2, AlertTriangle, AlertCircle, Package } from 'lucide-react';
 import QurbanLayout from '../../Layout/QurbanLayout';
 
-export default function SettingQurban({ setting = null }) {
+export default function SettingQurban({ setting = null, archives = [] }) {
     const { flash } = usePage().props;
 
     const [form, setForm] = useState({
@@ -121,6 +121,52 @@ export default function SettingQurban({ setting = null }) {
                 setForm({ jual_kulit: '', operasional_kambing: '', tanggal_pengambilan: '', waktu_pengambilan: '', tempat_pengambilan: '' });
             },
         });
+    };
+
+    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+    const [isArchiving, setIsArchiving] = useState(false);
+    const [archiveYear, setArchiveYear] = useState(setting?.tahun || new Date().getFullYear());
+
+    const handleOpenArchiveModal = () => {
+        setArchiveYear(setting?.tahun || new Date().getFullYear());
+        setIsArchiveModalOpen(true);
+    };
+
+    const handleCloseArchiveModal = () => {
+        setIsArchiveModalOpen(false);
+    };
+
+    const handleArchiveSubmit = (e) => {
+        e.preventDefault();
+        setIsArchiving(true);
+
+        router.post("/qurban/input/archive", { tahun: archiveYear }, {
+            onSuccess: () => {
+                setIsArchiving(false);
+                handleCloseArchiveModal();
+            },
+            onError: (errors) => {
+                setIsArchiving(false);
+                if (errors.tahun) {
+                    alert("Gagal Mengarsipkan: " + errors.tahun);
+                } else {
+                    alert("Gagal melakukan pengarsipan.");
+                }
+            },
+        });
+    };
+
+    const handleDeleteArchive = (id, tahun) => {
+        if (window.confirm(`Apakah Anda yakin ingin menghapus arsip tahun ${tahun}? File PDF terkait juga akan dihapus secara permanen.`)) {
+            router.post(`/qurban/input/archive/${id}/destroy`, {}, {
+                onSuccess: () => {
+                    alert(`Arsip tahun ${tahun} berhasil dihapus.`);
+                },
+                onError: () => {
+                    alert(`Gagal menghapus arsip tahun ${tahun}.`);
+                },
+            });
+        }
     };
 
     const fmt = val => {
@@ -458,6 +504,183 @@ export default function SettingQurban({ setting = null }) {
 
                 </div>
             </div>
+
+            <div className="mt-12 border-t border-gray-200 pt-8">
+                <h2 className="text-2xl font-bold text-gray-800">
+                    Arsip Data Qurban
+                </h2>
+                <p className="text-gray-600 text-sm mt-1 mb-6">
+                    Simpan data qurban tahun-tahun sebelumnya dan kelola laporan arsip PDF
+                </p>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
+                        <div>
+                            <div className="flex items-center gap-3 text-orange-700 mb-4">
+                                <Archive size={24} />
+                                <h3 className="font-bold text-lg text-gray-800">Arsipkan & Reset Data</h3>
+                            </div>
+                            <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                                Gunakan fitur ini setelah seluruh pelaksanaan pemotongan dan distribusi daging qurban selesai.
+                                Sistem akan menyusun semua data ke dalam file PDF dan mereset database qurban aktif agar bersih untuk tahun berikutnya.
+                            </p>
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3 mb-6">
+                                <AlertCircle className="text-amber-600 shrink-0" size={20} />
+                                <span className="text-amber-800 text-xs leading-relaxed font-medium">
+                                    Peringatan: Seluruh data aktif (Shohibul, Realtime, Penerima, Panitia, Jatah Lembaga, & Formula) akan dihapus secara permanen dari database.
+                                </span>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleOpenArchiveModal}
+                            className="w-full bg-orange-700 hover:bg-orange-800 text-white font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
+                        >
+                            <Archive size={16} />
+                            <span className="text-sm font-semibold">Mulai Pengarsipan</span>
+                        </button>
+                    </div>
+
+                    <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                            <Package size={20} className="text-orange-600" />
+                            Daftar Arsip Laporan PDF
+                        </h3>
+
+                        {archives.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                                <Archive size={48} className="mb-2 stroke-1" />
+                                <p className="text-sm">Belum ada data qurban yang diarsipkan.</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left text-gray-500">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                                        <tr>
+                                            <th scope="col" className="px-4 py-3">Tahun</th>
+                                            <th scope="col" className="px-4 py-3">Tanggal Diarsipkan</th>
+                                            <th scope="col" className="px-4 py-3">Ringkasan Data</th>
+                                            <th scope="col" className="px-4 py-3 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {archives.map((archive) => {
+                                            const summary = archive.summary_data || {};
+                                            return (
+                                                <tr key={archive.id} className="bg-white border-b hover:bg-gray-50">
+                                                    <td className="px-4 py-4 font-bold text-gray-900">
+                                                        Tahun {archive.tahun}
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        {new Date(archive.created_at).toLocaleDateString("id-ID", {
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                        })}
+                                                    </td>
+                                                    <td className="px-4 py-4 text-xs">
+                                                        <div className="space-y-1">
+                                                            <p>• Kantong: <span className="font-semibold text-gray-700">{summary.total_bungkus || 0} bks</span></p>
+                                                            <p>• Sapi: <span className="font-semibold text-green-700">{summary.jumlah_sapi || 0} ekor</span></p>
+                                                            <p>• Kambing: <span className="font-semibold text-amber-700">{summary.jumlah_kambing || 0} ekor</span></p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-right">
+                                                        <div className="flex justify-end gap-2">
+                                                            <a
+                                                                href={`/qurban/archive/${archive.id}/download`}
+                                                                className="bg-orange-50 hover:bg-orange-100 text-orange-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-orange-200"
+                                                            >
+                                                                <Download size={14} />
+                                                                <span className="text-xs font-semibold">PDF</span>
+                                                            </a>
+                                                            <button
+                                                                onClick={() => handleDeleteArchive(archive.id, archive.tahun)}
+                                                                className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-red-200"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Archive Confirmation Modal */}
+            {isArchiveModalOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
+                        <div className="bg-orange-700 text-white p-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle size={24} className="animate-bounce" />
+                                <h2 className="text-xl font-bold">Konfirmasi Pengarsipan</h2>
+                            </div>
+                            <p className="text-orange-100 text-sm mt-2 font-medium">
+                                Tindakan ini permanen dan tidak dapat dibatalkan!
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleArchiveSubmit} className="p-6">
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Tahun Laporan yang Diarsipkan <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    value={archiveYear}
+                                    onChange={(e) => setArchiveYear(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                    placeholder={new Date().getFullYear()}
+                                    required
+                                    min="2000"
+                                    max="2100"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">
+                                    Masukkan tahun data aktif saat ini.
+                                </p>
+                            </div>
+
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-800 text-xs leading-relaxed space-y-2">
+                                <p className="font-bold uppercase flex items-center gap-1.5">
+                                    <AlertCircle size={14} /> PENTING:
+                                </p>
+                                <p>
+                                    1. Seluruh data shohibul, realtime, penerima, panitia, jatah lembaga, serta formula saat ini akan <strong>diarsipkan ke dalam file PDF</strong>.
+                                </p>
+                                <p>
+                                    2. Setelah file berhasil disimpan, sistem akan <strong>menghapus bersih (TRUNCATE)</strong> seluruh data aktif tersebut dari database agar bersih untuk tahun depan.
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={handleCloseArchiveModal}
+                                    disabled={isArchiving}
+                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isArchiving}
+                                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+                                >
+                                    {isArchiving ? "Memproses..." : "Ya, Generate & Reset"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* Confirm Reset Modal */}
             {confirmReset && (

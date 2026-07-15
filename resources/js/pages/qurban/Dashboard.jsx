@@ -147,7 +147,6 @@ export default function Dashboard({
                         </div>
                         <div>
                             <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Penjualan Kulit</p>
-                            <p className="text-xs text-orange-500">hasil penjualan kulit hewan</p>
                             <p className="text-xs text-orange-500">Note : {noteKulit}</p>
                         </div>
                     </div>

@@ -177,6 +177,8 @@ Route::prefix('zakat')->group(function () {
 // qurban route
 Route::prefix('qurban')->group(function () {
     Route::get('/', [\App\Http\Controllers\QurbanHomeController::class, 'index'])->name('qurban.home');
+    Route::get('/archive/{id}/download-public', [\App\Http\Controllers\QurbanArchiveController::class, 'downloadPublic'])->name('qurban.archive.download-public');
+    Route::get('/archive/{id}/download', [\App\Http\Controllers\QurbanArchiveController::class, 'download'])->middleware(['auth', 'role:super admin,admin,qurban'])->name('qurban.archive.download');
 
     Route::middleware(['auth', 'role:super admin,admin,qurban'])->prefix('input')->group(function () {
         Route::get('/', function () {
@@ -197,11 +199,11 @@ Route::prefix('qurban')->group(function () {
         Route::post('/shohibul/{shohibulqurban}/destroy', [ShohibulqurbanController::class, 'destroy'])->name('shohibul.destroy');
 
         // realtime monitoring qurban
-Route::get('/realtime', [RealtimequrbanController::class, 'index'])->name('qurban.realtime.index');
-Route::post('/realtime/sembelih/{realtimeQurban}', [RealtimequrbanController::class, 'updateSembelih'])->name('qurban.realtime.sembelih');
-Route::post('/realtime/potong/{realtimeQurban}', [RealtimequrbanController::class, 'updatePotong'])->name('qurban.realtime.potong');
-Route::post('/realtime/timbang/{realtimeQurban}', [RealtimequrbanController::class, 'updateTimbang'])->name('qurban.realtime.timbang');
-Route::post('/realtime/kirim/{shohibulqurban}', [RealtimequrbanController::class, 'updateKirim'])->name('qurban.realtime.kirim');
+        Route::get('/realtime', [RealtimequrbanController::class, 'index'])->name('qurban.realtime.index');
+        Route::post('/realtime/sembelih/{realtimeQurban}', [RealtimequrbanController::class, 'updateSembelih'])->name('qurban.realtime.sembelih');
+        Route::post('/realtime/potong/{realtimeQurban}', [RealtimequrbanController::class, 'updatePotong'])->name('qurban.realtime.potong');
+        Route::post('/realtime/timbang/{realtimeQurban}', [RealtimequrbanController::class, 'updateTimbang'])->name('qurban.realtime.timbang');
+        Route::post('/realtime/kirim/{shohibulqurban}', [RealtimequrbanController::class, 'updateKirim'])->name('qurban.realtime.kirim');
 
         // jatah lembaga qurban
         Route::get('/jatah-lembaga', [JatahlembagaqurbanController::class, 'index'])->name('jatah-lembaga.index');
@@ -214,6 +216,8 @@ Route::post('/realtime/kirim/{shohibulqurban}', [RealtimequrbanController::class
         Route::post('/panitia/store', [PanitiaqurbanController::class, 'store'])->name('panitia.store');
         Route::post('/panitia/{panitiaqurban}/update', [PanitiaqurbanController::class, 'update'])->name('panitia.update');
         Route::post('/panitia/{panitiaqurban}/destroy', [PanitiaqurbanController::class, 'destroy'])->name('panitia.destroy');
+
+        Route::get('/panitia/export', [PanitiaqurbanController::class, 'export'])->name('panitia.export');
 
         // penerima qurban
         Route::get('/penerima/print', [PenerimaqurbanController::class, 'print'])->name('penerima.qurban.print');
@@ -243,5 +247,9 @@ Route::post('/realtime/kirim/{shohibulqurban}', [RealtimequrbanController::class
         Route::post('/setting/{settingqurban}/destroy', [SettingqurbanController::class, 'destroy'])->name('setting.destroy');
         Route::post('/setting/printer', [SettingqurbanController::class, 'updatePrinter'])->name('setting.qurban.printer.update');
         Route::post('/setting/printer/disconnect', [SettingqurbanController::class, 'disconnectPrinter'])->name('setting.qurban.printer.disconnect');
+
+        // pengarsipan qurban
+        Route::post('/archive', [\App\Http\Controllers\QurbanArchiveController::class, 'archive'])->name('qurban.archive.store');
+        Route::post('/archive/{id}/destroy', [\App\Http\Controllers\QurbanArchiveController::class, 'destroy'])->name('qurban.archive.destroy');
     });
 });

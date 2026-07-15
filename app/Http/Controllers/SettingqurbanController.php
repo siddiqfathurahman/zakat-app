@@ -11,8 +11,11 @@ class SettingqurbanController extends Controller
     public function index()
     {
         $setting = Settingqurban::first();
+        $archives = \App\Models\QurbanArchive::orderBy('tahun', 'desc')->get();
+
         return Inertia::render('qurban/SettingQurban', [
             'setting' => $setting,
+            'archives' => $archives,
         ]);
     }
 

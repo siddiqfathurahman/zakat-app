@@ -115,6 +115,15 @@ class QurbanHomeController extends Controller
         ];
         $noteKulit = $setting ? $setting->note_kulit : '';
 
+        $archives = \App\Models\QurbanArchive::orderBy('tahun', 'desc')->get()->map(function($archive) {
+            return [
+                'id' => $archive->id,
+                'tahun' => $archive->tahun,
+                'summary' => $archive->summary_data,
+                'created_at' => $archive->created_at->format('d M Y'),
+            ];
+        });
+
         return Inertia::render('QurbanHome', [
             'lastUpdate' => now()->timezone('Asia/Jakarta')->translatedFormat('d F Y – H:i').' WIB',
             'kantongStats' => $kantongStats,
@@ -128,6 +137,7 @@ class QurbanHomeController extends Controller
             'distribusiRT' => $distribusiRT,
             'hasilKulit' => $hasilKulit,
             'noteKulit' => $noteKulit,
+            'archives' => $archives,
         ]);
     }
 }

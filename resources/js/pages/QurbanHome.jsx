@@ -7,6 +7,7 @@ import {
   Archive,
   RefreshCw,
   Wallet,
+  Download,
 } from "lucide-react";
 
 const kantongIcons = [ShoppingBag, Archive, Archive];
@@ -81,6 +82,7 @@ const QurbanHome = ({
   distribusiRT = [],
   noteKulit = [],
   hasilKulit = { nominal: "Rp 0", keterangan: "" },
+  archives = [],
 }) => {
   const totalPemotonganSelesai = pemotongan.reduce((s, h) => s + h.selesai, 0);
   const totalPemotonganTotal = pemotongan.reduce((s, h) => s + h.total, 0);
@@ -312,6 +314,63 @@ const QurbanHome = ({
               <Wallet className="h-6 w-6" />
             </span>
           </div>
+
+          {/* Public Qurban Archives Section */}
+          {archives && archives.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-extrabold text-primary font-second">
+                Arsip Laporan Qurban
+              </h2>
+              <p className="mt-1 text-sm text-gray-400">
+                Unduh laporan pertanggungjawaban pengelolaan qurban dari tahun-tahun sebelumnya.
+              </p>
+
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {archives.map((archive) => {
+                  const summary = archive.summary || {};
+                  return (
+                    <div
+                      key={archive.id}
+                      className="rounded-2xl bg-white p-5 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                            Tahun {archive.tahun}
+                          </span>
+                          <span className="text-[10px] text-gray-400">
+                            Diarsipkan: {archive.created_at}
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-xs text-gray-600 mb-6">
+                          <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                            <span>Total Kantong:</span>
+                            <span className="font-semibold text-gray-900">{summary.total_bungkus || 0} Kantong</span>
+                          </div>
+                          <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                            <span>Shohibul Sapi:</span>
+                            <span className="font-semibold text-green-700">{summary.jumlah_sapi || 0} Ekor</span>
+                          </div>
+                          <div className="flex justify-between pb-1">
+                            <span>Shohibul Kambing:</span>
+                            <span className="font-semibold text-amber-700">{summary.jumlah_kambing || 0} Ekor</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <a
+                        href={`/qurban/archive/${archive.id}/download-public`}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-xs font-bold text-white "
+                      >
+                        <Download className="h-4 w-4" />
+                        Unduh Laporan PDF
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </AppLayout>

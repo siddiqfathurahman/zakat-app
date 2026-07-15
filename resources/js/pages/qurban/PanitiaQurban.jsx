@@ -260,9 +260,22 @@
                 </div>
 
 
-                <div className="mb-2 justify-end items-end flex">
-                    <CetakCocard panitiaqurbans={panitiaqurbans} setting={setting}  />
-                </div>
+            <div className="mb-2 justify-end items-end flex gap-2">
+                <a
+                    href={`/panitia/export?${new URLSearchParams({
+                        search,
+                        jabatan: filterJabatan,
+                        status: filterStatus,
+                    }).toString()}`}
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H8a2 2 0 01-2-2V5a2 2 0 012-2h6l6 6v11a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Excel
+                </a>
+                <CetakCocard panitiaqurbans={panitiaqurbans} setting={setting} />
+            </div>
 
             <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
                 <div className="flex flex-wrap gap-3 items-end">
