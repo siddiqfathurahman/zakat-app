@@ -84,8 +84,7 @@ Route::middleware(['auth', 'role:super admin,admin'])->prefix('admin')->group(fu
     Route::get('/berita/add', [NewsController::class, 'create'])->name('news.create');
     Route::post('/berita', [NewsController::class, 'store'])->name('news.store');
     Route::get('/berita/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
-    Route::post('/berita/{news}', [NewsController::class, 'update'])->name('news.update');
-    Route::put('/berita/{news}', [NewsController::class, 'update']); 
+    Route::post('/berita/{news}/update', [NewsController::class, 'update'])->name('news.update');
     Route::post('/berita/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
     Route::get('/berita/{slug}/komentar', [CommentController::class, 'adminIndex'])->name('admin.comments');
     Route::delete('/komentar/{comment}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');

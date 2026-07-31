@@ -25,7 +25,6 @@ const AdminBeritaForm = ({ news = null }) => {
         content:  news?.content  ?? "",
         status:   news?.status   ?? "draft",
         thumbnail: null,
-        _method: isEdit ? "PUT" : "POST",
     });
 
     const handleGenerate = async () => {
